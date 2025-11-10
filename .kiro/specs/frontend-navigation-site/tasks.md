@@ -49,7 +49,7 @@
   - 实现页面加载时从 LocalStorage 恢复数据的逻辑
   - _需求: 6.4, 7.1, 7.3, 7.4, 7.5_
 
-- [ ] 7. 实现主题切换组件
+- [x] 7. 实现主题切换组件
   - 创建 `components/layout/ThemeToggle.tsx` 组件
   - 使用 Ant Design Switch 或自定义按钮实现切换 UI
   - 集成 next-themes 的 useTheme hook
