@@ -8,7 +8,7 @@
   - 创建基础目录结构（api, components, store, services, types, utils）
   - _需求: 1.1, 7.1, 9.1_
 
-- [ ] 2. 定义 TypeScript 类型和接口
+- [x] 2. 定义 TypeScript 类型和接口
   - 创建 `types/link.ts` 定义 Link 接口（id, name, url, description, icon, backgroundColor, category, tags, order, timestamps）
   - 创建 `types/search.ts` 定义 SearchEngine 接口和搜索相关类型
   - 创建 `types/settings.ts` 定义 Settings 接口（theme, searchEngine, layout）
