@@ -2,33 +2,168 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CSS 自定义变量 - Light Theme */
 :root {
+  /* 背景颜色 */
   --background: #ffffff;
+  --background-secondary: #f5f5f5;
+  --background-tertiary: #fafafa;
+  
+  /* 前景颜色 */
   --foreground: #171717;
+  --foreground-secondary: #525252;
+  --foreground-tertiary: #737373;
+  
+  /* 边框颜色 */
+  --border: #e5e5e5;
+  --border-hover: #d4d4d4;
+  
+  /* 主题色 */
+  --primary: #1890ff;
+  --primary-hover: #40a9ff;
+  --primary-active: #096dd9;
+  
+  /* 卡片阴影 */
+  --card-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --card-shadow-hover: 0 4px 12px 0 rgba(0, 0, 0, 0.1);
+  
+  /* 过渡时长 */
+  --transition-duration: 300ms;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* CSS 自定义变量 - Dark Theme */
+.dark {
+  /* 背景颜色 */
+  --background: #0a0a0a;
+  --background-secondary: #171717;
+  --background-tertiary: #262626;
+  
+  /* 前景颜色 */
+  --foreground: #ededed;
+  --foreground-secondary: #a3a3a3;
+  --foreground-tertiary: #737373;
+  
+  /* 边框颜色 */
+  --border: #262626;
+  --border-hover: #404040;
+  
+  /* 主题色 */
+  --primary: #1890ff;
+  --primary-hover: #40a9ff;
+  --primary-active: #096dd9;
+  
+  /* 卡片阴影 */
+  --card-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: 0 4px 12px 0 rgba(0, 0, 0, 0.5);
 }
 
+/* 基础样式 */
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
+/* 主题过渡动画 */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-duration: var(--transition-duration);
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 禁用某些元素的过渡效果以提升性能 */
+*:before,
+*:after {
+  transition-property: background-color, border-color, color, fill, stroke;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-hover);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground-tertiary);
+}
+
+/* Firefox 滚动条 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-hover) var(--background-secondary);
+}
+
+/* 工具类 */
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+  
+  .transition-theme {
+    transition: background-color var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1),
+                color var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1),
+                border-color var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1);
+  }
 }
 
-/* Theme transition animations */
-* {
-  transition-property: background-color, border-color, color, fill, stroke;
-  transition-duration: 300ms;
-  transition-timing-function: ease-in-out;
+/* 焦点样式 */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 选择文本样式 */
+::selection {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* 加载动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* 骨架屏动画 */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--background-secondary) 0%,
+    var(--background-tertiary) 50%,
+    var(--background-secondary) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
 }

@@ -41,7 +41,7 @@
   - 定义预设搜索引擎列表（Google, Bing, Yahoo, Baidu, Yandex, DuckDuckGo）
   - _需求: 2.1, 2.2, 2.3, 2.5, 3.1, 3.2, 10.3_
 
-- [ ] 6. 创建根布局和主题系统
+- [x] 6. 创建根布局和主题系统
   - 配置 `app/layout.tsx` 集成 Redux Provider 和 Ant Design ConfigProvider
   - 使用 `next-themes` 的 ThemeProvider 实现主题管理
   - 配置 Ant Design 主题算法（light/dark）
