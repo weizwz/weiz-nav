@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Upload, Space, message, Modal } from 'antd';
+import { Button, Upload, Space, Modal } from 'antd';
 import { DownloadOutlined, UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { loadLinks } from '@/store/slices/linksSlice';
 import { Link } from '@/types/link';
+import { showSuccess, showError, showWarning } from '@/utils/feedback';
 
 /**
  * 验证链接数据格式
@@ -65,6 +66,11 @@ export const ImportExport: React.FC = () => {
    */
   const handleExport = () => {
     try {
+      if (links.length === 0) {
+        showWarning('没有可导出的数据');
+        return;
+      }
+
       // 将链接数据转换为 JSON 字符串
       const jsonData = JSON.stringify(links, null, 2);
       
@@ -85,10 +91,10 @@ export const ImportExport: React.FC = () => {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       
-      message.success('导出成功');
+      showSuccess('导出成功');
     } catch (error) {
       console.error('Export error:', error);
-      message.error('导出失败，请重试');
+      showError('导出失败，请重试');
     }
   };
 
@@ -99,13 +105,13 @@ export const ImportExport: React.FC = () => {
     const isJSON = file.type === 'application/json' || file.name.endsWith('.json');
     
     if (!isJSON) {
-      message.error('只能上传 JSON 文件');
+      showError('只能上传 JSON 文件');
       return Upload.LIST_IGNORE;
     }
 
     const isLt5M = file.size / 1024 / 1024 < 5;
     if (!isLt5M) {
-      message.error('文件大小不能超过 5MB');
+      showError('文件大小不能超过 5MB');
       return Upload.LIST_IGNORE;
     }
 
@@ -117,7 +123,7 @@ export const ImportExport: React.FC = () => {
    */
   const handleImport = () => {
     if (fileList.length === 0) {
-      message.warning('请先选择要导入的文件');
+      showWarning('请先选择要导入的文件');
       return;
     }
 
@@ -127,11 +133,29 @@ export const ImportExport: React.FC = () => {
     reader.onload = (e) => {
       try {
         const content = e.target?.result as string;
-        const data = JSON.parse(content);
+        
+        if (!content || content.trim() === '') {
+          showError('文件内容为空');
+          return;
+        }
+
+        let data;
+        try {
+          data = JSON.parse(content);
+        } catch (parseError) {
+          console.error('JSON parse error:', parseError);
+          showError('文件格式错误，无法解析 JSON 数据');
+          return;
+        }
 
         // 验证数据格式
         if (!validateLinkData(data)) {
-          message.error('文件格式不正确，请确保是有效的导航链接数据');
+          showError('文件格式不正确，请确保是有效的导航链接数据');
+          return;
+        }
+
+        if (data.length === 0) {
+          showWarning('导入的文件中没有链接数据');
           return;
         }
 
@@ -143,24 +167,30 @@ export const ImportExport: React.FC = () => {
           okText: '确认导入',
           cancelText: '取消',
           onOk: () => {
-            // 更新 Redux store
-            dispatch(loadLinks(data));
-            
-            // 保存到 LocalStorage
-            localStorage.setItem('nav_links', JSON.stringify(data));
-            
-            message.success(`成功导入 ${data.length} 个链接`);
-            setFileList([]);
+            try {
+              // 更新 Redux store
+              dispatch(loadLinks(data));
+              
+              // 保存到 LocalStorage
+              localStorage.setItem('nav_links', JSON.stringify(data));
+              
+              showSuccess(`成功导入 ${data.length} 个链接`);
+              setFileList([]);
+            } catch (saveError) {
+              console.error('Save error:', saveError);
+              showError('保存导入数据失败，请重试');
+            }
           },
         });
       } catch (error) {
         console.error('Import error:', error);
-        message.error('文件解析失败，请确保文件格式正确');
+        showError('导入失败，请重试');
       }
     };
 
-    reader.onerror = () => {
-      message.error('文件读取失败，请重试');
+    reader.onerror = (error) => {
+      console.error('File read error:', error);
+      showError('文件读取失败，请重试');
     };
 
     reader.readAsText(file as any);

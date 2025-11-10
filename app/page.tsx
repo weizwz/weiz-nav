@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { FloatButton, message, Drawer } from 'antd';
+import { FloatButton, Drawer } from 'antd';
 import { PlusOutlined, MenuOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addLink, updateLink, deleteLink, loadLinks } from '@/store/slices/linksSlice';
 import { storageService } from '@/services/storage';
 import { defaultLinks } from '@/services/defaultData';
+import { showSuccess, showError } from '@/utils/feedback';
 import Header from '@/components/layout/Header';
 import { CategorySidebar } from '@/components/navigation/CategorySidebar';
 import { LinkGrid } from '@/components/navigation/LinkGrid';
@@ -43,11 +44,18 @@ export default function Home() {
   useEffect(() => {
     // 如果 store 中没有数据，尝试从 LocalStorage 加载
     if (links.length === 0) {
-      const savedLinks = storageService.loadLinks();
-      if (savedLinks && savedLinks.length > 0) {
-        dispatch(loadLinks(savedLinks));
-      } else {
-        // 如果 LocalStorage 也没有数据，加载默认数据
+      try {
+        const savedLinks = storageService.loadLinks();
+        if (savedLinks && savedLinks.length > 0) {
+          dispatch(loadLinks(savedLinks));
+        } else {
+          // 如果 LocalStorage 也没有数据，加载默认数据
+          dispatch(loadLinks(defaultLinks));
+        }
+      } catch (error) {
+        console.error('加载数据失败:', error);
+        showError('加载数据失败，已使用默认数据');
+        // 加载失败时使用默认数据
         dispatch(loadLinks(defaultLinks));
       }
     }
@@ -84,17 +92,17 @@ export default function Home() {
           ...linkData,
           id: editingLink.id,
         }));
-        message.success('链接更新成功');
+        showSuccess('链接更新成功');
       } else {
         // 添加新链接
         dispatch(addLink(linkData as any));
-        message.success('链接添加成功');
+        showSuccess('链接添加成功');
       }
       setEditModalOpen(false);
       setEditingLink(null);
     } catch (error) {
       console.error('保存链接失败:', error);
-      message.error('保存链接失败，请重试');
+      showError('保存链接失败，请重试');
     }
   }, [dispatch, editingLink]);
 
@@ -109,12 +117,12 @@ export default function Home() {
     if (deletingLinkId) {
       try {
         dispatch(deleteLink(deletingLinkId));
-        message.success('链接删除成功');
+        showSuccess('链接删除成功');
         setDeleteModalOpen(false);
         setDeletingLinkId(null);
       } catch (error) {
         console.error('删除链接失败:', error);
-        message.error('删除链接失败，请重试');
+        showError('删除链接失败，请重试');
       }
     }
   }, [dispatch, deletingLinkId]);

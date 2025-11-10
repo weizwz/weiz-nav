@@ -90,26 +90,30 @@ class StorageService {
   /**
    * 保存链接数据到 LocalStorage
    * @param links 链接数组
-   * @returns 是否保存成功
+   * @returns 保存结果对象，包含成功状态和错误信息
    */
-  saveLinks(links: Link[]): boolean {
+  saveLinks(links: Link[]): { success: boolean; error?: string } {
     if (!this.isLocalStorageAvailable()) {
+      const error = 'LocalStorage 不可用，无法保存数据';
       console.error('Cannot save links: LocalStorage is not available');
-      return false;
+      return { success: false, error };
     }
 
     try {
       const data = JSON.stringify(links);
       localStorage.setItem(STORAGE_KEYS.LINKS, data);
       localStorage.setItem(STORAGE_KEYS.VERSION, CURRENT_VERSION);
-      return true;
+      return { success: true };
     } catch (error) {
       if (error instanceof Error && error.name === 'QuotaExceededError') {
+        const errorMsg = 'LocalStorage 存储空间已满，请导出数据并清理空间';
         console.error('LocalStorage quota exceeded. Please export your data and clear some space.');
+        return { success: false, error: errorMsg };
       } else {
+        const errorMsg = '保存数据失败，请重试';
         console.error('Failed to save links:', error);
+        return { success: false, error: errorMsg };
       }
-      return false;
     }
   }
 
@@ -145,21 +149,23 @@ class StorageService {
   /**
    * 保存设置到 LocalStorage
    * @param settings 设置对象
-   * @returns 是否保存成功
+   * @returns 保存结果对象，包含成功状态和错误信息
    */
-  saveSettings(settings: Settings): boolean {
+  saveSettings(settings: Settings): { success: boolean; error?: string } {
     if (!this.isLocalStorageAvailable()) {
+      const error = 'LocalStorage 不可用，无法保存设置';
       console.error('Cannot save settings: LocalStorage is not available');
-      return false;
+      return { success: false, error };
     }
 
     try {
       const data = JSON.stringify(settings);
       localStorage.setItem(STORAGE_KEYS.SETTINGS, data);
-      return true;
+      return { success: true };
     } catch (error) {
+      const errorMsg = '保存设置失败，请重试';
       console.error('Failed to save settings:', error);
-      return false;
+      return { success: false, error: errorMsg };
     }
   }
 
@@ -194,22 +200,24 @@ class StorageService {
 
   /**
    * 清除所有存储的数据
-   * @returns 是否清除成功
+   * @returns 清除结果对象，包含成功状态和错误信息
    */
-  clear(): boolean {
+  clear(): { success: boolean; error?: string } {
     if (!this.isLocalStorageAvailable()) {
+      const error = 'LocalStorage 不可用，无法清除数据';
       console.error('Cannot clear storage: LocalStorage is not available');
-      return false;
+      return { success: false, error };
     }
 
     try {
       localStorage.removeItem(STORAGE_KEYS.LINKS);
       localStorage.removeItem(STORAGE_KEYS.SETTINGS);
       localStorage.removeItem(STORAGE_KEYS.VERSION);
-      return true;
+      return { success: true };
     } catch (error) {
+      const errorMsg = '清除数据失败，请重试';
       console.error('Failed to clear storage:', error);
-      return false;
+      return { success: false, error: errorMsg };
     }
   }
 

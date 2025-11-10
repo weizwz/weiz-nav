@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Space, Typography, message } from 'antd';
+import { Button, Space, Typography } from 'antd';
 import { PlusOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -13,6 +13,7 @@ import { ResetDataModal } from '@/components/modals/ResetDataModal';
 import { Link } from '@/types/link';
 import { defaultLinks } from '@/services/defaultData';
 import { storageService } from '@/services/storage';
+import { showSuccess, showError, handleOperationResult } from '@/utils/feedback';
 
 const { Title } = Typography;
 
@@ -37,16 +38,26 @@ export default function ManagePage() {
 
   // 处理删除链接
   const handleDelete = (id: string) => {
-    dispatch(deleteLink(id));
-    message.success('删除成功');
+    try {
+      dispatch(deleteLink(id));
+      showSuccess('删除成功');
+    } catch (error) {
+      console.error('删除链接失败:', error);
+      showError('删除失败，请重试');
+    }
   };
 
   // 处理批量删除
   const handleBatchDelete = (ids: string[]) => {
-    ids.forEach((id) => {
-      dispatch(deleteLink(id));
-    });
-    message.success(`成功删除 ${ids.length} 个链接`);
+    try {
+      ids.forEach((id) => {
+        dispatch(deleteLink(id));
+      });
+      showSuccess(`成功删除 ${ids.length} 个链接`);
+    } catch (error) {
+      console.error('批量删除失败:', error);
+      showError('批量删除失败，请重试');
+    }
   };
 
   // 处理拖拽排序
@@ -62,17 +73,22 @@ export default function ManagePage() {
 
   // 处理编辑弹窗提交
   const handleModalSubmit = (linkData: Partial<Link>) => {
-    if (linkData.id) {
-      // 更新现有链接
-      dispatch(updateLink(linkData as any));
-      message.success('更新成功');
-    } else {
-      // 添加新链接
-      dispatch(addLink(linkData as any));
-      message.success('添加成功');
+    try {
+      if (linkData.id) {
+        // 更新现有链接
+        dispatch(updateLink(linkData as any));
+        showSuccess('更新成功');
+      } else {
+        // 添加新链接
+        dispatch(addLink(linkData as any));
+        showSuccess('添加成功');
+      }
+      setEditModalOpen(false);
+      setCurrentLink(null);
+    } catch (error) {
+      console.error('保存链接失败:', error);
+      showError('保存失败，请重试');
     }
-    setEditModalOpen(false);
-    setCurrentLink(null);
   };
 
   // 处理编辑弹窗取消
@@ -95,10 +111,10 @@ export default function ManagePage() {
   const handleResetConfirm = async () => {
     try {
       // 清除 LocalStorage
-      const cleared = storageService.clear();
+      const clearResult = storageService.clear();
       
-      if (!cleared) {
-        message.error('清除数据失败，请检查浏览器设置');
+      if (!clearResult.success) {
+        showError(clearResult.error || '清除数据失败，请检查浏览器设置');
         return;
       }
 
@@ -106,13 +122,18 @@ export default function ManagePage() {
       dispatch(resetLinks(defaultLinks));
 
       // 保存默认数据到 LocalStorage
-      storageService.saveLinks(defaultLinks);
+      const saveResult = storageService.saveLinks(defaultLinks);
+      
+      if (!saveResult.success) {
+        showError(saveResult.error || '保存默认数据失败');
+        return;
+      }
 
       // 关闭对话框
       setResetModalOpen(false);
 
       // 显示成功提示
-      message.success('数据已重置为默认状态');
+      showSuccess('数据已重置为默认状态');
 
       // 延迟刷新页面以确保用户看到成功提示
       setTimeout(() => {
@@ -120,7 +141,7 @@ export default function ManagePage() {
       }, 1000);
     } catch (error) {
       console.error('Reset data error:', error);
-      message.error('重置数据时发生错误');
+      showError('重置数据时发生错误，请重试');
     }
   };
 

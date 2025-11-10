@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Select, ColorPicker, message } from 'antd';
+import { Modal, Form, Input, Select, ColorPicker } from 'antd';
 import type { Color } from 'antd/es/color-picker';
 import { Link } from '@/types/link';
 import { PRESET_COLORS, isValidColor, getDefaultColor } from '@/utils/colorUtils';
 import { getFaviconUrl } from '@/api/favicon';
+import { showError } from '@/utils/feedback';
 
 interface EditLinkModalProps {
   open: boolean;
@@ -87,7 +88,8 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
 
       // 验证背景颜色
       if (values.backgroundColor && !isValidColor(values.backgroundColor)) {
-        message.error('背景颜色格式无效');
+        showError('背景颜色格式无效，请选择有效的颜色');
+        setLoading(false);
         return;
       }
 
@@ -101,6 +103,12 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
       form.resetFields();
     } catch (error) {
       console.error('表单验证失败:', error);
+      if (error && typeof error === 'object' && 'errorFields' in error) {
+        // Ant Design 表单验证错误
+        showError('请检查表单填写是否正确');
+      } else {
+        showError('提交失败，请重试');
+      }
     } finally {
       setLoading(false);
     }

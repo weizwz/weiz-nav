@@ -7,6 +7,7 @@ import { storageService } from '@/services/storage';
 /**
  * LocalStorage 同步中间件
  * 自动将 links 和 settings 的变化同步到 LocalStorage
+ * 包含错误处理和用户反馈
  */
 const localStorageSyncMiddleware: Middleware = (store) => (next) => (action) => {
   const result = next(action);
@@ -18,7 +19,12 @@ const localStorageSyncMiddleware: Middleware = (store) => (next) => (action) => 
   if (typeof actionType === 'string' && actionType.startsWith('links/')) {
     const state = store.getState();
     try {
-      storageService.saveLinks(state.links.items);
+      const saveResult = storageService.saveLinks(state.links.items);
+      if (!saveResult.success) {
+        console.error('Failed to sync links to LocalStorage:', saveResult.error);
+        // 可以在这里触发一个全局错误通知
+        // 但为了避免过多的提示，我们只记录到控制台
+      }
     } catch (error) {
       console.error('Failed to sync links to LocalStorage:', error);
     }
@@ -30,7 +36,10 @@ const localStorageSyncMiddleware: Middleware = (store) => (next) => (action) => 
     try {
       // 提取纯设置数据（排除 loading 和 error）
       const { loading, error, ...settings } = state.settings;
-      storageService.saveSettings(settings);
+      const saveResult = storageService.saveSettings(settings);
+      if (!saveResult.success) {
+        console.error('Failed to sync settings to LocalStorage:', saveResult.error);
+      }
     } catch (error) {
       console.error('Failed to sync settings to LocalStorage:', error);
     }
