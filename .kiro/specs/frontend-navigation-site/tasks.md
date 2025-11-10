@@ -57,7 +57,7 @@
   - 点击时切换主题并保存到 Redux store 和 LocalStorage
   - _需求: 7.1, 7.2, 7.4_
 
-- [ ] 8. 实现搜索栏组件
+- [x] 8. 实现搜索栏组件
   - 创建 `components/layout/SearchBar.tsx` 组件
   - 使用 Ant Design Input.Search 组件
   - 实现搜索引擎图标按钮和下拉菜单（使用 Dropdown 组件）

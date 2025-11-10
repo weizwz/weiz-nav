@@ -167,3 +167,26 @@ body {
   background-size: 1000px 100%;
   animation: shimmer 2s infinite;
 }
+
+/* SearchBar 组件样式 */
+.search-bar .ant-input-group-addon {
+  padding: 0;
+  background: transparent;
+}
+
+.search-bar .ant-input-affix-wrapper {
+  padding-right: 8px;
+}
+
+.search-bar .ant-input-clear-icon {
+  font-size: 14px;
+}
+
+/* 搜索引擎下拉菜单样式优化 */
+.ant-dropdown-menu-item {
+  transition: background-color 0.2s ease;
+}
+
+.ant-dropdown-menu-item:hover {
+  background-color: var(--background-secondary);
+}
