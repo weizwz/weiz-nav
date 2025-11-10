@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Card } from 'antd';
+import { Card, Dropdown } from 'antd';
+import type { MenuProps } from 'antd';
 import { motion } from 'framer-motion';
 import * as AntdIcons from '@ant-design/icons';
 import { Link } from '@/types/link';
@@ -21,6 +22,37 @@ export const LinkCard: React.FC<LinkCardProps> = ({ link, onEdit, onDelete }) =>
     // 在新标签页打开链接
     window.open(link.url, '_blank', 'noopener,noreferrer');
   };
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    // 阻止默认浏览器右键菜单
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  // 右键菜单项
+  const menuItems: MenuProps['items'] = [
+    {
+      key: 'edit',
+      label: '编辑',
+      icon: <AntdIcons.EditOutlined />,
+      onClick: () => {
+        if (onEdit) {
+          onEdit(link);
+        }
+      },
+    },
+    {
+      key: 'delete',
+      label: '删除',
+      icon: <AntdIcons.DeleteOutlined />,
+      danger: true,
+      onClick: () => {
+        if (onDelete) {
+          onDelete(link.id);
+        }
+      },
+    },
+  ];
 
   // 渲染图标
   const renderIcon = () => {
@@ -63,32 +95,37 @@ export const LinkCard: React.FC<LinkCardProps> = ({ link, onEdit, onDelete }) =>
   };
 
   return (
-    <motion.div
-      whileHover={{ 
-        y: -8,
-        transition: { duration: 0.2 }
-      }}
-      style={{ height: '100%' }}
+    <Dropdown
+      menu={{ items: menuItems }}
+      trigger={['contextMenu']}
     >
-      <Card
-        hoverable
-        onClick={handleClick}
-        style={{
-          height: 120,
-          backgroundColor: link.backgroundColor || '#ffffff',
-          cursor: 'pointer',
-          overflow: 'hidden',
+      <motion.div
+        whileHover={{ 
+          y: -8,
+          transition: { duration: 0.2 }
         }}
-        bodyStyle={{
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '16px',
-        }}
-        className="link-card"
+        style={{ height: '100%' }}
+        onContextMenu={handleContextMenu}
       >
+        <Card
+          hoverable
+          onClick={handleClick}
+          style={{
+            height: 120,
+            backgroundColor: link.backgroundColor || '#ffffff',
+            cursor: 'pointer',
+            overflow: 'hidden',
+          }}
+          bodyStyle={{
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+          }}
+          className="link-card"
+        >
         <div style={{ 
           display: 'flex', 
           flexDirection: 'column', 
@@ -137,7 +174,8 @@ export const LinkCard: React.FC<LinkCardProps> = ({ link, onEdit, onDelete }) =>
           )}
         </div>
       </Card>
-    </motion.div>
+      </motion.div>
+    </Dropdown>
   );
 };
 
