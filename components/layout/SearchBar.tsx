@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Input, Dropdown, Space } from 'antd';
+import { Input, Dropdown, Space, Button } from 'antd';
 import type { MenuProps } from 'antd';
 import {
   SearchOutlined,
@@ -13,8 +13,6 @@ import { performDebouncedSearch, clearSearch } from '@/store/slices/searchSlice'
 import { setSearchEngine } from '@/store/slices/settingsSlice';
 import { SEARCH_ENGINES, getSearchUrl, getSearchEngine } from '@/services/search';
 import { storageService } from '@/services/storage';
-
-const { Search } = Input;
 
 /**
  * SearchBar 组件
@@ -120,39 +118,45 @@ export default function SearchBar() {
   }
 
   /**
-   * 搜索引擎切换按钮
+   * 处理键盘事件
    */
-  const searchEngineButton = (
-    <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomLeft">
-      <button
-        className="flex items-center justify-center h-full px-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer border-0 bg-transparent"
-        aria-label="选择搜索引擎"
-      >
-        {getEngineIcon(currentEngine.icon)}
-      </button>
-    </Dropdown>
-  );
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch(inputValue);
+    }
+  };
 
   return (
     <div className="w-full max-w-2xl">
-      <Search
-        placeholder={`使用 ${currentEngine.name} 搜索或在站内查找...`}
-        value={inputValue}
-        onChange={handleInputChange}
-        onSearch={handleSearch}
-        allowClear
-        size="large"
-        addonBefore={searchEngineButton}
-        suffix={
-          inputValue && (
-            <CloseCircleOutlined
-              className="cursor-pointer text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              onClick={handleClear}
-            />
-          )
-        }
-        className="search-bar"
-      />
+      <Space.Compact size="large" className="w-full">
+        {/* 搜索引擎切换按钮 */}
+        <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomLeft">
+          <Button
+            icon={getEngineIcon(currentEngine.icon)}
+            aria-label="选择搜索引擎"
+            className="flex items-center justify-center"
+          />
+        </Dropdown>
+
+        {/* 搜索输入框 */}
+        <Input
+          placeholder={`使用 ${currentEngine.name} 搜索或在站内查找...`}
+          value={inputValue}
+          onChange={handleInputChange}
+          onKeyPress={handleKeyPress}
+          allowClear
+          prefix={<SearchOutlined className="text-gray-400" />}
+          className="search-bar flex-1"
+        />
+
+        {/* 搜索按钮 */}
+        <Button
+          type="primary"
+          icon={<SearchOutlined />}
+          onClick={() => handleSearch(inputValue)}
+          aria-label="搜索"
+        />
+      </Space.Compact>
     </div>
   );
 }

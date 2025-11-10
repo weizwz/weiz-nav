@@ -67,7 +67,7 @@
   - 保存用户选择的搜索引擎到 LocalStorage
   - _需求: 2.1, 2.2, 3.1, 3.2, 3.3, 3.4, 3.5_
 
-- [ ] 9. 实现页头组件
+- [x] 9. 实现页头组件
   - 创建 `components/layout/Header.tsx` 组件
   - 集成 SearchBar 和 ThemeToggle 组件
   - 实现响应式布局（移动端调整搜索栏和按钮位置）

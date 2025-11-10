@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
-import ThemeToggle from '@/components/layout/ThemeToggle';
+import Header from '@/components/layout/Header';
 
 export default function Home() {
   const { theme } = useTheme();
@@ -18,30 +18,34 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 transition-theme">
-      <div className="absolute top-6 right-6">
-        <ThemeToggle />
-      </div>
+    <div className="min-h-screen flex flex-col transition-theme">
+      {/* 页头组件 */}
+      <Header />
       
-      <div className="text-center space-y-6">
-        <h1 className="text-4xl font-bold">前端导航网站</h1>
-        <p className="mt-4 text-lg text-foreground-secondary">
-          主题切换组件已实现
-        </p>
-        
-        <p className="text-sm text-foreground-tertiary mt-4">
-          当前主题: {theme}
-        </p>
-        
-        <div className="mt-8 p-6 rounded-lg bg-background-secondary border border-border">
-          <p className="text-sm">
-            点击右上角的图标切换主题
+      {/* 主内容区域 */}
+      <main className="flex-1 flex flex-col items-center justify-center p-8">
+        <div className="text-center space-y-6">
+          <h2 className="text-3xl font-bold">欢迎使用前端导航网站</h2>
+          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
+            页头组件已实现
           </p>
-          <p className="text-xs text-foreground-tertiary mt-2">
-            主题设置会自动保存到 LocalStorage
+          
+          <p className="text-sm text-gray-500 dark:text-gray-500 mt-4">
+            当前主题: {theme}
           </p>
+          
+          <div className="mt-8 p-6 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+            <p className="text-sm">
+              ✓ 搜索栏已集成<br />
+              ✓ 主题切换已集成<br />
+              ✓ 响应式布局已实现
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              尝试调整浏览器窗口大小查看响应式效果
+            </p>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
