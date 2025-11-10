@@ -74,7 +74,7 @@
   - 添加网站标题或 Logo
   - _需求: 1.1, 1.2, 1.3_
 
-- [ ] 10. 实现链接卡片组件
+- [x] 10. 实现链接卡片组件
   - 创建 `components/navigation/LinkCard.tsx` 组件
   - 使用 Ant Design Card 组件作为基础
   - 显示图标（支持 Ant Design 图标或自定义图片 URL）、名称、描述

@@ -190,3 +190,17 @@ body {
 .ant-dropdown-menu-item:hover {
   background-color: var(--background-secondary);
 }
+
+/* LinkCard 组件样式 */
+.link-card {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  box-shadow: var(--card-shadow);
+}
+
+.link-card:hover {
+  box-shadow: var(--card-shadow-hover);
+}
+
+.link-card .ant-card-body {
+  transition: none;
+}
