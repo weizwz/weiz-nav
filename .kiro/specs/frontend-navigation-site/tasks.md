@@ -101,7 +101,7 @@
   - 提交时 dispatch Redux action 更新或添加链接
   - _需求: 4.2, 4.3, 4.6, 4.7_
 
-- [ ] 13. 实现确认对话框组件
+- [x] 13. 实现确认对话框组件
   - 创建 `components/modals/ConfirmModal.tsx` 可复用的确认对话框组件
   - 使用 Ant Design Modal.confirm 或自定义 Modal
   - 支持自定义标题、内容、确认/取消按钮文本
