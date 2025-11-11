@@ -122,7 +122,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete }) => {
     >
       <motion.div
         whileHover={{ 
-          y: -8,
+          y: -4,
           transition: { duration: 0.2 }
         }}
         style={{ height: '100%' }}
@@ -143,74 +143,75 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete }) => {
           role="button"
           aria-label={`打开 ${link.name}${link.description ? `，${link.description}` : ''}`}
           style={{
-            height: 120,
-            backgroundColor: link.backgroundColor || '#ffffff',
+            height: 100,
             cursor: 'pointer',
             overflow: 'hidden',
+            borderRadius: '12px',
           }}
           styles={{
             body: {
               height: '100%',
+              padding: 0,
               display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '16px',
             }
           }}
           className="link-card"
         >
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center',
-          gap: 8,
-          width: '100%'
-        }}>
-          {/* 图标 */}
+          {/* 左侧：背景色 + 图标 */}
           <div 
             style={{ 
-              color: 'inherit',
+              width: '40%',
+              backgroundColor: link.backgroundColor || '#1890ff',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              color: '#ffffff',
             }}
             aria-hidden="true"
           >
             {renderIcon}
           </div>
           
-          {/* 名称 */}
-          <div style={{
-            fontSize: 14,
-            fontWeight: 500,
-            textAlign: 'center',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            width: '100%',
-            color: 'inherit'
+          {/* 右侧：名称 + 描述 */}
+          <div style={{ 
+            flex: 1,
+            display: 'flex', 
+            flexDirection: 'column', 
+            justifyContent: 'center',
+            padding: '16px',
+            backgroundColor: 'var(--background)',
+            gap: 4,
           }}>
-            {link.name}
-          </div>
-          
-          {/* 描述 */}
-          {link.description && (
+            {/* 名称 */}
             <div style={{
-              fontSize: 12,
-              textAlign: 'center',
+              fontSize: 15,
+              fontWeight: 600,
+              color: 'var(--foreground)',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              width: '100%',
-              opacity: 0.8,
-              color: 'inherit'
+              lineHeight: 1.4,
             }}>
-              {link.description}
+              {link.name}
             </div>
-          )}
-        </div>
-      </Card>
+            
+            {/* 描述 */}
+            {link.description && (
+              <div style={{
+                fontSize: 12,
+                color: 'var(--foreground-secondary)',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                lineHeight: 1.5,
+              }}>
+                {link.description}
+              </div>
+            )}
+          </div>
+        </Card>
       </motion.div>
     </Dropdown>
   );

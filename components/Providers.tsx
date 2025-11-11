@@ -6,6 +6,7 @@ import { ConfigProvider, theme as antdTheme, App } from 'antd';
 import { ThemeProvider, useTheme } from 'next-themes';
 import zhCN from 'antd/locale/zh_CN';
 import store, { initializeStore } from '@/store';
+import MessageProvider from './MessageProvider';
 
 /**
  * Ant Design 主题配置组件
@@ -42,6 +43,7 @@ function AntdThemeProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       <App>
+        <MessageProvider />
         {children}
       </App>
     </ConfigProvider>
