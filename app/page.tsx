@@ -150,7 +150,7 @@ export default function Home() {
       <div className="flex-1 flex overflow-hidden">
         {/* 左侧分类导航 - Desktop */}
         <aside 
-          className="hidden lg:block w-48 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto transition-theme"
+          className="hidden lg:block w-48 bg-white dark:bg-antd-dark border-r border-gray-200 dark:border-gray-700 overflow-y-auto transition-theme"
           aria-label="分类导航侧边栏"
         >
           <CategorySidebar />
