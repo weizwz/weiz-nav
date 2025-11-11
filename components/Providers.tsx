@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 import { ConfigProvider, theme as antdTheme, App } from 'antd';
 import { ThemeProvider, useTheme } from 'next-themes';
+import { AntdRegistry } from '@ant-design/nextjs-registry';
 import zhCN from 'antd/locale/zh_CN';
 import store, { initializeStore } from '@/store';
 import MessageProvider from './MessageProvider';
@@ -13,11 +14,16 @@ import MessageProvider from './MessageProvider';
  * 根据当前主题动态切换 Ant Design 的主题算法
  */
 function AntdThemeProvider({ children }: { children: React.ReactNode }) {
-  const { theme, systemTheme } = useTheme();
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   
-  // 确定实际使用的主题
-  const currentTheme = theme === 'system' ? systemTheme : theme;
-  const isDark = currentTheme === 'dark';
+  // 等待客户端挂载
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  // 在挂载前使用默认主题，避免 hydration 不匹配
+  const isDark = mounted ? resolvedTheme === 'dark' : false;
 
   return (
     <ConfigProvider
@@ -70,17 +76,20 @@ function DataInitializer() {
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <Provider store={store}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange={false}
-      >
-        <AntdThemeProvider>
-          <DataInitializer />
-          {children}
-        </AntdThemeProvider>
-      </ThemeProvider>
+      <AntdRegistry>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          disableTransitionOnChange={false}
+          storageKey="theme"
+        >
+          <AntdThemeProvider>
+            <DataInitializer />
+            {children}
+          </AntdThemeProvider>
+        </ThemeProvider>
+      </AntdRegistry>
     </Provider>
   );
 }

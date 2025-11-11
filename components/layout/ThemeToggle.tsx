@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { Button, Tooltip } from 'antd';
 import { SunOutlined, MoonOutlined } from '@ant-design/icons';
@@ -16,6 +16,12 @@ export default function ThemeToggle() {
   const dispatch = useAppDispatch();
   const { theme: nextTheme, setTheme: setNextTheme, systemTheme } = useTheme();
   const reduxTheme = useAppSelector((state) => state.settings.theme);
+  const [mounted, setMounted] = useState(false);
+
+  // 等待组件挂载后再渲染，避免 hydration 错误
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // 同步 Redux 主题到 next-themes
   useEffect(() => {
@@ -27,6 +33,22 @@ export default function ThemeToggle() {
   // 确定当前实际显示的主题
   const currentTheme = nextTheme === 'system' ? systemTheme : nextTheme;
   const isDark = currentTheme === 'dark';
+
+  // 在挂载前显示占位符，避免 hydration 错误
+  if (!mounted) {
+    return (
+      <Button
+        type="text"
+        className="transition-theme flex items-center justify-center"
+        style={{
+          fontSize: '18px',
+          width: '40px',
+          height: '40px',
+        }}
+        disabled
+      />
+    );
+  }
 
   /**
    * 切换主题

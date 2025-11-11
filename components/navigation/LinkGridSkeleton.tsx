@@ -7,6 +7,7 @@ import { Card, Skeleton } from 'antd';
  * LinkGridSkeleton 组件
  * 链接网格的骨架屏加载状态
  * 用于页面初始加载时提供视觉反馈
+ * 自动适配暗黑主题
  */
 export const LinkGridSkeleton: React.FC = () => {
   return (
@@ -14,7 +15,12 @@ export const LinkGridSkeleton: React.FC = () => {
       {Array.from({ length: 12 }).map((_, index) => (
         <Card 
           key={index} 
-          style={{ height: 120 }}
+          className="transition-theme"
+          style={{ 
+            height: 120,
+            backgroundColor: 'var(--background)',
+            borderColor: 'var(--border)',
+          }}
           styles={{
             body: {
               height: '100%',

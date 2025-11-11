@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* CSS 自定义变量 - Light Theme */
 :root {
   /* 背景颜色 */
