@@ -1,13 +1,13 @@
 /**
  * Favicon API 服务
  * 使用 Favicon.im API 自动获取网站图标
- * API 文档: https://favicon.im
+ * API 文档: https://favicon.im/zh/
  */
 
 /**
  * Favicon.im API 基础 URL
  */
-const FAVICON_API_BASE = 'https://api.favicon.im';
+const FAVICON_API_BASE = 'https://favicon.im';
 
 /**
  * Favicon 尺寸选项
@@ -75,17 +75,12 @@ export function getFaviconUrl(url: string, options: FaviconOptions = {}): string
     return options.fallback || null;
   }
 
-  const { size = 64, larger = false } = options;
+  const { size = 64 } = options;
   
   // 构建 Favicon.im API URL
-  // 格式: https://api.favicon.im/{domain}?size={size}&larger={larger}
-  const params = new URLSearchParams();
-  params.append('size', size.toString());
-  if (larger) {
-    params.append('larger', 'true');
-  }
-
-  return `${FAVICON_API_BASE}/${domain}?${params.toString()}`;
+  // 格式: https://favicon.im/{domain}?size={size}
+  // 官方文档: https://favicon.im/zh/
+  return `${FAVICON_API_BASE}/${domain}?size=${size}`;
 }
 
 /**

@@ -45,7 +45,7 @@ pnpm start
 ## 项目结构
 
 ```
-frontend-navigation-site/
+weiz-nav/
 ├── api/                      # API 接口
 ├── app/                      # Next.js App Router
 │   ├── layout.tsx           # 根布局

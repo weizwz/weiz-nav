@@ -1,18 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Input, Dropdown, Space, Button } from 'antd';
+import { Input, Dropdown, Space } from 'antd';
 import type { MenuProps } from 'antd';
-import {
-  SearchOutlined,
-  GoogleOutlined,
-  CloseCircleOutlined,
-} from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { performDebouncedSearch, clearSearch } from '@/store/slices/searchSlice';
+import { performDebouncedSearch } from '@/store/slices/searchSlice';
 import { setSearchEngine } from '@/store/slices/settingsSlice';
 import { SEARCH_ENGINES, getSearchUrl, getSearchEngine } from '@/services/search';
 import { storageService } from '@/services/storage';
+import { getFaviconUrl } from '@/api/favicon';
 
 /**
  * SearchBar 组件
@@ -69,13 +65,7 @@ export default function SearchBar() {
     }
   }, [currentEngineId]);
 
-  /**
-   * 清除搜索
-   */
-  const handleClear = React.useCallback(() => {
-    setInputValue('');
-    dispatch(clearSearch());
-  }, [dispatch]);
+
 
   /**
    * 处理搜索引擎切换
@@ -98,7 +88,13 @@ export default function SearchBar() {
     key: engine.id,
     label: (
       <Space>
-        {getEngineIcon(engine.icon)}
+        <img 
+          src={getFaviconUrl(engine.icon, { size: 16 }) || ''} 
+          alt={`${engine.name} 图标`}
+          width={16}
+          height={16}
+          style={{ objectFit: 'contain', borderRadius: '50%' }}
+        />
         <span>{engine.name}</span>
       </Space>
     ),
@@ -106,18 +102,20 @@ export default function SearchBar() {
   })), [handleEngineChange]);
 
   /**
-   * 获取搜索引擎图标组件
+   * 获取搜索引擎图标
    */
-  function getEngineIcon(iconName: string) {
-    switch (iconName) {
-      case 'GoogleOutlined':
-        return <GoogleOutlined />;
-      case 'YahooOutlined':
-        return <SearchOutlined />; // Yahoo 图标使用通用搜索图标
-      default:
-        return <SearchOutlined />;
-    }
-  }
+  const getEngineIcon = React.useCallback((iconUrl: string) => {
+    const faviconUrl = getFaviconUrl(iconUrl, { size: 32 });
+    return (
+      <img 
+        src={faviconUrl || ''} 
+        alt={`${currentEngine.name} 图标`}
+        width={20}
+        height={20}
+        style={{ objectFit: 'contain', borderRadius: '50%' }}
+      />
+    );
+  }, [currentEngine.name]);
 
   /**
    * 处理键盘事件 - 使用 useCallback 缓存
@@ -130,42 +128,40 @@ export default function SearchBar() {
 
   return (
     <div className="w-full max-w-2xl" role="search" aria-label="搜索导航">
-      <Space.Compact size="large" className="w-full">
-        {/* 搜索引擎切换按钮 */}
-        <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomLeft">
-          <Button
-            icon={getEngineIcon(currentEngine.icon)}
-            aria-label={`当前搜索引擎：${currentEngine.name}，点击切换搜索引擎`}
-            aria-haspopup="menu"
-            aria-expanded={false}
-            className="flex items-center justify-center"
-            title={`当前搜索引擎：${currentEngine.name}`}
-          />
-        </Dropdown>
-
-        {/* 搜索输入框 */}
-        <Input
-          placeholder={`使用 ${currentEngine.name} 搜索或在站内查找...`}
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyPress={handleKeyPress}
-          allowClear
-          prefix={<SearchOutlined className="text-gray-400" aria-hidden="true" />}
-          className="search-bar flex-1"
-          aria-label="搜索输入框"
-          role="searchbox"
-          aria-describedby="search-description"
-        />
-
-        {/* 搜索按钮 */}
-        <Button
-          type="primary"
-          icon={<SearchOutlined aria-hidden="true" />}
-          onClick={() => handleSearch(inputValue)}
-          aria-label={`使用 ${currentEngine.name} 搜索`}
-          title={`使用 ${currentEngine.name} 搜索`}
-        />
-      </Space.Compact>
+      <Input
+        size="large"
+        placeholder="搜索"
+        value={inputValue}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyPress}
+        allowClear
+        prefix={
+          <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomLeft">
+            <div 
+              className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity pr-2"
+              aria-label={`当前搜索引擎：${currentEngine.name}，点击切换搜索引擎`}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  (e.currentTarget as HTMLElement).click();
+                }
+              }}
+            >
+              {getEngineIcon(currentEngine.icon)}
+            </div>
+          </Dropdown>
+        }
+        className="search-bar-modern"
+        style={{
+          borderRadius: '24px',
+          paddingLeft: '12px',
+        }}
+        aria-label="搜索输入框"
+        role="searchbox"
+        aria-describedby="search-description"
+      />
       <span id="search-description" className="sr-only">
         输入关键词进行站内搜索，或按回车键使用外部搜索引擎搜索
       </span>

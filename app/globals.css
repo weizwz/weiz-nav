@@ -254,6 +254,30 @@ select:focus-visible {
   font-size: 14px;
 }
 
+/* 现代搜索框样式 */
+.search-bar-modern.ant-input-affix-wrapper {
+  border-radius: 24px;
+  padding: 8px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.search-bar-modern.ant-input-affix-wrapper:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.search-bar-modern.ant-input-affix-wrapper-focused {
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.2);
+}
+
+.search-bar-modern .ant-input {
+  font-size: 15px;
+}
+
+.search-bar-modern .ant-input-prefix {
+  margin-right: 12px;
+}
+
 /* 搜索引擎下拉菜单样式优化 */
 .ant-dropdown-menu-item {
   transition: background-color 0.2s ease;

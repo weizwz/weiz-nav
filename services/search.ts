@@ -47,37 +47,37 @@ export const SEARCH_ENGINES: SearchEngine[] = [
   {
     id: 'google',
     name: 'Google',
-    icon: 'GoogleOutlined',
+    icon: 'https://www.google.com',
     searchUrl: 'https://www.google.com/search?q={query}'
   },
   {
     id: 'bing',
     name: 'Bing',
-    icon: 'SearchOutlined',
+    icon: 'https://www.bing.com',
     searchUrl: 'https://www.bing.com/search?q={query}'
   },
   {
     id: 'yahoo',
     name: 'Yahoo',
-    icon: 'YahooOutlined',
+    icon: 'https://www.yahoo.com',
     searchUrl: 'https://search.yahoo.com/search?p={query}'
   },
   {
     id: 'baidu',
     name: 'Baidu',
-    icon: 'SearchOutlined',
+    icon: 'https://www.baidu.com',
     searchUrl: 'https://www.baidu.com/s?wd={query}'
   },
   {
     id: 'yandex',
     name: 'Yandex',
-    icon: 'SearchOutlined',
+    icon: 'https://yandex.com',
     searchUrl: 'https://yandex.com/search/?text={query}'
   },
   {
     id: 'duckduckgo',
     name: 'DuckDuckGo',
-    icon: 'SearchOutlined',
+    icon: 'https://duckduckgo.com',
     searchUrl: 'https://duckduckgo.com/?q={query}'
   }
 ];
