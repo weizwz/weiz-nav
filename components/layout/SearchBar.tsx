@@ -89,7 +89,7 @@ export default function SearchBar() {
     label: (
       <Space>
         <img 
-          src={getFaviconUrl(engine.icon, { size: 16 }) || ''} 
+          src={getFaviconUrl(engine.icon) || ''} 
           alt={`${engine.name} 图标`}
           width={16}
           height={16}
@@ -105,7 +105,7 @@ export default function SearchBar() {
    * 获取搜索引擎图标
    */
   const getEngineIcon = React.useCallback((iconUrl: string) => {
-    const faviconUrl = getFaviconUrl(iconUrl, { size: 32 });
+    const faviconUrl = getFaviconUrl(iconUrl);
     return (
       <img 
         src={faviconUrl || ''} 

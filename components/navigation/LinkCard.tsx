@@ -6,25 +6,51 @@ import type { MenuProps } from 'antd';
 import { motion } from 'framer-motion';
 import * as AntdIcons from '@ant-design/icons';
 import { Link } from '@/types/link';
+import { getFaviconUrl } from '@/api/favicon';
 
 /**
- * 图标组件，支持加载失败时显示默认图标
+ * 图标组件，支持多级回退
+ * 1. 用户自定义图标
+ * 2. Favicon API 图标
+ * 3. Ant Design 默认图标
  */
-const IconWithFallback: React.FC<{ src: string; alt: string }> = ({ src, alt }) => {
+const IconWithFallback: React.FC<{ 
+  src: string; 
+  alt: string; 
+  fallbackUrl?: string;
+}> = ({ src, alt, fallbackUrl }) => {
   const [hasError, setHasError] = useState(false);
+  const [faviconError, setFaviconError] = useState(false);
 
-  if (hasError) {
-    // 显示默认图标
+  // 如果用户图标和 favicon 都失败，显示默认图标
+  if (hasError && faviconError) {
     const DefaultIcon = AntdIcons.LinkOutlined;
     return <DefaultIcon style={{ fontSize: 48 }} aria-label={`${alt}的默认图标`} />;
   }
 
+  // 如果用户图标失败，尝试 favicon
+  if (hasError && fallbackUrl && !faviconError) {
+    return (
+      <img 
+        src={fallbackUrl} 
+        alt={`${alt}的图标`}
+        loading="lazy"
+        className="w-12 h-12 object-contain"
+        onError={() => {
+          console.warn(`Favicon 加载失败: ${fallbackUrl}`);
+          setFaviconError(true);
+        }}
+      />
+    );
+  }
+
+  // 显示用户自定义图标
   return (
     <img 
       src={src} 
       alt={`${alt}的图标`}
       loading="lazy"
-      style={{ width: 48, height: 48, objectFit: 'contain' }}
+      className="w-12 h-12 object-contain"
       onError={() => {
         console.warn(`图标加载失败: ${src}`);
         setHasError(true);
@@ -88,32 +114,42 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete }) => {
 
   // 渲染图标 - 使用 useMemo 缓存
   const renderIcon = React.useMemo(() => {
-    if (!link.icon) {
-      // 默认图标
-      const DefaultIcon = AntdIcons.LinkOutlined;
-      return <DefaultIcon style={{ fontSize: 48 }} />;
-    }
+    // 获取 favicon URL 作为回退选项，使用 larger=true 获取更高质量的图标
+    const faviconUrl = getFaviconUrl(link.url, { larger: true });
 
-    // 检查是否是 URL（自定义图片）
-    if (link.icon.startsWith('http://') || link.icon.startsWith('https://') || link.icon.startsWith('/')) {
+    // 情况1: 用户提供了自定义图标 URL
+    if (link.icon && (link.icon.startsWith('http://') || link.icon.startsWith('https://') || link.icon.startsWith('/'))) {
       return (
         <IconWithFallback 
           src={link.icon} 
+          alt={link.name}
+          fallbackUrl={faviconUrl || undefined}
+        />
+      );
+    }
+
+    // 情况2: 用户提供了 Ant Design 图标名称
+    if (link.icon) {
+      const IconComponent = (AntdIcons as any)[link.icon];
+      if (IconComponent) {
+        return <IconComponent style={{ fontSize: 48 }} />;
+      }
+    }
+
+    // 情况3: 没有自定义图标，尝试使用 favicon
+    if (faviconUrl) {
+      return (
+        <IconWithFallback 
+          src={faviconUrl} 
           alt={link.name}
         />
       );
     }
 
-    // Ant Design 图标名称
-    const IconComponent = (AntdIcons as any)[link.icon];
-    if (IconComponent) {
-      return <IconComponent style={{ fontSize: 48 }} />;
-    }
-
-    // 如果图标名称无效，显示默认图标
+    // 情况4: 所有方式都失败，显示默认图标
     const DefaultIcon = AntdIcons.LinkOutlined;
     return <DefaultIcon style={{ fontSize: 48 }} />;
-  }, [link.icon, link.name]);
+  }, [link.icon, link.name, link.url]);
 
   return (
     <Dropdown
@@ -125,7 +161,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete }) => {
           y: -4,
           transition: { duration: 0.2 }
         }}
-        style={{ height: '100%' }}
+        className="h-full"
         onContextMenu={handleContextMenu}
         role="article"
         aria-label={`导航链接：${link.name}`}
@@ -142,12 +178,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete }) => {
           tabIndex={0}
           role="button"
           aria-label={`打开 ${link.name}${link.description ? `，${link.description}` : ''}`}
-          style={{
-            height: 100,
-            cursor: 'pointer',
-            overflow: 'hidden',
-            borderRadius: '12px',
-          }}
+          className="link-card h-[100px] cursor-pointer overflow-hidden rounded-xl"
           styles={{
             body: {
               height: '100%',
@@ -155,17 +186,12 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete }) => {
               display: 'flex',
             }
           }}
-          className="link-card"
         >
           {/* 左侧：背景色 + 图标 */}
           <div 
+            className="w-[40%] flex items-center justify-center text-white"
             style={{ 
-              width: '40%',
               backgroundColor: link.backgroundColor || '#1890ff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#ffffff',
             }}
             aria-hidden="true"
           >
@@ -173,40 +199,15 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete }) => {
           </div>
           
           {/* 右侧：名称 + 描述 */}
-          <div style={{ 
-            flex: 1,
-            display: 'flex', 
-            flexDirection: 'column', 
-            justifyContent: 'center',
-            padding: '16px',
-            backgroundColor: 'var(--background)',
-            gap: 4,
-          }}>
+          <div className="flex-1 flex flex-col justify-center p-4 bg-(--background) gap-1">
             {/* 名称 */}
-            <div style={{
-              fontSize: 15,
-              fontWeight: 600,
-              color: 'var(--foreground)',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              lineHeight: 1.4,
-            }}>
+            <div className="text-[15px] font-semibold text-(--foreground) overflow-hidden text-ellipsis whitespace-nowrap leading-snug">
               {link.name}
             </div>
             
             {/* 描述 */}
             {link.description && (
-              <div style={{
-                fontSize: 12,
-                color: 'var(--foreground-secondary)',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-                lineHeight: 1.5,
-              }}>
+              <div className="text-xs text-(--foreground-secondary) overflow-hidden text-ellipsis line-clamp-2 leading-relaxed">
                 {link.description}
               </div>
             )}

@@ -10,16 +10,9 @@
 const FAVICON_API_BASE = 'https://favicon.im';
 
 /**
- * Favicon 尺寸选项
- */
-export type FaviconSize = 16 | 32 | 64 | 128 | 256 | 512;
-
-/**
  * Favicon API 选项
  */
 export interface FaviconOptions {
-  /** 图标尺寸（像素） */
-  size?: FaviconSize;
   /** 是否使用较大的图标 */
   larger?: boolean;
   /** 回退图标 URL */
@@ -75,12 +68,17 @@ export function getFaviconUrl(url: string, options: FaviconOptions = {}): string
     return options.fallback || null;
   }
 
-  const { size = 64 } = options;
+  const { larger = false } = options;
   
   // 构建 Favicon.im API URL
-  // 格式: https://favicon.im/{domain}?size={size}
+  // 格式: https://favicon.im/{domain}?larger=true
   // 官方文档: https://favicon.im/zh/
-  return `${FAVICON_API_BASE}/${domain}?size=${size}`;
+  const params = new URLSearchParams();
+  if (larger) {
+    params.append('larger', 'true');
+  }
+  
+  return `${FAVICON_API_BASE}/${domain}?${params.toString()}`;
 }
 
 /**
@@ -176,11 +174,10 @@ export async function fetchMultipleFavicons(
  * 获取默认的 Favicon URL（不验证）
  * 用于快速显示，不等待加载验证
  * @param url 网站 URL
- * @param size 图标尺寸
  * @returns Favicon URL 或 null
  */
-export function getDefaultFaviconUrl(url: string, size: FaviconSize = 64): string | null {
-  return getFaviconUrl(url, { size });
+export function getDefaultFaviconUrl(url: string): string | null {
+  return getFaviconUrl(url);
 }
 
 /**
