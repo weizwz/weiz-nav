@@ -88,6 +88,8 @@ export const DataTable: React.FC<DataTableProps> = ({
   onReorder,
 }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [pageSize, setPageSize] = useState(20);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // 配置拖拽传感器
   const sensors = useSensors(
@@ -291,9 +293,15 @@ export const DataTable: React.FC<DataTableProps> = ({
               },
             }}
             pagination={{
-              pageSize: 20,
+              current: currentPage,
+              pageSize: pageSize,
               showSizeChanger: true,
               showTotal: (total) => `共 ${total} 条`,
+              onChange: (page, size) => {
+                setCurrentPage(page);
+                setPageSize(size);
+              },
+              pageSizeOptions: ['10', '20', '50', '100'],
             }}
             scroll={{ x: 1200 }}
           />
