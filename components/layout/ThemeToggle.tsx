@@ -82,7 +82,6 @@ export default function ThemeToggle() {
         aria-pressed={isDark}
         role="switch"
         aria-checked={isDark}
-        title={getTooltipTitle()}
         style={{
           fontSize: '18px',
           width: '40px',
