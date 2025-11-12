@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Table, Button, Space, Popconfirm, Tag, message } from 'antd';
+import { Table, Button, Space, Popconfirm, Tag } from 'antd';
 import { EditOutlined, DeleteOutlined, DragOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import {
@@ -22,6 +22,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Link } from '@/types/link';
+import { showSuccess, showWarning } from '@/utils/feedback';
 
 interface DataTableProps {
   links: Link[];
@@ -100,7 +101,7 @@ export const DataTable: React.FC<DataTableProps> = ({
 
       if (oldIndex !== -1 && newIndex !== -1) {
         onReorder(oldIndex, newIndex);
-        message.success('排序已更新');
+        showSuccess('排序已更新');
       }
     }
   };
@@ -108,7 +109,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   // 处理批量删除
   const handleBatchDelete = () => {
     if (selectedRowKeys.length === 0) {
-      message.warning('请先选择要删除的链接');
+      showWarning('请先选择要删除的链接');
       return;
     }
     onBatchDelete(selectedRowKeys as string[]);

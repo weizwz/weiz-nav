@@ -160,7 +160,7 @@ export default function ManagePage() {
   if (!mounted) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <Spin size="large" tip="加载中..." />
+        <Spin size="large" />
       </div>
     );
   }
