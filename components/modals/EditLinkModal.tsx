@@ -142,7 +142,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
       </span>
       <Form
         form={form}
-        layout="vertical"
+        labelCol={{ flex: '54px' }}
         autoComplete="off"
         aria-label={link ? '编辑链接表单' : '添加链接表单'}
       >
@@ -206,13 +206,13 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
         <Form.Item
           label="图标"
           name="icon"
-          extra="可以输入图标 URL 或留空使用默认图标"
+          extra="默认 https://favicon.im/xxx.com?larger=true"
         >
-          <Input placeholder="图标 URL（可选）" />
+          <Input placeholder="图标URL" />
         </Form.Item>
 
         <Form.Item
-          label="背景颜色"
+          label="背景"
           name="backgroundColor"
         >
           <ColorPicker

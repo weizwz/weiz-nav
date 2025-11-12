@@ -24,7 +24,7 @@ export const ResetDataModal: React.FC<ResetDataModalProps> = ({
   const [confirmText, setConfirmText] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const CONFIRM_KEYWORD = '确认';
+  const CONFIRM_KEYWORD = '确认重置';
   const isConfirmValid = confirmText === CONFIRM_KEYWORD;
 
   const handleOk = async () => {
@@ -79,10 +79,8 @@ export const ResetDataModal: React.FC<ResetDataModalProps> = ({
     >
       <Space direction="vertical" size="middle" style={{ width: '100%' }} id="reset-modal-description">
         <Alert
-          message="警告：此操作不可撤销"
-          description="重置数据将删除所有自定义链接和设置，并恢复到默认状态。"
-          type="warning"
-          showIcon
+          message="警告：此操作不可撤销！建议先导出数据进行备份"
+          type="error"
           role="alert"
           aria-live="polite"
         />
@@ -91,7 +89,7 @@ export const ResetDataModal: React.FC<ResetDataModalProps> = ({
           <Paragraph>
             此操作将：
           </Paragraph>
-          <ul style={{ paddingLeft: '20px', margin: 0 }}>
+          <ul className='pl-4 font-medium'>
             <li>删除所有自定义导航链接</li>
             <li>清除所有用户设置</li>
             <li>恢复到初始默认数据</li>
@@ -112,7 +110,7 @@ export const ResetDataModal: React.FC<ResetDataModalProps> = ({
             autoFocus
             aria-label="确认文本输入框"
             aria-required="true"
-            aria-invalid={confirmText && !isConfirmValid}
+            aria-invalid={confirmText && !isConfirmValid ? 'true' : 'false'}
             aria-describedby="confirm-text-error"
           />
           {confirmText && !isConfirmValid && (
