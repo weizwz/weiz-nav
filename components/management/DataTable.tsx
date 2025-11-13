@@ -36,6 +36,8 @@ interface DataTableProps {
   onDelete: (id: string) => void;
   onBatchDelete: (ids: string[]) => void;
   onReorder: (fromIndex: number, toIndex: number) => void;
+  selectedRowKeys?: React.Key[];
+  onSelectionChange?: (selectedKeys: React.Key[]) => void;
 }
 
 /**
@@ -86,10 +88,15 @@ export const DataTable: React.FC<DataTableProps> = ({
   onDelete,
   onBatchDelete,
   onReorder,
+  selectedRowKeys: externalSelectedRowKeys,
+  onSelectionChange,
 }) => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-  const [pageSize, setPageSize] = useState(20);
+  const [internalSelectedRowKeys, setInternalSelectedRowKeys] = useState<React.Key[]>([]);
+  const [pageSize, setPageSize] = useState(50);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // 使用外部传入的 selectedRowKeys 或内部状态
+  const selectedRowKeys = externalSelectedRowKeys !== undefined ? externalSelectedRowKeys : internalSelectedRowKeys;
 
   // 配置拖拽传感器
   const sensors = useSensors(
@@ -114,15 +121,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     }
   };
 
-  // 处理批量删除
-  const handleBatchDelete = () => {
-    if (selectedRowKeys.length === 0) {
-      showWarning('请先选择要删除的链接');
-      return;
-    }
-    onBatchDelete(selectedRowKeys as string[]);
-    setSelectedRowKeys([]);
-  };
+
 
   // 拖拽句柄组件
   const DragHandle = () => {
@@ -242,35 +241,16 @@ export const DataTable: React.FC<DataTableProps> = ({
   const rowSelection = {
     selectedRowKeys,
     onChange: (newSelectedRowKeys: React.Key[]) => {
-      setSelectedRowKeys(newSelectedRowKeys);
+      if (onSelectionChange) {
+        onSelectionChange(newSelectedRowKeys);
+      } else {
+        setInternalSelectedRowKeys(newSelectedRowKeys);
+      }
     },
   };
 
   return (
-    <div className={selectedRowKeys.length > 0 ? 'space-y-4' : ''}>
-      {/* 批量操作工具栏 */}
-      <div className="flex justify-between items-center" role="toolbar" aria-label="批量操作工具栏">
-        <div className="text-sm text-gray-600" role="status" aria-live="polite">
-          {selectedRowKeys.length > 0 && (
-            <span>已选择 {selectedRowKeys.length} 项</span>
-          )}
-        </div>
-        <Space>
-          {selectedRowKeys.length > 0 && (
-            <Popconfirm
-              title={`确定要删除选中的 ${selectedRowKeys.length} 个链接吗？`}
-              onConfirm={handleBatchDelete}
-              okText="确定"
-              cancelText="取消"
-            >
-              <Button danger aria-label={`批量删除选中的 ${selectedRowKeys.length} 个链接`}>
-                批量删除
-              </Button>
-            </Popconfirm>
-          )}
-        </Space>
-      </div>
-
+    <div>
       {/* 数据表格 */}
       <DndContext
         sensors={sensors}

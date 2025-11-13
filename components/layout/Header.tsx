@@ -33,7 +33,7 @@ const Header = memo(function Header() {
       className="w-full bg-(--background-main) border-b border-gray-200 dark:border-neutral-700 transition-theme"
       role="banner"
     >
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto p-4">
         {/* Desktop 布局 */}
         <div className="hidden md:flex items-center justify-between gap-6">
           {/* Logo/标题 */}

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Button, Space, Typography, Spin } from 'antd';
+import { Button, Space, Spin, Popconfirm } from 'antd';
 import { PlusOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -13,9 +13,7 @@ import { ResetDataModal } from '@/components/modals/ResetDataModal';
 import { Link } from '@/types/link';
 import { defaultLinks } from '@/services/defaultData';
 import { storageService } from '@/services/storage';
-import { showSuccess, showError, handleOperationResult } from '@/utils/feedback';
-
-const { Title } = Typography;
+import { showSuccess, showError, showWarning } from '@/utils/feedback';
 
 /**
  * 数据管理页面
@@ -30,6 +28,7 @@ export default function ManagePage() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentLink, setCurrentLink] = useState<Link | null>(null);
   const [resetModalOpen, setResetModalOpen] = useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   // 等待客户端挂载，避免 hydration 错误
   useEffect(() => {
@@ -53,13 +52,23 @@ export default function ManagePage() {
     }
   };
 
-  // 处理批量删除
-  const handleBatchDelete = (ids: string[]) => {
+  // 处理批量删除点击
+  const handleBatchDeleteClick = () => {
+    if (selectedRowKeys.length === 0) {
+      showWarning('请选择至少1条数据');
+      return;
+    }
+    // 如果有选中项，触发确认对话框
+  };
+
+  // 处理批量删除确认
+  const handleBatchDelete = () => {
     try {
-      ids.forEach((id) => {
-        dispatch(deleteLink(id));
+      selectedRowKeys.forEach((id) => {
+        dispatch(deleteLink(id as string));
       });
-      showSuccess(`成功删除 ${ids.length} 个链接`);
+      showSuccess(`成功删除 ${selectedRowKeys.length} 个链接`);
+      setSelectedRowKeys([]);
     } catch (error) {
       console.error('批量删除失败:', error);
       showError('批量删除失败，请重试');
@@ -167,14 +176,12 @@ export default function ManagePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto p-4">
         {/* 页头 */}
-        <header className="mb-6" role="banner">
+        <header className="mb-4" role="banner">
           <Space direction="vertical" size="small" className="w-full">
             <div className="flex justify-between items-center">
-              <Title level={2} className="mb-0!">
-                数据管理
-              </Title>
+              <div className='text-xl font-bold py-2 text-gray-900 dark:text-white whitespace-nowrap'>数据管理</div>
               <Button
                 icon={<ArrowLeftOutlined aria-hidden="true" />}
                 onClick={handleBack}
@@ -190,7 +197,12 @@ export default function ManagePage() {
         {/* 导入导出工具栏 */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-4">
           <div className="flex justify-between items-center">
-            <ImportExport />
+            <div className="flex items-center gap-4">
+              <ImportExport />
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                已选择 {selectedRowKeys.length} 项
+              </span>
+            </div>
             <div className='flex gap-4'>
               <Button
                 danger
@@ -198,6 +210,21 @@ export default function ManagePage() {
               >
                 重置数据
               </Button>
+              <Popconfirm
+                title={`确定要删除选中的 ${selectedRowKeys.length} 个链接吗？`}
+                onConfirm={handleBatchDelete}
+                okText="确定"
+                cancelText="取消"
+                disabled={selectedRowKeys.length === 0}
+              >
+                <Button 
+                  danger 
+                  onClick={handleBatchDeleteClick}
+                  aria-label={selectedRowKeys.length > 0 ? `批量删除选中的 ${selectedRowKeys.length} 个链接` : '批量删除'}
+                >
+                  批量删除
+                </Button>
+              </Popconfirm>
               <Button
                 type="primary"
                 icon={<PlusOutlined aria-hidden="true" />}
@@ -218,6 +245,8 @@ export default function ManagePage() {
             onDelete={handleDelete}
             onBatchDelete={handleBatchDelete}
             onReorder={handleReorder}
+            selectedRowKeys={selectedRowKeys}
+            onSelectionChange={setSelectedRowKeys}
           />
         </div>
 
