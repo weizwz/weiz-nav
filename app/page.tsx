@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { FloatButton, Drawer } from 'antd';
-import { PlusOutlined, MenuOutlined } from '@ant-design/icons';
+import { FloatButton } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addLink, updateLink, deleteLink, loadLinks } from '@/store/slices/linksSlice';
 import { storageService } from '@/services/storage';
@@ -33,9 +33,6 @@ export default function Home() {
   // 删除确认弹窗状态
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deletingLinkId, setDeletingLinkId] = useState<string | null>(null);
-  
-  // 移动端侧边栏抽屉状态
-  const [drawerOpen, setDrawerOpen] = useState(false);
   
   // 加载状态
   const [isLoading, setIsLoading] = useState(true);
@@ -177,43 +174,15 @@ export default function Home() {
         </main>
       </div>
 
-      {/* 移动端侧边栏抽屉 */}
-      <Drawer
-        title="分类"
-        placement="left"
-        onClose={() => setDrawerOpen(false)}
-        open={drawerOpen}
-        width={280}
-        aria-label="移动端分类导航菜单"
-        className="lg:hidden"
-      >
-        <CategorySidebar />
-      </Drawer>
-
-      {/* 浮动按钮组 */}
-      <FloatButton.Group
-        shape="circle"
+      {/* 添加链接浮动按钮 */}
+      <FloatButton
+        icon={<PlusOutlined aria-hidden="true" />}
+        type="primary"
+        tooltip="添加链接"
+        onClick={handleAddClick}
+        aria-label="添加新链接"
         style={{ right: 24, bottom: 24 }}
-        aria-label="快捷操作"
-      >
-        {/* 移动端菜单按钮 */}
-        <FloatButton
-          icon={<MenuOutlined aria-hidden="true" />}
-          tooltip="分类菜单"
-          onClick={() => setDrawerOpen(true)}
-          className="lg:hidden"
-          aria-label="打开分类菜单"
-        />
-        
-        {/* 添加链接按钮 */}
-        <FloatButton
-          icon={<PlusOutlined aria-hidden="true" />}
-          type="primary"
-          tooltip="添加链接"
-          onClick={handleAddClick}
-          aria-label="添加新链接"
-        />
-      </FloatButton.Group>
+      />
 
       {/* 编辑链接弹窗 */}
       <EditLinkModal
