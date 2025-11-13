@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { Modal, Form, Input } from 'antd';
+import { showError } from '@/utils/feedback';
 import { Category } from '@/types/category';
 import { IconPicker } from '@/components/common/IconPicker';
 
@@ -44,7 +45,7 @@ export const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
       onSubmit(values);
       form.resetFields();
     } catch (error) {
-      console.error('表单验证失败:', error);
+      showError('请检查表单填写是否正确');
     }
   };
 

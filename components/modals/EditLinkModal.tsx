@@ -111,7 +111,6 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
       onSubmit(linkData);
       form.resetFields();
     } catch (error) {
-      console.error('表单验证失败:', error);
       if (error && typeof error === 'object' && 'errorFields' in error) {
         // Ant Design 表单验证错误
         showError('请检查表单填写是否正确');
