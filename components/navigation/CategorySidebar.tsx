@@ -4,6 +4,7 @@ import React, { useCallback, useMemo, memo, useState, useEffect } from 'react';
 import { Menu, Dropdown, Button } from 'antd';
 import type { MenuProps } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import * as Icons from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setCurrentCategory } from '@/store/slices/settingsSlice';
 import { addCategory, deleteCategory, updateCategory } from '@/store/slices/categoriesSlice';
@@ -141,11 +142,17 @@ const CategorySidebarBase: React.FC<CategorySidebarProps> = ({ className, style 
     },
   ], [handleEditCategory, handleDeleteCategory]);
 
+  // 渲染图标
+  const renderIcon = useCallback((iconName: string) => {
+    const IconComponent = (Icons as any)[iconName];
+    return IconComponent ? <IconComponent /> : <Icons.AppstoreOutlined />;
+  }, []);
+
   // 生成菜单项
   const menuItems: MenuProps['items'] = useMemo(() => 
     categories.map((category) => ({
       key: category.name,
-      icon: <span className="text-base">{category.icon}</span>,
+      icon: renderIcon(category.icon),
       label: (
         <Dropdown
           menu={{ items: getContextMenu(category) }}
@@ -155,7 +162,7 @@ const CategorySidebarBase: React.FC<CategorySidebarProps> = ({ className, style 
         </Dropdown>
       ),
     }))
-  , [categories, getContextMenu]);
+  , [categories, getContextMenu, renderIcon]);
 
   return (
     <nav 

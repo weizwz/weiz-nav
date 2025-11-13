@@ -69,7 +69,7 @@ export const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
         layout="vertical"
         initialValues={{
           name: '',
-          icon: '📁',
+          icon: 'AppstoreOutlined',
         }}
       >
         <Form.Item

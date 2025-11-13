@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, Select, ColorPicker } from 'antd';
 import type { Color } from 'antd/es/color-picker';
+import * as Icons from '@ant-design/icons';
 import { Link } from '@/types/link';
 import { PRESET_COLORS, isValidColor, getDefaultColor } from '@/utils/colorUtils';
 import { getFaviconUrl } from '@/api/favicon';
@@ -30,6 +31,12 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [fetchingIcon, setFetchingIcon] = useState(false);
   const categories = useAppSelector((state) => state.categories.items);
+
+  // 渲染图标
+  const renderIcon = (iconName: string) => {
+    const IconComponent = (Icons as any)[iconName];
+    return IconComponent ? <IconComponent /> : <Icons.AppstoreOutlined />;
+  };
 
   // 当弹窗打开或链接数据变化时，更新表单
   useEffect(() => {
@@ -198,7 +205,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
           <Select placeholder="选择分类">
             {categories.map((category) => (
               <Select.Option key={category.id} value={category.name}>
-                <span className="mr-2">{category.icon}</span>
+                <span className="mr-2">{renderIcon(category.icon)}</span>
                 {category.name}
               </Select.Option>
             ))}

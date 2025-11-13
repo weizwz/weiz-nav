@@ -20,7 +20,7 @@ const defaultCategories: Category[] = [
   {
     id: 'home',
     name: '主页',
-    icon: '🏠',
+    icon: 'HomeOutlined',
     order: 0,
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -28,7 +28,7 @@ const defaultCategories: Category[] = [
   {
     id: 'work',
     name: '工作',
-    icon: '💼',
+    icon: 'LaptopOutlined',
     order: 1,
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -36,7 +36,7 @@ const defaultCategories: Category[] = [
   {
     id: 'entertainment',
     name: '娱乐',
-    icon: '▶️',
+    icon: 'PlayCircleOutlined',
     order: 2,
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -44,7 +44,7 @@ const defaultCategories: Category[] = [
   {
     id: 'study',
     name: '学习',
-    icon: '📖',
+    icon: 'ReadOutlined',
     order: 3,
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -52,7 +52,7 @@ const defaultCategories: Category[] = [
   {
     id: 'tools',
     name: '工具',
-    icon: '🔧',
+    icon: 'ToolOutlined',
     order: 4,
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -60,7 +60,7 @@ const defaultCategories: Category[] = [
   {
     id: 'other',
     name: '其他',
-    icon: '📦',
+    icon: 'AppstoreOutlined',
     order: 5,
     createdAt: Date.now(),
     updatedAt: Date.now(),
