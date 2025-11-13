@@ -5,10 +5,15 @@
 
 export type {
   Link,
-  Category,
   CreateLinkInput,
   UpdateLinkInput,
 } from './link';
+
+export type {
+  Category,
+  CreateCategoryInput,
+  UpdateCategoryInput,
+} from './category';
 
 export type {
   SearchEngine,

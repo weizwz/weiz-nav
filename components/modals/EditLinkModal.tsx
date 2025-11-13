@@ -7,6 +7,7 @@ import { Link } from '@/types/link';
 import { PRESET_COLORS, isValidColor, getDefaultColor } from '@/utils/colorUtils';
 import { getFaviconUrl } from '@/api/favicon';
 import { showError } from '@/utils/feedback';
+import { useAppSelector } from '@/store/hooks';
 
 interface EditLinkModalProps {
   open: boolean;
@@ -28,6 +29,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [fetchingIcon, setFetchingIcon] = useState(false);
+  const categories = useAppSelector((state) => state.categories.items);
 
   // 当弹窗打开或链接数据变化时，更新表单
   useEffect(() => {
@@ -194,12 +196,12 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
           rules={[{ required: true, message: '请选择分类' }]}
         >
           <Select placeholder="选择分类">
-            <Select.Option value="主页">主页</Select.Option>
-            <Select.Option value="工作">工作</Select.Option>
-            <Select.Option value="娱乐">娱乐</Select.Option>
-            <Select.Option value="学习">学习</Select.Option>
-            <Select.Option value="工具">工具</Select.Option>
-            <Select.Option value="其他">其他</Select.Option>
+            {categories.map((category) => (
+              <Select.Option key={category.id} value={category.name}>
+                <span className="mr-2">{category.icon}</span>
+                {category.name}
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
 

@@ -38,12 +38,6 @@ export interface Link {
 }
 
 /**
- * Category 类型定义
- * 用于分类管理
- */
-export type Category = '主页' | '工作' | '娱乐' | '学习' | '工具' | '其他';
-
-/**
  * 创建链接时的输入数据类型
  * 省略自动生成的字段
  */

@@ -2,6 +2,7 @@ import { configureStore, Middleware } from '@reduxjs/toolkit';
 import linksReducer from './slices/linksSlice';
 import searchReducer from './slices/searchSlice';
 import settingsReducer from './slices/settingsSlice';
+import categoriesReducer from './slices/categoriesSlice';
 import { storageService } from '@/services/storage';
 
 /**
@@ -22,11 +23,19 @@ const localStorageSyncMiddleware: Middleware = (store) => (next) => (action) => 
       const saveResult = storageService.saveLinks(state.links.items);
       if (!saveResult.success) {
         console.error('Failed to sync links to LocalStorage:', saveResult.error);
-        // 可以在这里触发一个全局错误通知
-        // 但为了避免过多的提示，我们只记录到控制台
       }
     } catch (error) {
       console.error('Failed to sync links to LocalStorage:', error);
+    }
+  }
+  
+  // 如果是 categories 相关的 action，同步 categories 数据
+  if (typeof actionType === 'string' && actionType.startsWith('categories/')) {
+    const state = store.getState();
+    try {
+      localStorage.setItem('nav_categories', JSON.stringify(state.categories.items));
+    } catch (error) {
+      console.error('Failed to sync categories to LocalStorage:', error);
     }
   }
   
@@ -56,6 +65,7 @@ export const store = configureStore({
     links: linksReducer,
     search: searchReducer,
     settings: settingsReducer,
+    categories: categoriesReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -77,6 +87,17 @@ export const initializeStore = () => {
   const savedLinks = storageService.loadLinks();
   if (savedLinks && savedLinks.length > 0) {
     store.dispatch({ type: 'links/loadLinks', payload: savedLinks });
+  }
+  
+  // 加载 categories
+  try {
+    const savedCategories = localStorage.getItem('nav_categories');
+    if (savedCategories) {
+      const categories = JSON.parse(savedCategories);
+      store.dispatch({ type: 'categories/loadCategories', payload: categories });
+    }
+  } catch (error) {
+    console.error('Failed to load categories:', error);
   }
   
   // 加载 settings
