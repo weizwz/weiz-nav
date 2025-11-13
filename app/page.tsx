@@ -46,11 +46,14 @@ export default function Home() {
     if (links.length === 0) {
       try {
         const savedLinks = storageService.loadLinks();
-        if (savedLinks && savedLinks.length > 0) {
+        if (savedLinks !== null) {
+          // localStorage 中有数据（可能是空数组或有内容的数组）
           dispatch(loadLinks(savedLinks));
         } else {
-          // 如果 LocalStorage 也没有数据，加载默认数据
+          // localStorage 中没有数据，说明是首次访问，加载默认数据
           dispatch(loadLinks(defaultLinks));
+          // 保存默认数据到 localStorage
+          storageService.saveLinks(defaultLinks);
         }
       } catch (error) {
         console.error('加载数据失败:', error);

@@ -34,6 +34,7 @@ function AntdThemeProvider({ children }: { children: React.ReactNode }) {
           colorPrimary: '#1890ff',
           borderRadius: 8,
           fontSize: 14,
+          zIndexPopupBase: 1000,
         },
         components: {
           Card: {
@@ -44,6 +45,9 @@ function AntdThemeProvider({ children }: { children: React.ReactNode }) {
           },
           Input: {
             borderRadius: 6,
+          },
+          Modal: {
+            zIndexPopupBase: 1000,
           },
         },
       }}

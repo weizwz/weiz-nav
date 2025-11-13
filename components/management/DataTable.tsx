@@ -63,7 +63,7 @@ const DraggableRow: React.FC<RowProps> = (props) => {
     ...props.style,
     transform: CSS.Transform.toString(transform),
     transition,
-    ...(isDragging ? { position: 'relative', zIndex: 9999 } : {}),
+    ...(isDragging ? { position: 'relative', zIndex: 999 } : {}),
   };
 
   // 将拖拽监听器存储在 context 中，供子组件使用
@@ -284,6 +284,7 @@ export const DataTable: React.FC<DataTableProps> = ({
               pageSizeOptions: ['10', '20', '50', '100'],
             }}
             scroll={{ x: 1200 }}
+            className="[&_.ant-empty]:z-0"
           />
         </SortableContext>
       </DndContext>

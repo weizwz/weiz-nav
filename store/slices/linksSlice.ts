@@ -115,7 +115,7 @@ const linksSlice = createSlice({
      * 加载链接数据
      */
     loadLinks: (state, action: PayloadAction<Link[]>) => {
-      state.items = action.payload.sort((a, b) => a.order - b.order);
+      state.items = [...action.payload].sort((a, b) => a.order - b.order);
       state.loading = false;
       state.error = null;
     },
