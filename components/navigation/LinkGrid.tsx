@@ -38,13 +38,7 @@ const LinkGridBase: React.FC<LinkGridProps> = ({
       return searchResults;
     }
 
-    // 否则根据分类过滤
-    // 如果分类是"主页"，显示所有链接
-    if (currentCategory === '主页') {
-      return links;
-    }
-
-    // 过滤指定分类的链接
+    // 根据分类过滤链接
     return links.filter((link) => link.category === currentCategory);
   }, [links, currentCategory, searchQuery, searchResults]);
 
@@ -73,11 +67,7 @@ const LinkGridBase: React.FC<LinkGridProps> = ({
       return (
         <div className={className} style={{ ...style, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
           <Empty
-            description={
-              currentCategory === '主页' 
-                ? '暂无链接，点击右下角按钮添加' 
-                : `${currentCategory}分类暂无链接`
-            }
+            description={`${currentCategory}分类暂无链接`}
           />
         </div>
       );

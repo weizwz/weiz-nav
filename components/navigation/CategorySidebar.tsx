@@ -164,6 +164,22 @@ const CategorySidebarBase: React.FC<CategorySidebarProps> = ({ className, style 
     }))
   , [categories, getContextMenu, renderIcon]);
 
+  // 在挂载前不渲染菜单，避免 hydration 不匹配
+  if (!mounted) {
+    return (
+      <nav 
+        className={className} 
+        style={style}
+        role="navigation"
+        aria-label="分类导航"
+      >
+        <div className="flex flex-col h-full">
+          <div style={{ flex: 1 }} />
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <nav 
       className={className} 
@@ -174,7 +190,7 @@ const CategorySidebarBase: React.FC<CategorySidebarProps> = ({ className, style 
       <div className="flex flex-col h-full">
         <Menu
           mode="inline"
-          selectedKeys={mounted ? [currentCategory] : ['主页']}
+          selectedKeys={[currentCategory]}
           onClick={handleCategoryChange}
           items={menuItems}
           style={{ 
