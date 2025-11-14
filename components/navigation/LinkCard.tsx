@@ -35,7 +35,7 @@ const IconWithFallback: React.FC<{
         src={fallbackUrl} 
         alt={`${alt}的图标`}
         loading="lazy"
-        className="w-12 h-12 object-contain"
+        className="w-15 h-15 object-contain"
         onError={() => {
           console.warn(`Favicon 加载失败: ${fallbackUrl}`);
           setFaviconError(true);
@@ -50,7 +50,7 @@ const IconWithFallback: React.FC<{
       src={src} 
       alt={`${alt}的图标`}
       loading="lazy"
-      className="w-12 h-12 object-contain"
+      className="w-15 h-15 object-contain"
       onError={() => {
         console.warn(`图标加载失败: ${src}`);
         setHasError(true);
@@ -178,7 +178,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete }) => {
           tabIndex={0}
           role="button"
           aria-label={`打开 ${link.name}${link.description ? `，${link.description}` : ''}`}
-          className="link-card h-[100px] cursor-pointer overflow-hidden rounded-xl"
+          className="link-card h-25 box-content cursor-pointer overflow-hidden rounded-xl"
           styles={{
             body: {
               height: '100%',
@@ -189,7 +189,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete }) => {
         >
           {/* 左侧：背景色 + 图标 */}
           <div 
-            className="w-[40%] flex items-center justify-center text-white"
+            className="w-25 flex items-center justify-center text-white relative"
             style={{ 
               backgroundColor: link.backgroundColor || '#1890ff',
             }}

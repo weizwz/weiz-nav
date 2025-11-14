@@ -110,6 +110,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
 
       onSubmit(linkData);
       form.resetFields();
+      setLoading(false);
     } catch (error) {
       // 表单验证失败，界面已有提示
       setLoading(false);
