@@ -1,13 +1,28 @@
 'use client';
 
 import React, { useCallback, useMemo, memo, useState, useEffect } from 'react';
-import { Menu, Dropdown, Button } from 'antd';
-import type { MenuProps } from 'antd';
+import { Dropdown, Button } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import * as Icons from '@ant-design/icons';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setCurrentCategory } from '@/store/slices/settingsSlice';
-import { addCategory, deleteCategory, updateCategory } from '@/store/slices/categoriesSlice';
+import { addCategory, deleteCategory, updateCategory, reorderCategories } from '@/store/slices/categoriesSlice';
 import { updateLink } from '@/store/slices/linksSlice';
 import { EditCategoryModal } from '@/components/modals/EditCategoryModal';
 import { Category } from '@/types/category';
@@ -17,6 +32,100 @@ interface CategorySidebarProps {
   className?: string;
   style?: React.CSSProperties;
 }
+
+/**
+ * 可拖拽的分类菜单项组件
+ */
+interface DraggableCategoryItemProps {
+  category: Category;
+  isSelected: boolean;
+  onSelect: (categoryName: string) => void;
+  onEdit: (category: Category) => void;
+  onDelete: (category: Category) => void;
+  renderIcon: (iconName: string) => React.ReactNode;
+}
+
+const DraggableCategoryItem: React.FC<DraggableCategoryItemProps> = ({
+  category,
+  isSelected,
+  onSelect,
+  onEdit,
+  onDelete,
+  renderIcon,
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: category.id,
+  });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const contextMenuItems = [
+    {
+      key: 'edit',
+      label: '编辑',
+      icon: <EditOutlined />,
+      onClick: () => onEdit(category),
+    },
+    {
+      key: 'delete',
+      label: '删除',
+      icon: <DeleteOutlined />,
+      danger: true,
+      onClick: () => onDelete(category),
+    },
+  ];
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+    >
+      <Dropdown
+        menu={{ items: contextMenuItems }}
+        trigger={['contextMenu']}
+      >
+        <div
+          {...listeners}
+          {...attributes}
+          className={`
+            flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 cursor-pointer
+            ${isSelected 
+              ? 'text-white shadow-md bg-(--primary)' 
+              : 'hover:bg-blue-100 dark:hover:bg-blue-500/50 text-gray-600 dark:text-gray-400'
+            }
+          `}
+          onClick={(e) => {
+            // 只有在没有拖拽的情况下才触发点击
+            if (!isDragging) {
+              onSelect(category.name);
+            }
+          }}
+        >
+          {/* 分类图标 */}
+          <div className={`w-5 h-5 flex items-center justify-center ${isSelected ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+            {renderIcon(category.icon)}
+          </div>
+          
+          {/* 分类名称 */}
+          <div className={`flex-1 select-none text-sm font-medium ${isSelected ? 'text-white' : ''}`}>
+            {category.name}
+          </div>
+        </div>
+      </Dropdown>
+    </div>
+  );
+};
 
 /**
  * CategorySidebar 组件
@@ -31,15 +140,42 @@ const CategorySidebarBase: React.FC<CategorySidebarProps> = ({ className, style 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
+  // 配置拖拽传感器 - 需要移动 5px 才触发拖拽，避免与点击冲突
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   // 等待客户端挂载，避免 hydration 错误
   useEffect(() => {
     setMounted(true);
   }, []);
 
   // 处理分类切换
-  const handleCategoryChange: MenuProps['onClick'] = useCallback((e: { key: string }) => {
-    dispatch(setCurrentCategory(e.key));
+  const handleCategoryChange = useCallback((categoryName: string) => {
+    dispatch(setCurrentCategory(categoryName));
   }, [dispatch]);
+
+  // 处理拖拽结束
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = categories.findIndex((cat) => cat.id === active.id);
+      const newIndex = categories.findIndex((cat) => cat.id === over.id);
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        dispatch(reorderCategories({ fromIndex: oldIndex, toIndex: newIndex }));
+        showSuccess('分类排序已更新');
+      }
+    }
+  }, [categories, dispatch]);
 
   // 处理添加分类
   const handleAddCategory = useCallback(() => {
@@ -125,44 +261,16 @@ const CategorySidebarBase: React.FC<CategorySidebarProps> = ({ className, style 
     setEditingCategory(null);
   }, [dispatch, editingCategory, links, currentCategory]);
 
-  // 生成右键菜单
-  const getContextMenu = useCallback((category: Category): MenuProps['items'] => [
-    {
-      key: 'edit',
-      label: '编辑',
-      icon: <EditOutlined />,
-      onClick: () => handleEditCategory(category),
-    },
-    {
-      key: 'delete',
-      label: '删除',
-      icon: <DeleteOutlined />,
-      danger: true,
-      onClick: () => handleDeleteCategory(category),
-    },
-  ], [handleEditCategory, handleDeleteCategory]);
-
   // 渲染图标
   const renderIcon = useCallback((iconName: string) => {
     const IconComponent = (Icons as any)[iconName];
     return IconComponent ? <IconComponent /> : <Icons.AppstoreOutlined />;
   }, []);
 
-  // 生成菜单项
-  const menuItems: MenuProps['items'] = useMemo(() => 
-    categories.map((category) => ({
-      key: category.name,
-      icon: renderIcon(category.icon),
-      label: (
-        <Dropdown
-          menu={{ items: getContextMenu(category) }}
-          trigger={['contextMenu']}
-        >
-          <div className="w-full">{category.name}</div>
-        </Dropdown>
-      ),
-    }))
-  , [categories, getContextMenu, renderIcon]);
+  // 排序后的分类列表
+  const sortedCategories = useMemo(() => 
+    [...categories].sort((a, b) => a.order - b.order)
+  , [categories]);
 
   // 在挂载前不渲染菜单，避免 hydration 不匹配
   if (!mounted) {
@@ -188,17 +296,31 @@ const CategorySidebarBase: React.FC<CategorySidebarProps> = ({ className, style 
       aria-label="分类导航"
     >
       <div className="flex flex-col h-full">
-        <Menu
-          mode="inline"
-          selectedKeys={[currentCategory]}
-          onClick={handleCategoryChange}
-          items={menuItems}
-          style={{ 
-            flex: 1,
-            borderRight: 0,
-          }}
-          aria-label="导航链接分类列表"
-        />
+        {/* 拖拽分类列表 */}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={sortedCategories.map((cat) => cat.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="flex-1 p-4 space-y-2 overflow-y-auto">
+              {sortedCategories.map((category) => (
+                <DraggableCategoryItem
+                  key={category.id}
+                  category={category}
+                  isSelected={currentCategory === category.name}
+                  onSelect={handleCategoryChange}
+                  onEdit={handleEditCategory}
+                  onDelete={handleDeleteCategory}
+                  renderIcon={renderIcon}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
         
         {/* 添加分类按钮 */}
         <div className="p-4 border-t border-gray-200 dark:border-neutral-700">
