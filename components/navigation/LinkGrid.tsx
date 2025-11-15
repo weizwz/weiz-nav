@@ -1,10 +1,26 @@
 'use client';
 
-import React, { useMemo, memo } from 'react';
+import React, { useMemo, memo, useCallback } from 'react';
 import { Empty } from 'antd';
-import { useAppSelector } from '@/store/hooks';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy,
+} from '@dnd-kit/sortable';
+import { useAppSelector, useAppDispatch } from '@/store/hooks';
+import { reorderLinks } from '@/store/slices/linksSlice';
 import { LinkCard } from './LinkCard';
 import { Link } from '@/types/link';
+import { showSuccess } from '@/utils/feedback';
 
 interface LinkGridProps {
   onEdit?: (link: Link) => void;
@@ -25,11 +41,24 @@ const LinkGridBase: React.FC<LinkGridProps> = ({
   className,
   style 
 }) => {
+  const dispatch = useAppDispatch();
   const links = useAppSelector((state) => state.links.items);
   const currentCategory = useAppSelector((state) => state.settings.currentCategory || '主页');
   const searchQuery = useAppSelector((state) => state.search.query);
   const searchResults = useAppSelector((state) => state.search.results);
   const isSearching = useAppSelector((state) => state.search.isSearching);
+
+  // 配置拖拽传感器 - 需要移动 8px 才触发拖拽，避免与点击冲突
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // 过滤显示的链接
   const displayedLinks = useMemo(() => {
@@ -38,9 +67,27 @@ const LinkGridBase: React.FC<LinkGridProps> = ({
       return searchResults;
     }
 
-    // 根据分类过滤链接
-    return links.filter((link) => link.category === currentCategory);
+    // 根据分类过滤链接，并按 order 排序
+    return links
+      .filter((link) => link.category === currentCategory)
+      .sort((a, b) => a.order - b.order);
   }, [links, currentCategory, searchQuery, searchResults]);
+
+  // 处理拖拽结束
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      // 在所有链接中查找索引（不是 displayedLinks）
+      const oldIndex = links.findIndex((link) => link.id === active.id);
+      const newIndex = links.findIndex((link) => link.id === over.id);
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        dispatch(reorderLinks({ fromIndex: oldIndex, toIndex: newIndex }));
+        showSuccess('链接排序已更新');
+      }
+    }
+  }, [links, dispatch]);
 
   // 空状态判断
   const isEmpty = displayedLinks.length === 0;
@@ -74,22 +121,38 @@ const LinkGridBase: React.FC<LinkGridProps> = ({
     }
   }
 
+  // 搜索模式下禁用拖拽
+  const isDraggingEnabled = !searchQuery.trim();
+
   return (
-    <div 
-      className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 p-8 ${className || ''}`}
-      style={style}
-      role="region"
-      aria-label={searchQuery.trim() ? `搜索结果：${displayedLinks.length} 个链接` : `${currentCategory}分类：${displayedLinks.length} 个链接`}
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
     >
-      {displayedLinks.map((link) => (
-        <LinkCard
-          key={link.id}
-          link={link}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      ))}
-    </div>
+      <SortableContext
+        items={displayedLinks.map((link) => link.id)}
+        strategy={rectSortingStrategy}
+        disabled={!isDraggingEnabled}
+      >
+        <div 
+          className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 p-8 ${className || ''}`}
+          style={style}
+          role="region"
+          aria-label={searchQuery.trim() ? `搜索结果：${displayedLinks.length} 个链接` : `${currentCategory}分类：${displayedLinks.length} 个链接`}
+        >
+          {displayedLinks.map((link) => (
+            <LinkCard
+              key={link.id}
+              link={link}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              isDraggingEnabled={isDraggingEnabled}
+            />
+          ))}
+        </div>
+      </SortableContext>
+    </DndContext>
   );
 };
 

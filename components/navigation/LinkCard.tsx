@@ -4,6 +4,8 @@ import React, { useCallback, memo, useState } from 'react';
 import { Card, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { motion } from 'framer-motion';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import * as AntdIcons from '@ant-design/icons';
 import { Link } from '@/types/link';
 import { getFaviconUrl } from '@/api/favicon';
@@ -63,6 +65,7 @@ interface LinkCardProps {
   link: Link;
   onEdit?: (link: Link) => void;
   onDelete?: (id: string) => void;
+  isDraggingEnabled?: boolean;
 }
 
 /**
@@ -70,12 +73,35 @@ interface LinkCardProps {
  * 显示单个导航链接的卡片，支持自定义图标、背景色和悬停动画
  * 使用 React.memo 优化避免不必要的重渲染
  */
-const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete }) => {
+const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDraggingEnabled = true }) => {
+  // 拖拽功能
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: link.id,
+    disabled: !isDraggingEnabled,
+  });
+
+  const dragStyle: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.8 : 1,
+    zIndex: isDragging ? 1000 : 'auto',
+    position: isDragging ? 'relative' : 'static',
+  };
+
   // 使用 useCallback 缓存事件处理函数
   const handleClick = useCallback(() => {
     // 在新标签页打开链接
-    window.open(link.url, '_blank', 'noopener,noreferrer');
-  }, [link.url]);
+    if (!isDragging) {
+      window.open(link.url, '_blank', 'noopener,noreferrer');
+    }
+  }, [link.url, isDragging]);
 
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
     // 阻止默认浏览器右键菜单
@@ -152,41 +178,47 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete }) => {
   }, [link.icon, link.name, link.url]);
 
   return (
-    <Dropdown
-      menu={{ items: menuItems }}
-      trigger={['contextMenu']}
+    <div
+      ref={setNodeRef}
+      style={dragStyle}
+      {...(isDraggingEnabled ? listeners : {})}
+      {...(isDraggingEnabled ? attributes : {})}
     >
-      <motion.div
-        whileHover={{ 
-          y: -4,
-          transition: { duration: 0.2 }
-        }}
-        className="h-full"
-        onContextMenu={handleContextMenu}
-        role="article"
-        aria-label={`导航链接：${link.name}`}
+      <Dropdown
+        menu={{ items: menuItems }}
+        trigger={['contextMenu']}
       >
-        <Card
-          hoverable
-          onClick={handleClick}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              handleClick();
-            }
+        <motion.div
+          whileHover={{ 
+            y: -4,
+            transition: { duration: 0.2 }
           }}
-          tabIndex={0}
-          role="button"
-          aria-label={`打开 ${link.name}${link.description ? `，${link.description}` : ''}`}
-          className="link-card h-25 box-content cursor-pointer overflow-hidden rounded-xl"
-          styles={{
-            body: {
-              height: '100%',
-              padding: 0,
-              display: 'flex',
-            }
-          }}
+          className="h-full"
+          onContextMenu={handleContextMenu}
+          role="article"
+          aria-label={`导航链接：${link.name}`}
         >
+          <Card
+            hoverable
+            onClick={handleClick}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleClick();
+              }
+            }}
+            tabIndex={0}
+            role="button"
+            aria-label={`打开 ${link.name}${link.description ? `，${link.description}` : ''}`}
+            className="link-card h-25 box-content cursor-pointer overflow-hidden rounded-xl"
+            styles={{
+              body: {
+                height: '100%',
+                padding: 0,
+                display: 'flex',
+              }
+            }}
+          >
           {/* 左侧：背景色 + 图标 */}
           <div 
             className="w-25 flex items-center justify-center text-white relative"
@@ -215,6 +247,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete }) => {
         </Card>
       </motion.div>
     </Dropdown>
+    </div>
   );
 };
 
@@ -229,7 +262,8 @@ const LinkCard = memo(LinkCardBase, (prevProps, nextProps) => {
     prevProps.link.icon === nextProps.link.icon &&
     prevProps.link.backgroundColor === nextProps.link.backgroundColor &&
     prevProps.onEdit === nextProps.onEdit &&
-    prevProps.onDelete === nextProps.onDelete
+    prevProps.onDelete === nextProps.onDelete &&
+    prevProps.isDraggingEnabled === nextProps.isDraggingEnabled
   );
 });
 
