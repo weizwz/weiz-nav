@@ -4,10 +4,18 @@ import Providers from '@/components/Providers';
 import '@ant-design/v5-patch-for-react-19';
 
 export const metadata: Metadata = {
-  title: '前端导航网站',
+  title: '唯知导航',
   description: '现代化的个人前端导航网站',
-  keywords: ['前端', '导航', '开发工具', '资源导航'],
-  authors: [{ name: '前端导航' }],
+  keywords: ['导航', '开发工具', '资源导航', 'weizwz', '唯知为之'],
+  authors: [{ name: ' weizwz' }],
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '16x16', type: 'image/x-icon' },
+      { url: '/favicon-128.ico', sizes: '128x128', type: 'image/x-icon' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/favicon-128.ico',
+  },
 };
 
 export const viewport: Viewport = {

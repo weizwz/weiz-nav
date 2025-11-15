@@ -37,9 +37,14 @@ const Header = memo(function Header() {
         {/* Desktop 布局 */}
         <div className="hidden md:flex items-center justify-between gap-6">
           {/* Logo/标题 */}
-          <div className="shrink-0">
+          <div className="shrink-0 flex items-center gap-3">
+            <img 
+              src="/logo.png" 
+              alt="网站Logo" 
+              className="w-8 h-8 object-contain"
+            />
             <h1 className="text-xl font-bold text-gray-900 dark:text-white whitespace-nowrap">
-              前端导航
+              唯知导航
             </h1>
           </div>
 
@@ -73,9 +78,16 @@ const Header = memo(function Header() {
         <div className="md:hidden space-y-4">
           {/* 顶部行：标题和工具栏 */}
           <div className="flex items-center justify-between">
-            <h1 className="text-lg font-bold text-gray-900 dark:text-white">
-              前端导航
-            </h1>
+            <div className="flex items-center gap-2">
+              <img 
+                src="/logo.png" 
+                alt="网站Logo" 
+                className="w-7 h-7 object-contain"
+              />
+              <h1 className="text-lg font-bold text-gray-900 dark:text-white">
+                唯知导航
+              </h1>
+            </div>
             <div className="flex items-center gap-2" role="toolbar" aria-label="工具栏">
               <ThemeToggle />
               <Tooltip title="数据管理" placement="bottom">
