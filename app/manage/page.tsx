@@ -221,7 +221,17 @@ export default function ManagePage() {
         <header className="mb-4" role="banner">
           <Space direction="vertical" size="small" className="w-full">
             <div className="flex justify-between items-center">
-              <div className='text-xl font-bold py-2 text-gray-900 dark:text-white whitespace-nowrap'>数据管理</div>
+              {/* Logo/标题 */}
+              <div className="flex items-center gap-3 py-2">
+                <img 
+                  src="/logo.png" 
+                  alt="网站Logo" 
+                  className="w-6 h-6 object-contain"
+                />
+                <h1 className="text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">
+                  数据管理
+                </h1>
+              </div>
               <Button
                 icon={<ArrowLeftOutlined aria-hidden="true" />}
                 onClick={handleBack}

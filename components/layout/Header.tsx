@@ -41,9 +41,9 @@ const Header = memo(function Header() {
             <img 
               src="/logo.png" 
               alt="网站Logo" 
-              className="w-8 h-8 object-contain"
+              className="w-6 h-6 object-contain"
             />
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white whitespace-nowrap">
+            <h1 className="text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">
               唯知导航
             </h1>
           </div>
