@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { FloatButton } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { FloatButton, Drawer, Button } from 'antd';
+import { PlusOutlined, MenuOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addLink, updateLink, deleteLink, loadLinks } from '@/store/slices/linksSlice';
 import { storageService } from '@/services/storage';
@@ -33,6 +33,9 @@ export default function Home() {
   // 删除确认弹窗状态
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deletingLinkId, setDeletingLinkId] = useState<string | null>(null);
+  
+  // 侧边栏抽屉状态（移动端）
+  const [drawerOpen, setDrawerOpen] = useState(false);
   
   // 加载状态
   const [isLoading, setIsLoading] = useState(true);
@@ -144,10 +147,11 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-(--background) transition-theme">
       {/* 页头组件 */}
-      <Header />
+      <Header onMenuClick={() => setDrawerOpen(true)} />
       
       {/* 主内容区域 */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative">
+
         {/* 左侧分类导航 - Desktop */}
         <aside 
           className="hidden lg:block w-48 bg-white dark:bg-antd-dark border-r border-gray-200 dark:border-neutral-700 overflow-y-auto transition-theme"
@@ -155,6 +159,18 @@ export default function Home() {
         >
           <CategorySidebar style={{height: '100%'}} />
         </aside>
+
+        {/* 移动端抽屉 - 分类导航 */}
+        <Drawer
+          title="分类"
+          placement="left"
+          onClose={() => setDrawerOpen(false)}
+          open={drawerOpen}
+          className="lg:hidden"
+          width={280}
+        >
+          <CategorySidebar />
+        </Drawer>
 
         {/* 右侧内容区域 */}
         <main 

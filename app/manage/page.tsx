@@ -246,20 +246,21 @@ export default function ManagePage() {
 
         {/* 导入导出工具栏 */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <div className="flex flex-wrap items-center gap-4">
               <ImportExport />
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 已选择 {selectedRowKeys.length} 项
               </span>
             </div>
-            <div className='flex gap-4'>
+            <div className='flex flex-wrap gap-2 lg:gap-4'>
               <Button
                 danger
                 icon={<ReloadOutlined aria-hidden="true" />}
                 onClick={handleResetClick}
+                aria-label="重置数据"
               >
-                重置数据
+                <span className="hidden md:inline">重置数据</span>
               </Button>
               <Popconfirm
                 title={`确定要删除选中的 ${selectedRowKeys.length} 个链接吗？`}
@@ -274,7 +275,7 @@ export default function ManagePage() {
                   onClick={handleBatchDeleteClick}
                   aria-label={selectedRowKeys.length > 0 ? `批量删除选中的 ${selectedRowKeys.length} 个链接` : '批量删除'}
                 >
-                  批量删除
+                  <span className="hidden md:inline">批量删除</span>
                 </Button>
               </Popconfirm>
               <Button
@@ -282,7 +283,7 @@ export default function ManagePage() {
                 onClick={handleBatchCategoryClick}
                 aria-label={selectedRowKeys.length > 0 ? `批量分类选中的 ${selectedRowKeys.length} 个链接` : '批量分类'}
               >
-                批量分类
+                <span className="hidden md:inline">批量分类</span>
               </Button>
               <Button
                 type="primary"
@@ -290,7 +291,7 @@ export default function ManagePage() {
                 onClick={handleAddNew}
                 aria-label="添加新链接"
               >
-                添加链接
+                <span className="hidden sm:inline">添加链接</span>
               </Button>
             </div>
           </div>

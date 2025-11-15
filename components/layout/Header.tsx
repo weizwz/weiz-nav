@@ -3,7 +3,7 @@
 import React, { memo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Tooltip } from 'antd';
-import { EditOutlined, SettingOutlined } from '@ant-design/icons';
+import { EditOutlined, SettingOutlined, MenuOutlined } from '@ant-design/icons';
 import SearchBar from './SearchBar';
 import ThemeToggle from './ThemeToggle';
 
@@ -20,7 +20,11 @@ import ThemeToggle from './ThemeToggle';
  * 
  * 使用 React.memo 优化避免不必要的重渲染
  */
-const Header = memo(function Header() {
+interface HeaderProps {
+  onMenuClick?: () => void;
+}
+
+const Header = memo(function Header({ onMenuClick }: HeaderProps) {
   const router = useRouter();
 
   // 跳转到数据管理页面
@@ -89,6 +93,23 @@ const Header = memo(function Header() {
               </h1>
             </div>
             <div className="flex items-center gap-2" role="toolbar" aria-label="工具栏">
+              {onMenuClick && (
+                <Tooltip title="分类菜单" placement="bottom">
+                  <Button
+                    type="text"
+                    icon={<MenuOutlined aria-hidden="true" />}
+                    onClick={onMenuClick}
+                    aria-label="打开分类菜单"
+                    title="分类菜单"
+                    className="flex items-center justify-center lg:hidden"
+                    style={{
+                      fontSize: '18px',
+                      width: '40px',
+                      height: '40px',
+                    }}
+                  />
+                </Tooltip>
+              )}
               <ThemeToggle />
               <Tooltip title="数据管理" placement="bottom">
                 <Button
