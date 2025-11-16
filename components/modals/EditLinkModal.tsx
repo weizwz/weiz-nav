@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Modal, Form, Input, Select, ColorPicker, Space, Button, Row, Col } from 'antd';
 import type { Color } from 'antd/es/color-picker';
-import { PlusOutlined, MinusOutlined, UndoOutlined, SearchOutlined, ZoomInOutlined, ZoomOutOutlined } from '@ant-design/icons';
+import { UndoOutlined, ZoomInOutlined, ZoomOutOutlined, BgColorsOutlined } from '@ant-design/icons';
 import * as Icons from '@ant-design/icons';
 import { Link } from '@/types/link';
 import { PRESET_COLORS, isValidColor, getDefaultColor } from '@/utils/colorUtils';
@@ -37,6 +37,11 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
   const [iconScale, setIconScale] = useState<number>(0.8);
   const [savedCustomIcon, setSavedCustomIcon] = useState<string>(''); // 保存自定义图标
   const categories = useAppSelector((state) => state.categories.items);
+
+  // 检查是否支持 EyeDropper API
+  const supportsEyeDropper = React.useMemo(() => {
+    return typeof window !== 'undefined' && 'EyeDropper' in window;
+  }, []);
 
   // 渲染图标
   const renderIcon = (iconName: string) => {
@@ -162,7 +167,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
 
   // 处理图标缩放
   const handleScaleChange = useCallback((delta: number) => {
-    const newScale = Math.max(0.3, Math.min(1.2, iconScale + delta));
+    const newScale = Math.max(0.3, Math.min(1.5, iconScale + delta));
     setIconScale(newScale);
     form.setFieldsValue({ iconScale: newScale });
   }, [form, iconScale]);
@@ -171,6 +176,29 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
   const handleResetScale = useCallback(() => {
     setIconScale(0.8);
     form.setFieldsValue({ iconScale: 0.8 });
+  }, [form]);
+
+  // 使用吸管工具选择颜色
+  const handleEyeDropper = useCallback(async () => {
+    try {
+      // @ts-ignore - EyeDropper API 还没有 TypeScript 类型定义
+      const eyeDropper = new window.EyeDropper();
+      const result = await eyeDropper.open();
+      
+      if (result?.sRGBHex) {
+        const color = result.sRGBHex;
+        setPreviewBgColor(color);
+        form.setFieldsValue({ backgroundColor: color });
+      }
+    } catch (error: any) {
+      // 用户取消选择
+      if (error?.message?.includes('cancel')) {
+        return;
+      }
+      // 其他错误
+      console.error('吸管工具出错:', error);
+      showError('使用吸管工具失败，请确保网站在 HTTPS 或 localhost 下运行');
+    }
   }, [form]);
 
   // 处理表单提交
@@ -344,6 +372,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
                 >
                   {previewIcon ? (
                     <img
+                      key={previewIcon}
                       src={previewIcon}
                       alt="图标预览"
                       className="w-25 h-25 object-contain transition-all"
@@ -367,7 +396,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
                     size="small"
                     icon={<ZoomInOutlined />}
                     onClick={() => handleScaleChange(0.1)}
-                    disabled={iconScale >= 1.2}
+                    disabled={iconScale >= 1.5}
                     title="放大"
                   />
                   <Button
@@ -394,21 +423,29 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
           </Col>
           
           <Col span={12}>
-            <Form.Item
-              label="背景"
-              name="backgroundColor"
-            >
-              <ColorPicker
-                presets={[
-                  {
-                    label: '预设颜色',
-                    colors: PRESET_COLORS,
-                  },
-                ]}
-                showText
-                format="hex"
-                onChange={handleBgColorChange}
-              />
+            <Form.Item label="背景">
+              <Space.Compact>
+                <Form.Item name="backgroundColor" noStyle>
+                  <ColorPicker
+                    presets={[
+                      {
+                        label: '预设颜色',
+                        colors: PRESET_COLORS,
+                      },
+                    ]}
+                    showText
+                    format="hex"
+                    onChange={handleBgColorChange}
+                  />
+                </Form.Item>
+                {supportsEyeDropper && (
+                  <Button
+                    icon={<BgColorsOutlined />}
+                    onClick={handleEyeDropper}
+                    title="使用吸管工具选择颜色"
+                  />
+                )}
+              </Space.Compact>
             </Form.Item>
           </Col>
         </Row>
