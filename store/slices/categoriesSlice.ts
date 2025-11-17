@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Category, CreateCategoryInput, UpdateCategoryInput } from '@/types/category';
+import { defaultCategories } from '@/services/defaultData';
 
 /**
  * Categories 状态接口
@@ -12,84 +13,6 @@ interface CategoriesState {
   /** 错误信息 */
   error: string | null;
 }
-
-/**
- * 默认分类数据
- */
-const defaultCategories: Category[] = [
-  {
-    id: 'common-tools',
-    name: '常用工具',
-    icon: 'ToolOutlined',
-    order: 0,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  },
-  {
-    id: 'react',
-    name: 'React',
-    icon: 'CodeOutlined',
-    order: 1,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  },
-  {
-    id: 'vue',
-    name: 'Vue',
-    icon: 'CodepenOutlined',
-    order: 2,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  },
-  {
-    id: 'node',
-    name: 'Node',
-    icon: 'CloudServerOutlined',
-    order: 3,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  },
-  {
-    id: 'build-tools',
-    name: '构建工具',
-    icon: 'BuildOutlined',
-    order: 4,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  },
-  {
-    id: 'css',
-    name: 'CSS',
-    icon: 'BgColorsOutlined',
-    order: 5,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  },
-  {
-    id: 'community',
-    name: '社区',
-    icon: 'TeamOutlined',
-    order: 6,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  },
-  {
-    id: 'code-hosting',
-    name: '代码托管',
-    icon: 'GithubOutlined',
-    order: 7,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  },
-  {
-    id: 'hosting',
-    name: '网站托管',
-    icon: 'CloudOutlined',
-    order: 8,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  },
-];
 
 /**
  * 初始状态

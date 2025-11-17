@@ -11,7 +11,7 @@ import {
 } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { addLink, updateLink, deleteLink, reorderLinks, resetLinks } from '@/store/slices/linksSlice';
+import { addLink, updateLink, deleteLink, resetLinks } from '@/store/slices/linksSlice';
 import { resetCategories, defaultCategories, updateCategory, deleteCategory } from '@/store/slices/categoriesSlice';
 import { DataTable } from '@/components/management/DataTable';
 import { EditLinkModal } from '@/components/modals/EditLinkModal';
