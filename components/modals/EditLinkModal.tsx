@@ -62,7 +62,12 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
         // 编辑模式：填充现有数据
         const bgColor = link.backgroundColor || getDefaultColor();
         const scale = link.iconScale || 0.7;
-        const iconUrl = link.icon || '';
+        let iconUrl = link.icon || '';
+        
+        // 如果图标为空，自动获取 favicon
+        if (!iconUrl && link.url) {
+          iconUrl = getFaviconUrl(link.url, { larger: true }) || '';
+        }
         
         form.setFieldsValue({
           name: link.name,
