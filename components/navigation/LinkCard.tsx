@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, memo, useState } from 'react';
+import React, { useCallback, memo, useState, useEffect, useRef } from 'react';
 import { Card, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { motion } from 'framer-motion';
@@ -104,6 +104,16 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDragg
     zIndex: isDragging ? 1000 : 'auto',
     position: isDragging ? 'relative' : 'static',
   };
+
+  // 使用 ref 跟踪组件挂载状态，避免在卸载后执行操作
+  const isMountedRef = useRef(true);
+  
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // 使用 useCallback 缓存事件处理函数
   const handleClick = useCallback(() => {
@@ -235,13 +245,17 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDragg
           >
           {/* 左侧：背景色 + 图标 */}
           <div 
-            className="flex-none w-25 flex items-center justify-center text-white relative"
+            className="flex-none w-25 flex items-center justify-center text-white relative overflow-hidden"
             style={{ 
               backgroundColor: link.backgroundColor || '#bae0ff',
             }}
             aria-hidden="true"
-          >
+          > 
             {renderIcon}
+            {
+              (link.backgroundColor === '#ffffff' || link.backgroundColor === 'rgb(255, 255, 255)' || link.backgroundColor?.indexOf('rgba(255, 255, 255') === 0) &&
+              <div className='absolute right-0 top-7/32 h-9/16 w-0 border-r border-card-border z-0'></div>
+            }
           </div>
           
           {/* 右侧：名称 + 描述 */}
