@@ -26,7 +26,7 @@ function createLink(
     description,
     category,
     icon,
-    backgroundColor: backgroundColor || '#1890ff',
+    backgroundColor: backgroundColor || '#bae0ff',
     iconScale: 0.7,
     tags: [],
     order: 0,

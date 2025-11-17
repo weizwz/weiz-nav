@@ -91,7 +91,7 @@ export const DataTable: React.FC<DataTableProps> = ({
   onSelectionChange,
 }) => {
   const [internalSelectedRowKeys, setInternalSelectedRowKeys] = useState<React.Key[]>([]);
-  const [pageSize, setPageSize] = useState(50);
+  const [pageSize, setPageSize] = useState(100);
   const [currentPage, setCurrentPage] = useState(1);
 
   // 使用外部传入的 selectedRowKeys 或内部状态
@@ -195,9 +195,9 @@ export const DataTable: React.FC<DataTableProps> = ({
         <div className="flex items-center gap-2">
           <div
             className="w-6 h-6 rounded border border-gray-300"
-            style={{ backgroundColor: color || '#1890ff' }}
+            style={{ backgroundColor: color || '#bae0ff' }}
           />
-          <span className="text-xs text-gray-500">{color || '#1890ff'}</span>
+          <span className="text-xs text-gray-500">{color || '#bae0ff'}</span>
         </div>
       ),
     },
@@ -280,7 +280,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                 setCurrentPage(page);
                 setPageSize(size);
               },
-              pageSizeOptions: ['10', '20', '50', '100'],
+              pageSizeOptions: ['50', '100', '150', '200'],
             }}
             scroll={{ x: 1200 }}
             className="[&_.ant-empty]:z-0"

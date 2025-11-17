@@ -237,7 +237,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDragg
           <div 
             className="flex-none w-25 flex items-center justify-center text-white relative"
             style={{ 
-              backgroundColor: link.backgroundColor || '#1890ff',
+              backgroundColor: link.backgroundColor || '#bae0ff',
             }}
             aria-hidden="true"
           >
