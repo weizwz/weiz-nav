@@ -2,9 +2,11 @@
 
 <div align="center">
 
-![Logo](./public/logo.png)
+![](https://p.weizwz.com/nav/20251118_175016_3ab1473ede1b43e9.webp)
 
-现代化的个人前端导航网站，为开发者提供高效、美观的资源导航体验。全程使用 Kiro 的 Spec 模式开发，感谢 Claude Sonnet 4.5
+现代化的个人前端导航网站，为开发者提供高效、美观的资源导航体验。
+
+全程使用 Kiro 的 Spec 模式开发，感谢 Claude Sonnet 4.5
 
 [![Next.js](https://img.shields.io/badge/Next.js-15.x-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
@@ -12,7 +14,7 @@
 [![Ant Design](https://img.shields.io/badge/Ant%20Design-5.x-1890ff)](https://ant.design/)
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 
-[在线演示](#) | [快速开始](#快速开始) | [功能特性](#功能特性) | [部署指南](#部署)
+[在线演示](https://nav.weizwz.com) | [快速开始](#-快速开始) | [功能特性](#-功能特性) | [部署指南](#-部署)
 
 </div>
 
