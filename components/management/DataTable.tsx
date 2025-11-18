@@ -335,7 +335,7 @@ export const DataTable: React.FC<DataTableProps> = ({
           current: currentPage,
           pageSize: pageSize,
           showSizeChanger: true,
-          showTotal: (total) => {
+          showTotal: () => {
             const categoryCount = treeData.length;
             const linkCount = links.length;
             return `共 ${categoryCount} 个分类，${linkCount} 条链接`;

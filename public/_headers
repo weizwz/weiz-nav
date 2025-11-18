@@ -3,28 +3,94 @@
 
 # 所有页面的通用头
 /*
+  # 安全头
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+  
+  # 内容安全策略（CSP）
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none';
+  
+  # 性能优化
+  X-DNS-Prefetch-Control: on
 
-# 静态资源缓存（1年）
+# 静态资源缓存（1年）- 带版本哈希的文件
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
 
-# 图片资源缓存（1周）
+# JavaScript 和 CSS 文件
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: application/javascript; charset=utf-8
+
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: text/css; charset=utf-8
+
+# 图片资源缓存（1个月）
 /*.jpg
-  Cache-Control: public, max-age=604800
+  Cache-Control: public, max-age=2592000, immutable
+  X-Content-Type-Options: nosniff
+
+/*.jpeg
+  Cache-Control: public, max-age=2592000, immutable
+  X-Content-Type-Options: nosniff
 
 /*.png
-  Cache-Control: public, max-age=604800
+  Cache-Control: public, max-age=2592000, immutable
+  X-Content-Type-Options: nosniff
 
-/*.ico
-  Cache-Control: public, max-age=604800
+/*.webp
+  Cache-Control: public, max-age=2592000, immutable
+  X-Content-Type-Options: nosniff
 
 /*.svg
-  Cache-Control: public, max-age=604800
+  Cache-Control: public, max-age=2592000, immutable
+  Content-Type: image/svg+xml; charset=utf-8
 
-# HTML 文件不缓存
+/*.ico
+  Cache-Control: public, max-age=2592000, immutable
+
+# 字体文件缓存（1年）
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: font/woff
+
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: font/woff2
+
+/*.ttf
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: font/ttf
+
+/*.eot
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: application/vnd.ms-fontobject
+
+# HTML 文件不缓存（确保更新及时）
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
+  X-Content-Type-Options: nosniff
+
+# JSON 文件
+/*.json
+  Cache-Control: public, max-age=0, must-revalidate
+  Content-Type: application/json; charset=utf-8
+
+# Manifest 文件
+/manifest.json
+  Cache-Control: public, max-age=86400
+  Content-Type: application/manifest+json; charset=utf-8
+
+# Robots 和 Sitemap
+/robots.txt
+  Cache-Control: public, max-age=86400
+  Content-Type: text/plain; charset=utf-8
+
+/sitemap.xml
+  Cache-Control: public, max-age=86400
+  Content-Type: application/xml; charset=utf-8

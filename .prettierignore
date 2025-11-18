@@ -1,0 +1,27 @@
+# 依赖
+node_modules
+.pnp
+.pnp.js
+
+# 构建输出
+.next
+out
+build
+dist
+
+# 缓存
+.cache
+*.tsbuildinfo
+
+# 日志
+*.log
+
+# 环境变量
+.env*.local
+
+# 其他
+.DS_Store
+*.pem
+pnpm-lock.yaml
+package-lock.json
+yarn.lock

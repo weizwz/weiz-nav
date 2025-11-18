@@ -30,7 +30,6 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [fetchingIcon, setFetchingIcon] = useState(false);
   const [iconType, setIconType] = useState<'1' | '2'>('1'); // 1: Favicon, 2: 自定义
   const [previewIcon, setPreviewIcon] = useState<string>('');
   const [previewBgColor, setPreviewBgColor] = useState<string>(getDefaultColor());
@@ -303,7 +302,6 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
           <Input
             placeholder="https://example.com"
             onChange={handleUrlChange}
-            disabled={fetchingIcon}
           />
         </Form.Item>
 

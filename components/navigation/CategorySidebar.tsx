@@ -108,7 +108,7 @@ const DraggableCategoryItem: React.FC<DraggableCategoryItemProps> = ({
               : 'hover:bg-blue-100 dark:hover:bg-blue-500/50 text-gray-600 dark:text-gray-400'
             }
           `}
-          onClick={(e) => {
+          onClick={() => {
             // 只有在没有拖拽的情况下才触发点击
             if (!isDragging) {
               onSelect(category.name);

@@ -10,8 +10,6 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-  DragOverlay,
-  Modifier,
 } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -48,7 +46,6 @@ const LinkGridBase: React.FC<LinkGridProps> = ({
   const currentCategory = useAppSelector((state) => state.settings.currentCategory || '主页');
   const searchQuery = useAppSelector((state) => state.search.query);
   const searchResults = useAppSelector((state) => state.search.results);
-  const isSearching = useAppSelector((state) => state.search.isSearching);
 
   // 配置拖拽传感器 - 需要移动 8px 才触发拖拽，避免与点击冲突
   const sensors = useSensors(
@@ -63,7 +60,7 @@ const LinkGridBase: React.FC<LinkGridProps> = ({
   );
 
   // 限制拖拽范围的修饰符
-  const restrictToParentElement: Modifier = ({ transform, containerNodeRect, draggingNodeRect }) => {
+  const restrictToParentElement = ({ transform, containerNodeRect, draggingNodeRect }: any) => {
     if (!containerNodeRect || !draggingNodeRect) {
       return transform;
     }

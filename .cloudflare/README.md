@@ -11,7 +11,7 @@ Wrangler CLI 的配置文件，用于命令行部署。
 
 ```toml
 name = "weiz-nav"                    # 项目名称
-compatibility_date = "2024-11-18"    # 兼容性日期
+compatibility_date = "2025-11-18"    # 兼容性日期
 pages_build_output_dir = "out"       # 构建输出目录
 ```
 
@@ -184,8 +184,8 @@ wrangler login
 
 ## 相关文档
 
-- [快速开始](../../QUICKSTART.md)
-- [完整部署指南](../../DEPLOYMENT.md)
+- [快速开始](../.kiro/specs/frontend-navigation-site/QUICKSTART.md)
+- [完整部署指南](../.kiro/specs/frontend-navigation-site/DEPLOYMENT.md)
 - [GitHub Actions 配置](../.github/CLOUDFLARE_SETUP.md)
 
 ## 支持

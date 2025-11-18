@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { FloatButton, Drawer, Button } from 'antd';
-import { PlusOutlined, MenuOutlined } from '@ant-design/icons';
+import { FloatButton, Drawer } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addLink, updateLink, deleteLink, loadLinks } from '@/store/slices/linksSlice';
 import { storageService } from '@/services/storage';

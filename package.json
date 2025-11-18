@@ -5,14 +5,21 @@
   "scripts": {
     "dev": "next dev",
     "dev:https": "node server.js",
+    "dev:turbo": "next dev --turbo",
     "generate-cert": "node scripts/generate-cert.js",
     "build": "next build",
+    "build:analyze": "ANALYZE=true next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "clean": "rm -rf .next out node_modules/.cache",
     "serve:static": "npx serve@latest out -p 3000",
     "deploy:vercel": "vercel --prod",
     "deploy:cloudflare": "wrangler pages deploy out --project-name=weiz-nav",
-    "deploy": "pnpm deploy:cloudflare"
+    "deploy": "pnpm deploy:cloudflare",
+    "prebuild": "pnpm clean"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.24.0",

@@ -213,7 +213,7 @@ TTL: 自动
 
 ```toml
 name = "weiz-nav"
-compatibility_date = "2024-11-18"
+compatibility_date = "2025-11-18"
 pages_build_output_dir = "out"
 
 [build]

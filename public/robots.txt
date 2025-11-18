@@ -1,0 +1,11 @@
+# robots.txt for weiz-nav
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://nav.weizwz.com/sitemap.xml
+
+# 禁止爬取的路径（如果有）
+# Disallow: /api/
+# Disallow: /admin/

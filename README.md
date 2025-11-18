@@ -2,7 +2,7 @@
 
 现代化的个人前端导航网站，基于 Next.js 15 构建。
 
-> 🚀 **快速部署**：查看 [QUICKSTART.md](./QUICKSTART.md) 了解如何在 5 分钟内部署到 Cloudflare Pages
+> 🚀 **快速部署**：查看 [QUICKSTART.md](./.kiro/specs/frontend-navigation-site/QUICKSTART.md) 了解如何在 5 分钟内部署到 Cloudflare Pages
 
 ## 技术栈
 
