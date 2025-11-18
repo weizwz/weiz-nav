@@ -15,9 +15,8 @@ export const LinkGridSkeleton: React.FC = () => {
       {Array.from({ length: 12 }).map((_, index) => (
         <Card 
           key={index} 
-          className="transition-theme"
+          className="transition-theme h-22"
           style={{ 
-            height: 120,
             backgroundColor: 'var(--background)',
             borderColor: 'var(--border)',
           }}
@@ -25,18 +24,24 @@ export const LinkGridSkeleton: React.FC = () => {
             body: {
               height: '100%',
               display: 'flex',
-              flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
-              padding: '16px',
+              padding: '0',
+              paddingRight: '16px',
             }
           }}
         >
-          <Skeleton 
-            active 
-            avatar={{ size: 48, shape: 'square' }}
+          <Skeleton.Avatar
+            active
+            size={86}
+            shape='square'
+            className='rounded-l-xl overflow-hidden'
+          />
+          <Skeleton
+            active
+            avatar={false}
             paragraph={{ rows: 1 }}
-            title={false}
+            title={true}
+            className='flex-1 h-10 pl-5'
           />
         </Card>
       ))}
