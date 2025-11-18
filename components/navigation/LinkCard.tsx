@@ -41,7 +41,7 @@ const IconWithFallback: React.FC<{
         src={fallbackUrl} 
         alt={`${alt}的图标`}
         loading="lazy"
-        className="w-25 h-25 object-contain"
+        className="w-22 h-22 object-contain"
         style={{ 
           transform: `scale(${scale})`,
         }}
@@ -59,7 +59,7 @@ const IconWithFallback: React.FC<{
       src={src} 
       alt={`${alt}的图标`}
       loading="lazy"
-      className="w-25 h-25 object-contain"
+      className="w-22 h-22 object-contain"
       style={{ 
         transform: `scale(${scale})`,
       }}
@@ -234,7 +234,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDragg
             tabIndex={0}
             role="button"
             aria-label={`打开 ${link.name}${link.description ? `，${link.description}` : ''}`}
-            className="link-card h-25 box-content cursor-pointer overflow-hidden rounded-xl"
+            className="link-card h-22 box-content cursor-pointer overflow-hidden rounded-xl"
             styles={{
               body: {
                 height: '100%',
@@ -245,7 +245,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDragg
           >
           {/* 左侧：背景色 + 图标 */}
           <div 
-            className="flex-none w-25 flex items-center justify-center text-white relative overflow-hidden"
+            className="flex-none w-22 flex items-center justify-center text-white relative overflow-hidden dark:brightness-[0.8]"
             style={{ 
               backgroundColor: link.backgroundColor || '#bae0ff',
             }}
@@ -259,7 +259,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDragg
           </div>
           
           {/* 右侧：名称 + 描述 */}
-          <div className="flex-1 flex flex-col justify-center p-4 bg-(--background-main) gap-1">
+          <div className="flex-1 flex flex-col justify-center p-3 bg-(--background-main) gap-1">
             {/* 名称 */}
             <div className="text-[15px] font-semibold text-(--foreground) overflow-hidden text-ellipsis whitespace-nowrap leading-snug">
               {link.name}
