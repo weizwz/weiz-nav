@@ -41,6 +41,8 @@ const IconWithFallback: React.FC<{
         src={fallbackUrl} 
         alt={`${alt}的图标`}
         loading="lazy"
+        decoding="async"
+        crossOrigin="anonymous"
         className="w-22 h-22 object-contain"
         style={{ 
           transform: `scale(${scale})`,
@@ -59,6 +61,8 @@ const IconWithFallback: React.FC<{
       src={src} 
       alt={`${alt}的图标`}
       loading="lazy"
+      decoding="async"
+      crossOrigin="anonymous"
       className="w-22 h-22 object-contain"
       style={{ 
         transform: `scale(${scale})`,
