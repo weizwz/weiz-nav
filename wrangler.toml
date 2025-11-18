@@ -3,13 +3,6 @@ compatibility_date = "2025-11-18"
 
 pages_build_output_dir = "out"
 
-[build]
-command = "pnpm build"
-
-[build.upload]
-format = "directory"
-dir = "out"
-
 # 环境变量配置（如需要）
 # [env.production.vars]
 # NEXT_PUBLIC_API_URL = "https://api.example.com"
