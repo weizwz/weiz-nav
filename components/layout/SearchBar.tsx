@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Input, Dropdown, Space } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { performDebouncedSearch } from '@/store/slices/searchSlice';
@@ -88,19 +89,49 @@ export default function SearchBar() {
   }, [dispatch, settings]);
 
   /**
+   * 搜索引擎图标组件，支持加载失败回退
+   */
+  const EngineIcon: React.FC<{ iconUrl: string; name: string; size?: number }> = ({ iconUrl, name, size = 20 }) => {
+    const [hasError, setHasError] = useState(false);
+    const faviconUrl = getFaviconUrl(iconUrl);
+
+    // 如果图标加载失败，显示默认搜索图标
+    if (hasError || !faviconUrl) {
+      return (
+        <SearchOutlined 
+          style={{ 
+            fontSize: size, 
+            display: 'flex', 
+            alignItems: 'center',
+            color: 'inherit'
+          }} 
+        />
+      );
+    }
+
+    return (
+      <img 
+        src={faviconUrl} 
+        alt={`${name} 图标`}
+        width={size}
+        height={size}
+        style={{ objectFit: 'contain', borderRadius: '50%' }}
+        onError={() => {
+          console.warn(`搜索引擎图标加载失败: ${faviconUrl}`);
+          setHasError(true);
+        }}
+      />
+    );
+  };
+
+  /**
    * 构建搜索引擎下拉菜单 - 使用 useMemo 缓存
    */
   const menuItems: MenuProps['items'] = React.useMemo(() => SEARCH_ENGINES.map((engine) => ({
     key: engine.id,
     label: (
       <Space>
-        <img 
-          src={getFaviconUrl(engine.icon) || ''} 
-          alt={`${engine.name} 图标`}
-          width={16}
-          height={16}
-          style={{ objectFit: 'contain', borderRadius: '50%' }}
-        />
+        <EngineIcon iconUrl={engine.icon} name={engine.name} size={16} />
         <span>{engine.name}</span>
       </Space>
     ),
@@ -111,16 +142,7 @@ export default function SearchBar() {
    * 获取搜索引擎图标
    */
   const getEngineIcon = React.useCallback((iconUrl: string) => {
-    const faviconUrl = getFaviconUrl(iconUrl);
-    return (
-      <img 
-        src={faviconUrl || ''} 
-        alt={`${currentEngine.name} 图标`}
-        width={20}
-        height={20}
-        style={{ objectFit: 'contain', borderRadius: '50%' }}
-      />
-    );
+    return <EngineIcon iconUrl={iconUrl} name={currentEngine.name} size={20} />;
   }, [currentEngine.name]);
 
   /**

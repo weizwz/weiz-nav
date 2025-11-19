@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Settings, ThemeMode, LayoutMode, UpdateSettingsInput } from '@/types';
+import { getDefaultCategoryName } from '@/services/defaultData';
 
 /**
  * Settings 状态接口
@@ -18,7 +19,7 @@ const defaultSettings: Settings = {
   theme: 'system',
   searchEngine: 'google',
   layout: 'grid',
-  currentCategory: '常用工具',
+  currentCategory: getDefaultCategoryName(),
   showDescription: true,
   gridColumns: 6,
 };

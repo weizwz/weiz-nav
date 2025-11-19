@@ -257,6 +257,38 @@ sequenceDiagram
 - 悬停效果：轻微上浮 + 阴影增强
 - 动画：使用 framer-motion 实现
 
+**图标加载策略（多级回退机制）:**
+1. **第一级：自定义图标**
+   - 如果用户提供了自定义图标 URL，优先加载
+   - 使用 `<img>` 标签的 `onError` 事件监听加载失败
+   - 设置 `loading="lazy"` 和 `decoding="async"` 优化性能
+
+2. **第二级：Favicon 回退**
+   - 当自定义图标加载失败时，自动尝试加载网站的 favicon
+   - 使用 `getFaviconUrl()` 函数获取 favicon URL
+   - 同样监听 `onError` 事件处理加载失败
+
+3. **第三级：默认图标**
+   - 当所有图片加载都失败时，显示 Ant Design 的 `LinkOutlined` 图标
+   - 确保默认图标大小与自定义图标保持一致
+   - 使用 `iconScale` 属性控制图标缩放
+
+**图标加载实现细节:**
+- 使用 React state 跟踪加载状态（`hasError`, `faviconError`, `imageLoaded`, `faviconLoaded`）
+- 通过 CSS `display` 属性控制图标显示/隐藏，避免显示破损图片
+- 在控制台记录加载失败的警告信息，便于调试
+- 使用 `onLoad` 事件标记图片成功加载，防止误判
+
+**IconWithFallback 子组件:**
+```typescript
+interface IconWithFallbackProps {
+  src: string;           // 主图标 URL
+  alt: string;           // 图标描述
+  fallbackUrl?: string;  // 回退 favicon URL
+  scale?: number;        // 图标缩放比例（默认 0.8）
+}
+```
+
 **右键菜单:**
 - 使用 Ant Design Dropdown 组件
 - 菜单项：编辑、删除

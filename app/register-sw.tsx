@@ -58,9 +58,21 @@ export default function RegisterServiceWorker() {
         let refreshing = false;
         navigator.serviceWorker.addEventListener('controllerchange', () => {
           if (refreshing) return;
+          
+          // 检查是否是首次加载（没有旧的 controller）
+          const isFirstLoad = !navigator.serviceWorker.controller;
+          if (isFirstLoad) {
+            console.log('首次加载 Service Worker，无需刷新');
+            return;
+          }
+          
           refreshing = true;
-          console.log('Service Worker 已更新，刷新页面...');
-          window.location.reload();
+          console.log('Service Worker 已更新，3秒后刷新页面...');
+          
+          // 延迟刷新，给用户时间看到提示
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
         });
       });
     }

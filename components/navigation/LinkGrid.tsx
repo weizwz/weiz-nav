@@ -21,6 +21,7 @@ import { reorderLinks } from '@/store/slices/linksSlice';
 import { LinkCard } from './LinkCard';
 import { Link } from '@/types/link';
 import { showSuccess } from '@/utils/feedback';
+import { getDefaultCategoryName } from '@/services/defaultData';
 
 interface LinkGridProps {
   onEdit?: (link: Link) => void;
@@ -43,7 +44,7 @@ const LinkGridBase: React.FC<LinkGridProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const links = useAppSelector((state) => state.links.items);
-  const currentCategory = useAppSelector((state) => state.settings.currentCategory || '主页');
+  const currentCategory = useAppSelector((state) => state.settings.currentCategory || getDefaultCategoryName());
   const searchQuery = useAppSelector((state) => state.search.query);
   const searchResults = useAppSelector((state) => state.search.results);
 

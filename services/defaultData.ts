@@ -187,3 +187,11 @@ export const defaultCategories: Category[] = (() => {
     updatedAt: Date.now(),
   }));
 })();
+
+/**
+ * 获取默认分类名称
+ * 返回第一个分类的名称，如果没有分类则返回空字符串
+ */
+export const getDefaultCategoryName = (): string => {
+  return defaultCategories.length > 0 ? defaultCategories[0].name : '';
+};

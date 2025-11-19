@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![](https://p.weizwz.com/nav/20251118_175016_3ab1473ede1b43e9.webp)
+![](https://p.weizwz.com/nav/20251119_170634_d89c36024f0efbc4.webp)
 
 现代化的个人前端导航网站，为开发者提供高效、美观的资源导航体验
 
@@ -14,7 +14,7 @@
 [![Ant Design](https://img.shields.io/badge/Ant%20Design-5.x-1890ff)](https://ant.design/)
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 
-[在线演示](https://nav.weizwz.com) | [快速开始](#-快速开始) | [文档](./.kiro/specs/frontend-navigation-site/) | [部署指南](./.kiro/specs/frontend-navigation-site/QUICKSTART.md)
+<a href="https://nav.weizwz.com" target="_blank">在线演示</a> | [快速开始](#-快速开始) | [文档](./.kiro/specs/frontend-navigation-site/) | [部署指南](./.kiro/specs/frontend-navigation-site/QUICKSTART.md)
 
 </div>
 

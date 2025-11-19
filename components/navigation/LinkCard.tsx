@@ -11,6 +11,23 @@ import { Link } from '@/types/link';
 import { getFaviconUrl } from '@/api/favicon';
 
 /**
+ * 判断颜色是否为白色或接近白色
+ */
+const isWhiteColor = (color?: string): boolean => {
+  if (!color) return false;
+  const normalizedColor = color.toLowerCase().trim();
+  return (
+    normalizedColor === '#ffffff' ||
+    normalizedColor === '#fff' ||
+    normalizedColor === 'white' ||
+    normalizedColor === 'rgb(255, 255, 255)' ||
+    normalizedColor === 'rgb(255,255,255)' ||
+    normalizedColor.startsWith('rgba(255, 255, 255') ||
+    normalizedColor.startsWith('rgba(255,255,255')
+  );
+};
+
+/**
  * 图标组件，支持多级回退
  * 1. 用户自定义图标
  * 2. Favicon API 图标
@@ -21,22 +38,32 @@ const IconWithFallback: React.FC<{
   alt: string; 
   fallbackUrl?: string;
   scale?: number;
-}> = ({ src, alt, fallbackUrl, scale = 0.8 }) => {
+  backgroundColor?: string;
+}> = ({ src, alt, fallbackUrl, scale = 0.8, backgroundColor }) => {
   const [hasError, setHasError] = useState(false);
   const [faviconError, setFaviconError] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [faviconLoaded, setFaviconLoaded] = useState(false);
 
-  // 计算图标大小（基础大小 60px）
-  const iconSize = Math.round(60 * scale);
-
-  // 如果用户图标和 favicon 都失败，显示默认图标
-  if (hasError && faviconError) {
-    const DefaultIcon = AntdIcons.LinkOutlined;
-    return <DefaultIcon style={{ fontSize: iconSize }} aria-label={`${alt}的默认图标`} />;
+  // 第一级：尝试加载用户自定义图标
+  if (!hasError) {
+    return (
+      <img 
+        src={src} 
+        alt={`${alt}的图标`}
+        loading="lazy"
+        decoding="async"
+        className="w-22 h-22 object-contain"
+        style={{ 
+          transform: `scale(${scale})`,
+        }}
+        onError={() => {
+          console.warn(`图标加载失败: ${src}`);
+          setHasError(true);
+        }}
+      />
+    );
   }
 
-  // 如果用户图标失败，尝试 favicon
+  // 第二级：用户图标失败，尝试加载 Favicon
   if (hasError && fallbackUrl && !faviconError) {
     return (
       <img 
@@ -48,37 +75,28 @@ const IconWithFallback: React.FC<{
         style={{ 
           transform: `scale(${scale})`,
         }}
-        onLoad={() => setFaviconLoaded(true)}
         onError={() => {
-          // 只有在图片未成功加载时才标记为错误
-          if (!faviconLoaded) {
-            console.warn(`Favicon 加载失败: ${fallbackUrl}`);
-            setFaviconError(true);
-          }
+          console.warn(`Favicon 加载失败: ${fallbackUrl}`);
+          setFaviconError(true);
         }}
       />
     );
   }
 
-  // 显示用户自定义图标
+  // 第三级：所有图片都失败，显示默认图标
+  // 默认图标使用固定大小（48px），不受 iconScale 影响
+  // 如果背景是白色，使用主题色；否则使用白色
+  const DefaultIcon = AntdIcons.LinkOutlined;
+  const defaultIconColor = isWhiteColor(backgroundColor) ? '#1890ff' : '#ffffff';
+  const defaultIconSize = 48;
+  
   return (
-    <img 
-      src={src} 
-      alt={`${alt}的图标`}
-      loading="lazy"
-      decoding="async"
-      className="w-22 h-22 object-contain"
+    <DefaultIcon 
       style={{ 
-        transform: `scale(${scale})`,
-      }}
-      onLoad={() => setImageLoaded(true)}
-      onError={() => {
-        // 只有在图片未成功加载时才标记为错误
-        if (!imageLoaded) {
-          console.warn(`图标加载失败: ${src}`);
-          setHasError(true);
-        }
-      }}
+        fontSize: defaultIconSize,
+        color: defaultIconColor,
+      }} 
+      aria-label={`${alt}的默认图标`} 
     />
   );
 };
@@ -175,43 +193,65 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDragg
     // 获取 favicon URL 作为回退选项，使用 larger=true 获取更高质量的图标
     const faviconUrl = getFaviconUrl(link.url, { larger: true });
     const scale = link.iconScale || 0.7;
-    const iconSize = Math.round(60 * scale);
+    const backgroundColor = link.backgroundColor;
 
-    // 情况1: 用户提供了自定义图标 URL
-    if (link.icon && (link.icon.startsWith('http://') || link.icon.startsWith('https://') || link.icon.startsWith('/'))) {
+    // 判断是否为 favicon.im 的 URL
+    const isFaviconUrl = (url: string) => {
+      return url.includes('favicon.im/');
+    };
+
+    // 情况1: 用户提供了自定义图标 URL（但不是 favicon.im 的 URL）
+    if (link.icon && 
+        (link.icon.startsWith('http://') || link.icon.startsWith('https://') || link.icon.startsWith('/')) &&
+        !isFaviconUrl(link.icon)) {
       return (
         <IconWithFallback 
           src={link.icon} 
           alt={link.name}
           fallbackUrl={faviconUrl || undefined}
           scale={scale}
+          backgroundColor={backgroundColor}
         />
       );
     }
 
     // 情况2: 用户提供了 Ant Design 图标名称
-    if (link.icon) {
+    if (link.icon && !link.icon.startsWith('http://') && !link.icon.startsWith('https://') && !link.icon.startsWith('/')) {
       const IconComponent = (AntdIcons as any)[link.icon];
       if (IconComponent) {
-        return <IconComponent style={{ fontSize: iconSize }} />;
+        const antdIconSize = Math.round(60 * scale);
+        return <IconComponent style={{ fontSize: antdIconSize }} />;
       }
     }
 
-    // 情况3: 没有自定义图标，尝试使用 favicon
+    // 情况3: 没有自定义图标，或者图标是 favicon.im URL，尝试使用 favicon
     if (faviconUrl) {
       return (
         <IconWithFallback 
           src={faviconUrl} 
           alt={link.name}
           scale={scale}
+          backgroundColor={backgroundColor}
         />
       );
     }
 
     // 情况4: 所有方式都失败，显示默认图标
+    // 默认图标使用固定大小（48px），不受 iconScale 影响
+    // 如果背景是白色，使用主题色；否则使用白色
     const DefaultIcon = AntdIcons.LinkOutlined;
-    return <DefaultIcon style={{ fontSize: iconSize }} />;
-  }, [link.icon, link.name, link.url, link.iconScale]);
+    const defaultIconColor = isWhiteColor(backgroundColor) ? '#1890ff' : '#ffffff';
+    const defaultIconSize = 48;
+    
+    return (
+      <DefaultIcon 
+        style={{ 
+          fontSize: defaultIconSize,
+          color: defaultIconColor,
+        }} 
+      />
+    );
+  }, [link.icon, link.name, link.url, link.iconScale, link.backgroundColor]);
 
   return (
     <div

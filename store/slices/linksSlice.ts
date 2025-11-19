@@ -59,9 +59,34 @@ const linksSlice = createSlice({
     updateLink: (state, action: PayloadAction<UpdateLinkInput>) => {
       const index = state.items.findIndex(link => link.id === action.payload.id);
       if (index !== -1) {
+        const oldLink = state.items[index];
+        const newCategory = action.payload.category;
+        
+        // 检查分类是否改变
+        const categoryChanged = newCategory && newCategory !== oldLink.category;
+        
+        // 如果分类改变，将链接移到新分类的最后
+        let newOrder = oldLink.order;
+        if (categoryChanged) {
+          // 找到新分类中所有链接的最大 order 值
+          const linksInNewCategory = state.items.filter(
+            link => link.category === newCategory && link.id !== action.payload.id
+          );
+          
+          if (linksInNewCategory.length > 0) {
+            const maxOrder = Math.max(...linksInNewCategory.map(link => link.order));
+            newOrder = maxOrder + 1;
+          } else {
+            // 如果新分类中没有其他链接，使用当前所有链接的最大 order + 1
+            const maxOrder = Math.max(...state.items.map(link => link.order));
+            newOrder = maxOrder + 1;
+          }
+        }
+        
         state.items[index] = {
-          ...state.items[index],
+          ...oldLink,
           ...action.payload,
+          order: newOrder,
           updatedAt: Date.now(),
         };
         state.error = null;
