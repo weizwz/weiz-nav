@@ -88,6 +88,7 @@ pnpm deploy
 - [快速开始](./.kiro/specs/frontend-navigation-site/QUICKSTART.md) - 5 分钟快速部署
 - [部署指南](./.kiro/specs/frontend-navigation-site/DEPLOYMENT.md) - 详细部署说明
 - [PWA 使用指南](./.kiro/specs/frontend-navigation-site/PWA_GUIDE.md) - PWA 安装和使用
+- [缓存清除指南](./.kiro/specs/frontend-navigation-site/CACHE_CLEAR_GUIDE.md) - 解决缓存问题
 
 **开发文档**
 - [需求文档](./.kiro/specs/frontend-navigation-site/requirements.md) - 功能需求

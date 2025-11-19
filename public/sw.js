@@ -1,7 +1,7 @@
 // Service Worker for PWA
-const CACHE_NAME = 'weiz-nav-v3';
-const RUNTIME_CACHE = 'weiz-nav-runtime-v3';
-const IMAGE_CACHE = 'weiz-nav-images-v3';
+const CACHE_NAME = 'weiz-nav-v4';
+const RUNTIME_CACHE = 'weiz-nav-runtime-v4';
+const IMAGE_CACHE = 'weiz-nav-images-v4';
 
 // 需要预缓存的静态资源
 const PRECACHE_URLS = [

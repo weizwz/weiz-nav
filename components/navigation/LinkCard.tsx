@@ -24,6 +24,8 @@ const IconWithFallback: React.FC<{
 }> = ({ src, alt, fallbackUrl, scale = 0.8 }) => {
   const [hasError, setHasError] = useState(false);
   const [faviconError, setFaviconError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [faviconLoaded, setFaviconLoaded] = useState(false);
 
   // 计算图标大小（基础大小 60px）
   const iconSize = Math.round(60 * scale);
@@ -46,9 +48,13 @@ const IconWithFallback: React.FC<{
         style={{ 
           transform: `scale(${scale})`,
         }}
+        onLoad={() => setFaviconLoaded(true)}
         onError={() => {
-          console.warn(`Favicon 加载失败: ${fallbackUrl}`);
-          setFaviconError(true);
+          // 只有在图片未成功加载时才标记为错误
+          if (!faviconLoaded) {
+            console.warn(`Favicon 加载失败: ${fallbackUrl}`);
+            setFaviconError(true);
+          }
         }}
       />
     );
@@ -65,9 +71,13 @@ const IconWithFallback: React.FC<{
       style={{ 
         transform: `scale(${scale})`,
       }}
+      onLoad={() => setImageLoaded(true)}
       onError={() => {
-        console.warn(`图标加载失败: ${src}`);
-        setHasError(true);
+        // 只有在图片未成功加载时才标记为错误
+        if (!imageLoaded) {
+          console.warn(`图标加载失败: ${src}`);
+          setHasError(true);
+        }
       }}
     />
   );
