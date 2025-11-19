@@ -146,7 +146,7 @@ export default function Home() {
   );
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50 dark:bg-(--background) transition-theme overflow-hidden">
+    <div className="h-screen flex flex-col bg-(--background) transition-theme overflow-hidden">
       {/* 固定顶部 Header */}
       <div className="flex-none">
         <Header onMenuClick={() => setDrawerOpen(true)} />

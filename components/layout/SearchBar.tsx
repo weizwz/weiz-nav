@@ -157,8 +157,8 @@ export default function SearchBar() {
   return (
     <div className="w-full max-w-2xl" role="search" aria-label="搜索导航">
       <Input
-        size="large"
         placeholder="搜索"
+        variant="filled"
         value={inputValue}
         onChange={handleInputChange}
         onKeyDown={handleKeyPress}
@@ -166,7 +166,7 @@ export default function SearchBar() {
         prefix={
           <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomLeft">
             <div 
-              className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity pr-2"
+              className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity pr-1"
               aria-label={`当前搜索引擎：${currentEngine.name}，点击切换搜索引擎`}
               role="button"
               tabIndex={0}
@@ -181,11 +181,7 @@ export default function SearchBar() {
             </div>
           </Dropdown>
         }
-        className="search-bar-modern"
-        style={{
-          borderRadius: '24px',
-          paddingLeft: '12px',
-        }}
+        className="search-bar-modern bg-(--background)! pl-3! shadow-none!"
         aria-label="搜索输入框"
         role="searchbox"
         aria-describedby="search-description"

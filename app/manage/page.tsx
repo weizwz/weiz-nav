@@ -282,9 +282,9 @@ export default function ManagePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto px-4 py-3 sm:px-8">
         {/* 页头 */}
-        <header className="mb-4" role="banner">
+        <header className="mb-3" role="banner">
           <Space direction="vertical" size="small" className="w-full">
             <div className="flex justify-between items-center">
               {/* Logo/标题 */}
@@ -292,9 +292,9 @@ export default function ManagePage() {
                 <img 
                   src="/logo.png" 
                   alt="网站Logo" 
-                  className="w-6 h-6 object-contain"
+                  className="w-5 h-5 object-contain"
                 />
-                <h1 className="text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">
+                <h1 className="text-base font-bold text-gray-800 dark:text-white whitespace-nowrap">
                   数据管理
                 </h1>
               </div>
