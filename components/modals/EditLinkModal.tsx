@@ -367,7 +367,34 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
         </Form.Item>
 
         <Row gutter={16}>
-          <Col span={12}>
+          <Col xs={24} sm={12}>
+            <Form.Item label="背景">
+              <Space.Compact>
+                <Form.Item name="backgroundColor" noStyle>
+                  <ColorPicker
+                    presets={[
+                      {
+                        label: '预设颜色',
+                        colors: PRESET_COLORS,
+                      },
+                    ]}
+                    showText
+                    format="hex"
+                    onChange={handleBgColorChange}
+                  />
+                </Form.Item>
+                {supportsEyeDropper && (
+                  <Button
+                    icon={<BgColorsOutlined />}
+                    onClick={handleEyeDropper}
+                    title="使用吸管工具选择颜色"
+                  />
+                )}
+              </Space.Compact>
+            </Form.Item>
+          </Col>
+          
+          <Col xs={24} sm={12}>
             <Form.Item label="预览">
               <div className="flex items-center gap-3">
                 {/* 预览卡片 */}
@@ -424,33 +451,6 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
                   {Math.round(iconScale * 100)}%
                 </div>
               </div>
-            </Form.Item>
-          </Col>
-          
-          <Col span={12}>
-            <Form.Item label="背景">
-              <Space.Compact>
-                <Form.Item name="backgroundColor" noStyle>
-                  <ColorPicker
-                    presets={[
-                      {
-                        label: '预设颜色',
-                        colors: PRESET_COLORS,
-                      },
-                    ]}
-                    showText
-                    format="hex"
-                    onChange={handleBgColorChange}
-                  />
-                </Form.Item>
-                {supportsEyeDropper && (
-                  <Button
-                    icon={<BgColorsOutlined />}
-                    onClick={handleEyeDropper}
-                    title="使用吸管工具选择颜色"
-                  />
-                )}
-              </Space.Compact>
             </Form.Item>
           </Col>
         </Row>
