@@ -3,7 +3,7 @@
 import React, { memo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Tooltip } from 'antd';
-import { EditOutlined, MenuOutlined } from '@ant-design/icons';
+import { EditOutlined, MenuOutlined, GithubOutlined } from '@ant-design/icons';
 import SearchBar from './SearchBar';
 import ThemeToggle from './ThemeToggle';
 
@@ -75,6 +75,21 @@ const Header = memo(function Header({ onMenuClick }: HeaderProps) {
                 }}
               />
             </Tooltip>
+            <Tooltip title="GitHub 项目地址" placement="bottom">
+              <Button
+                type="text"
+                icon={<GithubOutlined aria-hidden="true" />}
+                onClick={() => window.open('https://github.com/weizwz/weiz-nav', '_blank', 'noopener,noreferrer')}
+                aria-label="访问 GitHub 项目地址"
+                title="GitHub"
+                className="flex items-center justify-center"
+                style={{
+                  fontSize: '18px',
+                  width: '40px',
+                  height: '40px',
+                }}
+              />
+            </Tooltip>
           </div>
         </div>
 
@@ -118,6 +133,21 @@ const Header = memo(function Header({ onMenuClick }: HeaderProps) {
                   onClick={handleManageClick}
                   aria-label="打开数据管理页面"
                   title="数据管理"
+                  className="flex items-center justify-center"
+                  style={{
+                    fontSize: '18px',
+                    width: '40px',
+                    height: '40px',
+                  }}
+                />
+              </Tooltip>
+              <Tooltip title="GitHub 项目地址" placement="bottom">
+                <Button
+                  type="text"
+                  icon={<GithubOutlined aria-hidden="true" />}
+                  onClick={() => window.open('https://github.com/weizwz/weiz-nav', '_blank', 'noopener,noreferrer')}
+                  aria-label="访问 GitHub 项目地址"
+                  title="GitHub"
                   className="flex items-center justify-center"
                   style={{
                     fontSize: '18px',
