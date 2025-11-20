@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Table, Button, Space, Popconfirm } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, RightOutlined, DownOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { Link } from '@/types/link';
 import { Category } from '@/types/category';
@@ -59,18 +59,19 @@ export const DataTable: React.FC<DataTableProps> = ({
   const categories = useAppSelector((state) => state.categories.items);
 
   // 使用外部传入的 selectedRowKeys 或内部状态
-  const selectedRowKeys = externalSelectedRowKeys !== undefined ? externalSelectedRowKeys : internalSelectedRowKeys;
+  const selectedRowKeys =
+    externalSelectedRowKeys !== undefined ? externalSelectedRowKeys : internalSelectedRowKeys;
 
   // 构建树形数据结构
   const treeData = useMemo(() => {
     const tree: TreeNode[] = [];
 
     // 按分类组织链接
-    categories.forEach(category => {
+    categories.forEach((category) => {
       const categoryLinks = links
-        .filter(link => link.category === category.name)
+        .filter((link) => link.category === category.name)
         .sort((a, b) => a.order - b.order)
-        .map(link => ({
+        .map((link) => ({
           key: link.id,
           id: link.id,
           name: link.name,
@@ -101,9 +102,9 @@ export const DataTable: React.FC<DataTableProps> = ({
 
     // 添加未分类节点（如果有未分类的链接）
     const uncategorizedLinks = links
-      .filter(link => !link.category || link.category === '')
+      .filter((link) => !link.category || link.category === '')
       .sort((a, b) => a.order - b.order)
-      .map(link => ({
+      .map((link) => ({
         key: link.id,
         id: link.id,
         name: link.name,
@@ -136,16 +137,13 @@ export const DataTable: React.FC<DataTableProps> = ({
     return tree.sort((a, b) => a.order - b.order);
   }, [links, categories]);
 
-  // 默认展开所有分类（包括未分类）
+  // 默认展开第一个分类
   useEffect(() => {
-    const allCategoryKeys = categories.map(cat => `category-${cat.id}`);
-    // 如果有未分类链接，也展开未分类节点
-    const hasUncategorized = links.some(link => !link.category || link.category === '');
-    if (hasUncategorized) {
-      allCategoryKeys.push('category-uncategorized');
+    if (categories.length > 0) {
+      const firstCategoryKey = `category-${categories[0].id}`;
+      setExpandedRowKeys([firstCategoryKey]);
     }
-    setExpandedRowKeys(allCategoryKeys);
-  }, [categories, links]);
+  }, [categories]);
 
   // 表格列定义
   const columns: ColumnsType<TreeNode> = [
@@ -153,25 +151,48 @@ export const DataTable: React.FC<DataTableProps> = ({
       title: '名称',
       dataIndex: 'name',
       key: 'name',
-      width: 160,
+      width: 120,
       ellipsis: true,
-      render: (name: string, record: TreeNode) => (
-        <span className={record.isCategory ? 'font-semibold text-base' : ''}>
-          {name}
-        </span>
-      ),
+      render: (name: string, record: TreeNode) =>
+        record.isCategory ? (
+          <span className="font-semibold">{name}</span>
+        ) : record.icon ? (
+          <div className="flex items-center">
+            <div
+              className="w-6 h-6 rounded border border-gray-300 flex justify-center items-center mr-2"
+              style={{ background: record.backgroundColor }}
+            >
+              <img
+                src={record.icon}
+                alt="图标"
+                className="w-4 h-4 object-contain"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            </div>
+            <span> {name} </span>
+          </div>
+        ) : (
+          <span> {name} </span>
+        ),
     },
     {
       title: '地址',
       dataIndex: 'url',
       key: 'url',
-      width: 200,
+      width: 180,
       ellipsis: true,
-      render: (url: string, record: TreeNode) => 
+      render: (url: string, record: TreeNode) =>
         record.isCategory ? (
           <span className="text-gray-400">-</span>
         ) : url ? (
-          <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700">
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-700"
+          >
             {url}
           </a>
         ) : null,
@@ -180,9 +201,9 @@ export const DataTable: React.FC<DataTableProps> = ({
       title: '描述',
       dataIndex: 'description',
       key: 'description',
-      width: 300,
+      width: 240,
       ellipsis: true,
-      render: (description: string, record: TreeNode) => 
+      render: (description: string, record: TreeNode) =>
         record.isCategory ? (
           <span className="text-gray-500">共 {record.children?.length || 0} 条链接</span>
         ) : (
@@ -190,11 +211,11 @@ export const DataTable: React.FC<DataTableProps> = ({
         ),
     },
     {
-      title: '背景颜色',
+      title: '背景',
       dataIndex: 'backgroundColor',
       key: 'backgroundColor',
       width: 100,
-      render: (color: string, record: TreeNode) => 
+      render: (color: string, record: TreeNode) =>
         record.isCategory ? (
           <span className="text-gray-400">-</span>
         ) : (
@@ -210,7 +231,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     {
       title: '操作',
       key: 'action',
-      width: 150,
+      width: 120,
       fixed: 'right',
       render: (_, record: TreeNode) => {
         if (record.isCategory) {
@@ -218,7 +239,7 @@ export const DataTable: React.FC<DataTableProps> = ({
           if (record.id === 'uncategorized') {
             return <span className="text-gray-400">-</span>;
           }
-          
+
           // 分类节点的操作
           const category: Category = {
             id: record.id,
@@ -228,7 +249,7 @@ export const DataTable: React.FC<DataTableProps> = ({
             createdAt: record.createdAt,
             updatedAt: record.updatedAt,
           };
-          
+
           return (
             <Space size="small">
               <Button
@@ -250,19 +271,14 @@ export const DataTable: React.FC<DataTableProps> = ({
                 cancelText="取消"
                 okType="danger"
               >
-                <Button
-                  type="link"
-                  danger
-                  icon={<DeleteOutlined />}
-                  size="small"
-                >
+                <Button type="link" danger icon={<DeleteOutlined />} size="small">
                   删除
                 </Button>
               </Popconfirm>
             </Space>
           );
         }
-        
+
         // 链接节点的操作
         return (
           <Space size="small">
@@ -280,12 +296,7 @@ export const DataTable: React.FC<DataTableProps> = ({
               okText="确定"
               cancelText="取消"
             >
-              <Button
-                type="link"
-                danger
-                icon={<DeleteOutlined />}
-                size="small"
-              >
+              <Button type="link" danger icon={<DeleteOutlined />} size="small">
                 删除
               </Button>
             </Popconfirm>
@@ -300,7 +311,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     selectedRowKeys,
     onChange: (newSelectedRowKeys: React.Key[]) => {
       // 过滤掉分类节点
-      const linkKeys = newSelectedRowKeys.filter(key => !String(key).startsWith('category-'));
+      const linkKeys = newSelectedRowKeys.filter((key) => !String(key).startsWith('category-'));
       if (onSelectionChange) {
         onSelectionChange(linkKeys);
       } else {
@@ -321,15 +332,12 @@ export const DataTable: React.FC<DataTableProps> = ({
         rowKey="key"
         size="middle"
         rowSelection={rowSelection}
-        rowClassName={(record) => 
-          record.isCategory 
-            ? 'category-row' 
-            : ''
-        }
+        rowClassName={(record) => (record.isCategory ? 'category-row' : '')}
         expandable={{
           expandedRowKeys,
+          indentSize: 0,
           onExpandedRowsChange: (keys) => setExpandedRowKeys([...keys]),
-          defaultExpandAllRows: true,
+          // defaultExpandAllRows: true,
         }}
         pagination={{
           current: currentPage,
@@ -347,7 +355,6 @@ export const DataTable: React.FC<DataTableProps> = ({
           pageSizeOptions: ['10', '20', '50', '100'],
         }}
         scroll={{ x: 1200 }}
-        className="[&_.ant-empty]:z-0 [&_.category-row>td]:bg-blue-50! [&_.category-row>td]:dark:bg-blue-900/30! [&_.category-row:hover>td]:bg-blue-100! [&_.category-row:hover>td]:dark:bg-blue-800/40!"
       />
     </div>
   );
