@@ -224,7 +224,7 @@ export const DataTable: React.FC<DataTableProps> = ({
               className="w-6 h-6 rounded border border-gray-300"
               style={{ backgroundColor: color || '#d9d9d9' }}
             />
-            <span className="text-xs text-gray-500">{color || '#d9d9d9'}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-200">{color || '#d9d9d9'}</span>
           </div>
         ),
     },
