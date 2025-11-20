@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Table, Button, Space, Popconfirm } from 'antd';
-import { EditOutlined, DeleteOutlined, RightOutlined, DownOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { Link } from '@/types/link';
 import { Category } from '@/types/category';
