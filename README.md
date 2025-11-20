@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![](https://p.weizwz.com/nav/20251119_170634_d89c36024f0efbc4.webp)
+![](https://p.weizwz.com/nav/20251120_110028_78c15d3713752f31.webp)
 
 现代化的个人前端导航网站，为开发者提供高效、美观的资源导航体验
 

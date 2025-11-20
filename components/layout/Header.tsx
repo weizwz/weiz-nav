@@ -3,7 +3,7 @@
 import React, { memo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Tooltip } from 'antd';
-import { EditOutlined, MenuOutlined, GithubOutlined } from '@ant-design/icons';
+import { MenuOutlined, GithubOutlined, SettingOutlined } from '@ant-design/icons';
 import SearchBar from './SearchBar';
 import ThemeToggle from './ThemeToggle';
 
@@ -37,7 +37,7 @@ const Header = memo(function Header({ onMenuClick }: HeaderProps) {
       className="w-full bg-(--background-main) border-b border-gray-200 dark:border-neutral-700 transition-theme"
       role="banner"
     >
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto px-4 py-3 sm:px-8">
         {/* Desktop 布局 */}
         <div className="hidden md:flex items-center justify-between gap-6">
           {/* Logo/标题 */}
@@ -45,9 +45,9 @@ const Header = memo(function Header({ onMenuClick }: HeaderProps) {
             <img 
               src="/logo.png" 
               alt="网站Logo" 
-              className="w-6 h-6 object-contain"
+              className="w-5 h-5 object-contain"
             />
-            <h1 className="text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">
+            <h1 className="text-base font-bold text-gray-800 dark:text-white whitespace-nowrap">
               唯知导航
             </h1>
           </div>
@@ -58,70 +58,58 @@ const Header = memo(function Header({ onMenuClick }: HeaderProps) {
           </div>
 
           {/* 右侧工具栏 */}
-          <div className="shrink-0 flex items-center gap-2" role="toolbar" aria-label="工具栏">
+          <div className="shrink-0 flex items-center" role="toolbar" aria-label="工具栏">
             <ThemeToggle />
             <Tooltip title="数据管理" placement="bottom">
               <Button
                 type="text"
-                icon={<EditOutlined aria-hidden="true" />}
+                icon={<SettingOutlined aria-hidden="true" />}
+                size='large'
                 onClick={handleManageClick}
                 aria-label="打开数据管理页面"
                 title="数据管理"
                 className="flex items-center justify-center"
-                style={{
-                  fontSize: '18px',
-                  width: '40px',
-                  height: '40px',
-                }}
               />
             </Tooltip>
             <Tooltip title="GitHub 项目地址" placement="bottom">
               <Button
                 type="text"
                 icon={<GithubOutlined aria-hidden="true" />}
+                size='large'
                 onClick={() => window.open('https://github.com/weizwz/weiz-nav', '_blank', 'noopener,noreferrer')}
                 aria-label="访问 GitHub 项目地址"
                 title="GitHub"
                 className="flex items-center justify-center"
-                style={{
-                  fontSize: '18px',
-                  width: '40px',
-                  height: '40px',
-                }}
               />
             </Tooltip>
           </div>
         </div>
 
         {/* Mobile 布局 */}
-        <div className="md:hidden space-y-4">
+        <div className="md:hidden space-y-1">
           {/* 顶部行：标题和工具栏 */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <img 
                 src="/logo.png" 
                 alt="网站Logo" 
-                className="w-7 h-7 object-contain"
+                className="w-5 h-5 object-contain"
               />
-              <h1 className="text-lg font-bold text-gray-900 dark:text-white">
+              <h1 className="text-base font-bold text-gray-800 dark:text-white whitespace-nowrap">
                 唯知导航
               </h1>
             </div>
-            <div className="flex items-center gap-2" role="toolbar" aria-label="工具栏">
+            <div className="flex items-center" role="toolbar" aria-label="工具栏">
               {onMenuClick && (
                 <Tooltip title="分类菜单" placement="bottom">
                   <Button
                     type="text"
                     icon={<MenuOutlined aria-hidden="true" />}
+                    size='large'
                     onClick={onMenuClick}
                     aria-label="打开分类菜单"
                     title="分类菜单"
                     className="flex items-center justify-center lg:hidden"
-                    style={{
-                      fontSize: '18px',
-                      width: '40px',
-                      height: '40px',
-                    }}
                   />
                 </Tooltip>
               )}
@@ -129,38 +117,30 @@ const Header = memo(function Header({ onMenuClick }: HeaderProps) {
               <Tooltip title="数据管理" placement="bottom">
                 <Button
                   type="text"
-                  icon={<EditOutlined aria-hidden="true" />}
+                  icon={<SettingOutlined aria-hidden="true" />}
+                  size='large'
                   onClick={handleManageClick}
                   aria-label="打开数据管理页面"
                   title="数据管理"
                   className="flex items-center justify-center"
-                  style={{
-                    fontSize: '18px',
-                    width: '40px',
-                    height: '40px',
-                  }}
                 />
               </Tooltip>
               <Tooltip title="GitHub 项目地址" placement="bottom">
                 <Button
                   type="text"
                   icon={<GithubOutlined aria-hidden="true" />}
+                  size='large'
                   onClick={() => window.open('https://github.com/weizwz/weiz-nav', '_blank', 'noopener,noreferrer')}
                   aria-label="访问 GitHub 项目地址"
                   title="GitHub"
                   className="flex items-center justify-center"
-                  style={{
-                    fontSize: '18px',
-                    width: '40px',
-                    height: '40px',
-                  }}
                 />
               </Tooltip>
             </div>
           </div>
 
           {/* 搜索栏 - 全宽 */}
-          <div className="w-full">
+          <div className="w-full pb-2">
             <SearchBar />
           </div>
         </div>

@@ -281,134 +281,136 @@ export default function ManagePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto p-4">
-        {/* 页头 */}
-        <header className="mb-4" role="banner">
-          <Space direction="vertical" size="small" className="w-full">
-            <div className="flex justify-between items-center">
-              {/* Logo/标题 */}
-              <div className="flex items-center gap-3 py-2">
-                <img 
-                  src="/logo.png" 
-                  alt="网站Logo" 
-                  className="w-6 h-6 object-contain"
-                />
-                <h1 className="text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">
-                  数据管理
-                </h1>
-              </div>
-              <Button
-                icon={<ArrowLeftOutlined aria-hidden="true" />}
-                onClick={handleBack}
-                type="text"
-                aria-label="返回主页"
-              >
-                返回主页
-              </Button>
+    <div className="h-screen flex flex-col bg-(--background) transition-theme">
+      {/* 页头 */}
+      <header className="flex-none w-full bg-(--background-main) border-b border-gray-200 dark:border-neutral-700 transition-theme" role="banner">
+        <div className="container mx-auto px-4 py-3 sm:px-8 ">
+          <div className="flex justify-between items-center">
+            {/* Logo/标题 */}
+            <div className="flex items-center gap-3 py-2">
+              <img 
+                src="/logo.png" 
+                alt="网站Logo" 
+                className="w-5 h-5 object-contain"
+              />
+              <h1 className="text-base font-bold text-gray-800 dark:text-white whitespace-nowrap">
+                数据管理
+              </h1>
             </div>
-          </Space>
-        </header>
-
-        {/* 导入导出工具栏 */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-4">
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-            <div className="flex flex-wrap items-center gap-4">
-              <ImportExport />
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                已选择 {selectedRowKeys.length} 项
-              </span>
-            </div>
-            <div className='flex flex-wrap gap-2 lg:gap-4'>
-              <Button
-                danger
-                icon={<ReloadOutlined aria-hidden="true" />}
-                onClick={handleResetClick}
-                aria-label="重置数据"
-              >
-                <span className="hidden md:inline">重置数据</span>
-              </Button>
-              <Popconfirm
-                title={`确定要删除选中的 ${selectedRowKeys.length} 个链接吗？`}
-                onConfirm={handleBatchDelete}
-                okText="确定"
-                cancelText="取消"
-                disabled={selectedRowKeys.length === 0}
-              >
-                <Button 
-                  danger
-                  icon={<DeleteOutlined aria-hidden="true" />}
-                  onClick={handleBatchDeleteClick}
-                  aria-label={selectedRowKeys.length > 0 ? `批量删除选中的 ${selectedRowKeys.length} 个链接` : '批量删除'}
-                >
-                  <span className="hidden md:inline">批量删除</span>
-                </Button>
-              </Popconfirm>
-              <Button
-                icon={<TagsOutlined aria-hidden="true" />}
-                onClick={handleBatchCategoryClick}
-                aria-label={selectedRowKeys.length > 0 ? `批量分类选中的 ${selectedRowKeys.length} 个链接` : '批量分类'}
-              >
-                <span className="hidden md:inline">批量分类</span>
-              </Button>
-              <Button
-                type="primary"
-                icon={<PlusOutlined aria-hidden="true" />}
-                onClick={handleAddNew}
-                aria-label="添加新链接"
-              >
-                <span className="hidden sm:inline">添加链接</span>
-              </Button>
-            </div>
+            <Button
+              icon={<ArrowLeftOutlined aria-hidden="true" />}
+              onClick={handleBack}
+              type="text"
+              aria-label="返回主页"
+            >
+              返回主页
+            </Button>
           </div>
         </div>
+      </header>
+      {/* 数据表格 */}
+      <div className='flex-1 overflow-y-auto'>
+        <div className="container flex flex-col mx-auto p-4 sm:px-8">
+          {/* 导入导出工具栏 */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-4">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+              <div className="flex flex-wrap items-center gap-4">
+                <ImportExport />
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  已选择 {selectedRowKeys.length} 项
+                </span>
+              </div>
+              <div className='flex flex-wrap gap-2 lg:gap-4'>
+                <Button
+                  danger
+                  icon={<ReloadOutlined aria-hidden="true" />}
+                  onClick={handleResetClick}
+                  aria-label="重置数据"
+                >
+                  <span className="hidden md:inline">重置数据</span>
+                </Button>
+                <Popconfirm
+                  title={`确定要删除选中的 ${selectedRowKeys.length} 个链接吗？`}
+                  onConfirm={handleBatchDelete}
+                  okText="确定"
+                  cancelText="取消"
+                  disabled={selectedRowKeys.length === 0}
+                >
+                  <Button 
+                    danger
+                    icon={<DeleteOutlined aria-hidden="true" />}
+                    onClick={handleBatchDeleteClick}
+                    aria-label={selectedRowKeys.length > 0 ? `批量删除选中的 ${selectedRowKeys.length} 个链接` : '批量删除'}
+                  >
+                    <span className="hidden md:inline">批量删除</span>
+                  </Button>
+                </Popconfirm>
+                <Button
+                  icon={<TagsOutlined aria-hidden="true" />}
+                  onClick={handleBatchCategoryClick}
+                  aria-label={selectedRowKeys.length > 0 ? `批量分类选中的 ${selectedRowKeys.length} 个链接` : '批量分类'}
+                >
+                  <span className="hidden md:inline">批量分类</span>
+                </Button>
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined aria-hidden="true" />}
+                  onClick={handleAddNew}
+                  aria-label="添加新链接"
+                >
+                  <span className="hidden sm:inline">添加链接</span>
+                </Button>
+              </div>
+            </div>
+          </div>
 
-        {/* 数据表格 */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm px-4 pt-4">
-          <DataTable
-            links={links}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onEditCategory={handleEditCategory}
-            onDeleteCategory={handleDeleteCategory}
-            selectedRowKeys={selectedRowKeys}
-            onSelectionChange={setSelectedRowKeys}
+          {/* 数据表格 */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm px-4 pt-4 mb-4">
+            <DataTable
+              links={links}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onEditCategory={handleEditCategory}
+              onDeleteCategory={handleDeleteCategory}
+              selectedRowKeys={selectedRowKeys}
+              onSelectionChange={setSelectedRowKeys}
+            />
+          </div>
+
+          {/* 编辑链接弹窗 */}
+          <EditLinkModal
+            open={editModalOpen}
+            link={currentLink}
+            onCancel={handleModalCancel}
+            onSubmit={handleModalSubmit}
           />
-        </div>
 
-        {/* 编辑链接弹窗 */}
-        <EditLinkModal
-          open={editModalOpen}
-          link={currentLink}
-          onCancel={handleModalCancel}
-          onSubmit={handleModalSubmit}
-        />
+          {/* 编辑分类弹窗 */}
+          <EditCategoryModal
+            open={categoryEditModalOpen}
+            category={currentCategory}
+            onCancel={() => {
+              setCategoryEditModalOpen(false);
+              setCurrentCategory(null);
+            }}
+            onSubmit={handleCategorySubmit}
+          />
 
-        {/* 编辑分类弹窗 */}
-        <EditCategoryModal
-          open={categoryEditModalOpen}
-          category={currentCategory}
-          onCancel={() => {
-            setCategoryEditModalOpen(false);
-            setCurrentCategory(null);
-          }}
-          onSubmit={handleCategorySubmit}
-        />
+          {/* 重置数据确认对话框 */}
+          <ResetDataModal
+            open={resetModalOpen}
+            onConfirm={handleResetConfirm}
+            onCancel={handleResetCancel}
+          />
 
-        {/* 重置数据确认对话框 */}
-        <ResetDataModal
-          open={resetModalOpen}
-          onConfirm={handleResetConfirm}
-          onCancel={handleResetCancel}
-        />
-
-        {/* 批量分类弹窗 */}
-        <BatchCategoryModal
-          open={batchCategoryModalOpen}
-          selectedCount={selectedRowKeys.length}
-          onCancel={() => setBatchCategoryModalOpen(false)}
-          onSubmit={handleBatchCategorySubmit}
-        />
+          {/* 批量分类弹窗 */}
+          <BatchCategoryModal
+            open={batchCategoryModalOpen}
+            selectedCount={selectedRowKeys.length}
+            onCancel={() => setBatchCategoryModalOpen(false)}
+            onSubmit={handleBatchCategorySubmit}
+          />
+      </div>
       </div>
     </div>
   );

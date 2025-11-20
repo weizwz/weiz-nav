@@ -322,23 +322,6 @@ select:focus-visible {
   transition: none;
 }
 
-/* DataTable 分类行样式 */
-.category-row > td {
-  background-color: #eff6ff !important;
-}
-
-.dark .category-row > td {
-  background-color: rgba(30, 58, 138, 0.3) !important;
-}
-
-.category-row:hover > td {
-  background-color: #dbeafe !important;
-}
-
-.dark .category-row:hover > td {
-  background-color: rgba(30, 64, 175, 0.4) !important;
-}
-
 /* PWA 安装提示动画 */
 @keyframes slide-up {
   from {

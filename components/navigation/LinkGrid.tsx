@@ -160,7 +160,7 @@ const LinkGridBase: React.FC<LinkGridProps> = ({
         disabled={!isDraggingEnabled}
       >
         <div 
-          className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6 p-8 max-w-full ${className || ''}`}
+          className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-x-8 gap-y-6 p-4 sm:p-8 md:px-10 max-w-full ${className || ''}`}
           style={{ ...style, width: '100%', boxSizing: 'border-box' }}
           role="region"
           aria-label={searchQuery.trim() ? `搜索结果：${displayedLinks.length} 个链接` : `${currentCategory}分类：${displayedLinks.length} 个链接`}

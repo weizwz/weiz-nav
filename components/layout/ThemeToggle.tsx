@@ -76,16 +76,12 @@ export default function ThemeToggle() {
       <Button
         type="text"
         icon={isDark ? <SunOutlined aria-hidden="true" /> : <MoonOutlined aria-hidden="true" />}
+        size='large'
         onClick={toggleTheme}
         className="transition-theme flex items-center justify-center"
         aria-label={getTooltipTitle()}
         role="switch"
         aria-checked={isDark}
-        style={{
-          fontSize: '18px',
-          width: '40px',
-          height: '40px',
-        }}
       />
     </Tooltip>
   );
