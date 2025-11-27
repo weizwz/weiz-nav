@@ -11,7 +11,7 @@ import { Card, Skeleton } from 'antd';
  */
 export const LinkGridSkeleton: React.FC = () => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 gap-4 p-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 4xl:grid-cols-7 5xl:grid-cols-8 6xl:grid-cols-9 7xl:grid-cols-10 gap-4 p-8">
       {Array.from({ length: 12 }).map((_, index) => (
         <Card 
           key={index} 
