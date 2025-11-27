@@ -10,6 +10,10 @@
   --color-dark-input-border: #424242;
   /* layout */
   --breakpoint-3xl: 112rem;
+  --breakpoint-4xl: 136rem;
+  --breakpoint-5xl: 160rem;
+  --breakpoint-6xl: 184rem;
+  --breakpoint-7xl: 208rem;
 }
 
 /* CSS 自定义变量 - Light Theme */

@@ -6,8 +6,9 @@
 
 /**
  * Favicon.im API 基础 URL
+ * 可通过环境变量 NEXT_PUBLIC_FAVICON_API_URL 自定义
  */
-const FAVICON_API_BASE = 'https://favicon.im';
+const FAVICON_API_BASE = process.env.NEXT_PUBLIC_FAVICON_API_URL || 'https://favicon.im';
 
 /**
  * Favicon API 选项
