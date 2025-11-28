@@ -51,8 +51,6 @@ export const DataTable: React.FC<DataTableProps> = ({
   onSelectionChange,
 }) => {
   const [internalSelectedRowKeys, setInternalSelectedRowKeys] = useState<React.Key[]>([]);
-  const [pageSize, setPageSize] = useState(100);
-  const [currentPage, setCurrentPage] = useState(1);
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
 
   // 获取分类数据
@@ -339,21 +337,7 @@ export const DataTable: React.FC<DataTableProps> = ({
           onExpandedRowsChange: (keys) => setExpandedRowKeys([...keys]),
           // defaultExpandAllRows: true,
         }}
-        pagination={{
-          current: currentPage,
-          pageSize: pageSize,
-          showSizeChanger: true,
-          showTotal: () => {
-            const categoryCount = treeData.length;
-            const linkCount = links.length;
-            return `共 ${categoryCount} 个分类，${linkCount} 条链接`;
-          },
-          onChange: (page, size) => {
-            setCurrentPage(page);
-            setPageSize(size);
-          },
-          pageSizeOptions: ['10', '20', '50', '100'],
-        }}
+        pagination={false}
         scroll={{ x: 1200 }}
       />
     </div>
