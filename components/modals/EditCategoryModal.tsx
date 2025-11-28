@@ -65,7 +65,7 @@ export const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
       cancelText="取消"
       destroyOnHidden
     >
-      <div className='pt-2'></div>
+      <div className="pt-2"></div>
       <Form
         form={form}
         labelCol={{ flex: '54px' }}
@@ -80,17 +80,13 @@ export const EditCategoryModal: React.FC<EditCategoryModalProps> = ({
           name="name"
           rules={[
             { required: true, message: '请输入分类名称' },
-            { max: 20, message: '分类名称不能超过20个字符' },
+            { max: 20, message: '分类名称不能超过 20 个字符' },
           ]}
         >
           <Input placeholder="请输入分类名称" />
         </Form.Item>
 
-        <Form.Item
-          label="图标"
-          name="icon"
-          rules={[{ required: true, message: '请选择图标' }]}
-        >
+        <Form.Item label="图标" name="icon" rules={[{ required: true, message: '请选择图标' }]}>
           <IconPicker />
         </Form.Item>
       </Form>

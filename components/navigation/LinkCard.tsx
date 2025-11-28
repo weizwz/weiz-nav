@@ -260,14 +260,11 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDragg
       {...(isDraggingEnabled ? listeners : {})}
       {...(isDraggingEnabled ? attributes : {})}
     >
-      <Dropdown
-        menu={{ items: menuItems }}
-        trigger={['contextMenu']}
-      >
+      <Dropdown menu={{ items: menuItems }} trigger={['contextMenu']}>
         <motion.div
-          whileHover={{ 
+          whileHover={{
             y: -4,
-            transition: { duration: 0.2 }
+            transition: { duration: 0.2 },
           }}
           className="h-full"
           onContextMenu={handleContextMenu}
@@ -292,41 +289,42 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDragg
                 height: '100%',
                 padding: 0,
                 display: 'flex',
-              }
+              },
             }}
           >
-          {/* 左侧：背景色 + 图标 */}
-          <div 
-            className="flex-none w-22 flex items-center justify-center text-white relative overflow-hidden dark:brightness-[0.8]"
-            style={{ 
-              backgroundColor: link.backgroundColor || '#bae0ff',
-            }}
-            aria-hidden="true"
-          > 
-            {renderIcon}
-            {
-              (link.backgroundColor === '#ffffff' || link.backgroundColor === 'rgb(255, 255, 255)' || link.backgroundColor?.indexOf('rgba(255, 255, 255') === 0) &&
-              <div className='absolute right-0 top-7/32 h-9/16 w-0 border-r border-card-border z-0'></div>
-            }
-          </div>
-          
-          {/* 右侧：名称 + 描述 */}
-          <div className="flex-1 flex flex-col justify-center p-3 bg-(--background-main) gap-1">
-            {/* 名称 */}
-            <div className="text-[15px] font-semibold text-(--foreground) overflow-hidden text-ellipsis whitespace-nowrap leading-snug">
-              {link.name}
+            {/* 左侧：背景色 + 图标 */}
+            <div
+              className="flex-none w-22 flex items-center justify-center text-white relative overflow-hidden dark:brightness-[0.8]"
+              style={{
+                backgroundColor: link.backgroundColor || '#bae0ff',
+              }}
+              aria-hidden="true"
+            >
+              {renderIcon}
+              {(link.backgroundColor === '#ffffff' ||
+                link.backgroundColor === 'rgb(255, 255, 255)' ||
+                link.backgroundColor?.indexOf('rgba(255, 255, 255') === 0) && (
+                <div className="absolute right-0 top-7/32 h-9/16 w-0 border-r border-card-border z-0"></div>
+              )}
             </div>
-            
-            {/* 描述 */}
-            {link.description && (
-              <div className="text-xs text-(--foreground-secondary) overflow-hidden text-ellipsis line-clamp-2 leading-relaxed">
-                {link.description}
+
+            {/* 右侧：名称 + 描述 */}
+            <div className="w-full flex-1 flex flex-col justify-center p-3 bg-(--background-main) gap-1 overflow-hidden">
+              {/* 名称 */}
+              <div className="text-[15px] font-semibold text-(--foreground) overflow-hidden text-ellipsis whitespace-nowrap leading-snug">
+                {link.name}
               </div>
-            )}
-          </div>
-        </Card>
-      </motion.div>
-    </Dropdown>
+
+              {/* 描述 */}
+              {link.description && (
+                <div className="text-xs text-(--foreground-secondary) overflow-hidden text-ellipsis line-clamp-2">
+                  {link.description}
+                </div>
+              )}
+            </div>
+          </Card>
+        </motion.div>
+      </Dropdown>
     </div>
   );
 };

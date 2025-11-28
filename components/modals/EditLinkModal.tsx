@@ -334,7 +334,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
       <span id="edit-link-modal-description" className="sr-only">
         填写表单以{link ? '编辑' : '添加'}导航链接信息
       </span>
-      <div className='pt-2'></div>
+      <div className="pt-2"></div>
       <Form
         form={form}
         labelCol={{ flex: '54px' }}
@@ -350,10 +350,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
             { max: 500, message: '地址长度不能超过 500 个字符' },
           ]}
         >
-          <Input
-            placeholder="https://example.com"
-            onChange={handleUrlChange}
-          />
+          <Input placeholder="https://example.com" onChange={handleUrlChange} />
         </Form.Item>
 
         <Form.Item
@@ -361,7 +358,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
           name="name"
           rules={[
             { required: true, message: '请输入链接名称' },
-            { max: 50, message: '名称长度不能超过 50 个字符' },
+            { max: 30, message: '名称长度不能超过 30 个字符' },
           ]}
         >
           <Input placeholder="链接名称" />
@@ -370,26 +367,13 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
         <Form.Item
           label="描述"
           name="description"
-          rules={[
-            { max: 200, message: '描述长度不能超过 200 个字符' },
-          ]}
+          rules={[{ max: 200, message: '描述长度不能超过 200 个字符' }]}
         >
-          <Input.TextArea
-            placeholder="链接描述（可选）"
-            rows={3}
-            showCount
-            maxLength={200}
-          />
+          <Input.TextArea placeholder="链接描述（可选）" rows={3} showCount maxLength={200} />
         </Form.Item>
 
-        <Form.Item
-          label="分类"
-          name="category"
-        >
-          <Select 
-            placeholder="选择分类（可选）" 
-            allowClear
-          >
+        <Form.Item label="分类" name="category">
+          <Select placeholder="选择分类（可选）" allowClear>
             {categories.map((category) => (
               <Select.Option key={category.id} value={category.name}>
                 <span className="mr-2">{renderIcon(category.icon)}</span>
@@ -400,12 +384,12 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
         </Form.Item>
 
         <Form.Item label="图标">
-          <Space.Compact className='w-full flex'>
-            <Select 
-              className='w-32!' 
+          <Space.Compact className="w-full flex">
+            <Select
+              className="w-32!"
               value={iconType}
               onChange={handleIconTypeChange}
-              options={iconOptions} 
+              options={iconOptions}
             />
             {iconType === '2' ? (
               <Form.Item name="icon" className="flex-1 mb-0!">
@@ -418,7 +402,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
               </Form.Item>
             ) : (
               <Form.Item name="icon" className="flex-1 mb-0!">
-                <Input 
+                <Input
                   placeholder={iconType === '1' ? '自动获取' : '输入图标 URL'}
                   disabled={iconType === '1'}
                   onChange={handleIconUrlChange}
@@ -455,12 +439,12 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
               </Space.Compact>
             </Form.Item>
           </Col>
-          
+
           <Col xs={24} sm={12}>
             <Form.Item label="预览">
               <div className="flex items-center gap-3">
                 {/* 预览卡片 */}
-                <div 
+                <div
                   className="w-25 h-25 rounded-xl flex items-center justify-center relative overflow-hidden border border-input-border dark:border-dark-input-border dark:brightness-[0.8] transition-all"
                   style={{ backgroundColor: previewBgColor }}
                 >
@@ -478,12 +462,10 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
                       }}
                     />
                   ) : (
-                    <div className="text-white/40 text-xs text-center px-2">
-                      暂无图标
-                    </div>
+                    <div className="text-white/40 text-xs text-center px-2">暂无图标</div>
                   )}
                 </div>
-                
+
                 {/* 缩放控制按钮 */}
                 <div className="flex flex-col gap-2">
                   <Button
@@ -507,11 +489,9 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
                     title="重置"
                   />
                 </div>
-                
+
                 {/* 缩放比例显示 */}
-                <div className="text-sm text-gray-500">
-                  {Math.round(iconScale * 100)}%
-                </div>
+                <div className="text-sm text-gray-500">{Math.round(iconScale * 100)}%</div>
               </div>
             </Form.Item>
           </Col>
