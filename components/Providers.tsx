@@ -30,6 +30,7 @@ function AntdThemeProvider({ children }: { children: React.ReactNode }) {
       locale={zhCN}
       theme={{
         algorithm: isDark ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
+        cssVar: true,
         token: {
           colorPrimary: '#1890ff',
           borderRadius: 8,

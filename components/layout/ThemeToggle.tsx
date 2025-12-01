@@ -23,12 +23,15 @@ export default function ThemeToggle() {
     setMounted(true);
   }, []);
 
-  // 同步 Redux 主题到 next-themes
+  // 同步 next-themes 主题到 Redux
+  // next-themes 是单一事实来源，Redux 只是为了保持状态一致性以便其他组件使用
   useEffect(() => {
-    if (reduxTheme && nextTheme !== reduxTheme) {
-      setNextTheme(reduxTheme);
+    if (nextTheme && (nextTheme === 'light' || nextTheme === 'dark' || nextTheme === 'system')) {
+      if (reduxTheme !== nextTheme) {
+        dispatch(setTheme(nextTheme as ThemeMode));
+      }
     }
-  }, [reduxTheme, nextTheme, setNextTheme]);
+  }, [nextTheme, reduxTheme, dispatch]);
 
   // 确定当前实际显示的主题
   const currentTheme = nextTheme === 'system' ? systemTheme : nextTheme;
@@ -55,13 +58,10 @@ export default function ThemeToggle() {
    */
   const toggleTheme = () => {
     // 在 light 和 dark 之间切换
-    const newTheme: ThemeMode = isDark ? 'light' : 'dark';
-    
-    // 更新 next-themes
+    const newTheme = isDark ? 'light' : 'dark';
+
+    // 只更新 next-themes，useEffect 会自动同步到 Redux
     setNextTheme(newTheme);
-    
-    // 更新 Redux store（会自动保存到 LocalStorage）
-    dispatch(setTheme(newTheme));
   };
 
   /**
@@ -76,7 +76,7 @@ export default function ThemeToggle() {
       <Button
         type="text"
         icon={isDark ? <SunOutlined aria-hidden="true" /> : <MoonOutlined aria-hidden="true" />}
-        size='large'
+        size="large"
         onClick={toggleTheme}
         className="transition-theme flex items-center justify-center"
         aria-label={getTooltipTitle()}

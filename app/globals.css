@@ -71,6 +71,12 @@
   /* 卡片阴影 */
   --card-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --card-shadow-hover: 0 4px 12px 0 rgba(0, 0, 0, 0.5);
+
+  /* Ant Design 变量覆盖 - 解决暗黑模式闪烁问题 */
+  --ant-color-bg-container: #141414;
+  --ant-color-bg-layout: #000000;
+  --ant-color-text: rgba(255, 255, 255, 0.85);
+  --ant-color-text-base: #fff;
 }
 
 /* 基础样式 */
