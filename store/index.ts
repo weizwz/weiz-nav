@@ -3,6 +3,7 @@ import linksReducer from './slices/linksSlice';
 import searchReducer from './slices/searchSlice';
 import settingsReducer from './slices/settingsSlice';
 import categoriesReducer from './slices/categoriesSlice';
+import uiReducer from './slices/uiSlice';
 import { storageService } from '@/services/storage';
 
 /**
@@ -12,10 +13,10 @@ import { storageService } from '@/services/storage';
  */
 const localStorageSyncMiddleware: Middleware = (store) => (next) => (action) => {
   const result = next(action);
-  
+
   // 获取 action 的类型
   const actionType = (action as { type?: string }).type || '';
-  
+
   // 如果是 links 相关的 action，同步 links 数据
   if (typeof actionType === 'string' && actionType.startsWith('links/')) {
     const state = store.getState();
@@ -28,7 +29,7 @@ const localStorageSyncMiddleware: Middleware = (store) => (next) => (action) => 
       console.error('Failed to sync links to LocalStorage:', error);
     }
   }
-  
+
   // 如果是 categories 相关的 action，同步 categories 数据
   if (typeof actionType === 'string' && actionType.startsWith('categories/')) {
     const state = store.getState();
@@ -38,7 +39,7 @@ const localStorageSyncMiddleware: Middleware = (store) => (next) => (action) => 
       console.error('Failed to sync categories to LocalStorage:', error);
     }
   }
-  
+
   // 如果是 settings 相关的 action，同步 settings 数据
   if (typeof actionType === 'string' && actionType.startsWith('settings/')) {
     const state = store.getState();
@@ -53,7 +54,7 @@ const localStorageSyncMiddleware: Middleware = (store) => (next) => (action) => 
       console.error('Failed to sync settings to LocalStorage:', error);
     }
   }
-  
+
   return result;
 };
 
@@ -66,6 +67,7 @@ export const store = configureStore({
     search: searchReducer,
     settings: settingsReducer,
     categories: categoriesReducer,
+    ui: uiReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

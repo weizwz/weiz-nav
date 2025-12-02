@@ -21,7 +21,6 @@ import { reorderLinks } from '@/store/slices/linksSlice';
 import { LinkCard } from './LinkCard';
 import { Link } from '@/types/link';
 import { showSuccess } from '@/utils/feedback';
-import { getDefaultCategoryName } from '@/services/defaultData';
 
 interface LinkGridProps {
   onEdit?: (link: Link) => void;
@@ -36,15 +35,10 @@ interface LinkGridProps {
  * 支持根据分类和搜索状态过滤链接
  * 使用 React.memo 和 useMemo 优化性能
  */
-const LinkGridBase: React.FC<LinkGridProps> = ({ 
-  onEdit, 
-  onDelete,
-  className,
-  style 
-}) => {
+const LinkGridBase: React.FC<LinkGridProps> = ({ onEdit, onDelete, className, style }) => {
   const dispatch = useAppDispatch();
   const links = useAppSelector((state) => state.links.items);
-  const currentCategory = useAppSelector((state) => state.settings.currentCategory || getDefaultCategoryName());
+  const currentCategory = useAppSelector((state) => state.ui.currentCategory || '主页');
   const searchQuery = useAppSelector((state) => state.search.query);
   const searchResults = useAppSelector((state) => state.search.results);
 
@@ -97,20 +91,23 @@ const LinkGridBase: React.FC<LinkGridProps> = ({
   }, [links, currentCategory, searchQuery, searchResults]);
 
   // 处理拖拽结束
-  const handleDragEnd = useCallback((event: DragEndEvent) => {
-    const { active, over } = event;
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
 
-    if (over && active.id !== over.id) {
-      // 在所有链接中查找索引（不是 displayedLinks）
-      const oldIndex = links.findIndex((link) => link.id === active.id);
-      const newIndex = links.findIndex((link) => link.id === over.id);
+      if (over && active.id !== over.id) {
+        // 在所有链接中查找索引（不是 displayedLinks）
+        const oldIndex = links.findIndex((link) => link.id === active.id);
+        const newIndex = links.findIndex((link) => link.id === over.id);
 
-      if (oldIndex !== -1 && newIndex !== -1) {
-        dispatch(reorderLinks({ fromIndex: oldIndex, toIndex: newIndex }));
-        showSuccess('链接排序已更新');
+        if (oldIndex !== -1 && newIndex !== -1) {
+          dispatch(reorderLinks({ fromIndex: oldIndex, toIndex: newIndex }));
+          showSuccess('链接排序已更新');
+        }
       }
-    }
-  }, [links, dispatch]);
+    },
+    [links, dispatch]
+  );
 
   // 空状态判断
   const isEmpty = displayedLinks.length === 0;
@@ -121,24 +118,34 @@ const LinkGridBase: React.FC<LinkGridProps> = ({
   if (isEmpty) {
     if (isSearchEmpty) {
       return (
-        <div className={className} style={{ ...style, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
-          <Empty
-            description={
-              <span>
-                没有找到与 &quot;{searchQuery}&quot; 相关的链接
-              </span>
-            }
-          />
+        <div
+          className={className}
+          style={{
+            ...style,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '400px',
+          }}
+        >
+          <Empty description={<span>没有找到与 &quot;{searchQuery}&quot; 相关的链接</span>} />
         </div>
       );
     }
 
     if (isCategoryEmpty) {
       return (
-        <div className={className} style={{ ...style, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
-          <Empty
-            description={`${currentCategory}分类暂无链接`}
-          />
+        <div
+          className={className}
+          style={{
+            ...style,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '400px',
+          }}
+        >
+          <Empty description={`${currentCategory}分类暂无链接`} />
         </div>
       );
     }
@@ -159,11 +166,17 @@ const LinkGridBase: React.FC<LinkGridProps> = ({
         strategy={rectSortingStrategy}
         disabled={!isDraggingEnabled}
       >
-        <div 
-          className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 4xl:grid-cols-7 5xl:grid-cols-8 6xl:grid-cols-9 7xl:grid-cols-10 gap-x-8 gap-y-6 p-4 sm:p-8 md:px-10 max-w-full ${className || ''}`}
+        <div
+          className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 4xl:grid-cols-7 5xl:grid-cols-8 6xl:grid-cols-9 7xl:grid-cols-10 gap-x-8 gap-y-6 p-4 sm:p-8 md:px-10 max-w-full ${
+            className || ''
+          }`}
           style={{ ...style, width: '100%', boxSizing: 'border-box' }}
           role="region"
-          aria-label={searchQuery.trim() ? `搜索结果：${displayedLinks.length} 个链接` : `${currentCategory}分类：${displayedLinks.length} 个链接`}
+          aria-label={
+            searchQuery.trim()
+              ? `搜索结果：${displayedLinks.length} 个链接`
+              : `${currentCategory}分类：${displayedLinks.length} 个链接`
+          }
         >
           {displayedLinks.map((link) => (
             <LinkCard

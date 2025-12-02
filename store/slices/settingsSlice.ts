@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Settings, ThemeMode, LayoutMode, UpdateSettingsInput } from '@/types';
-import { getDefaultCategoryName } from '@/services/defaultData';
 
 /**
  * Settings 状态接口
@@ -19,7 +18,6 @@ const defaultSettings: Settings = {
   theme: 'system',
   searchEngine: 'google',
   layout: 'grid',
-  currentCategory: getDefaultCategoryName(),
   showDescription: true,
   gridColumns: 6,
 };
@@ -62,14 +60,6 @@ const settingsSlice = createSlice({
      */
     setLayout: (state, action: PayloadAction<LayoutMode>) => {
       state.layout = action.payload;
-      state.error = null;
-    },
-
-    /**
-     * 设置当前分类
-     */
-    setCurrentCategory: (state, action: PayloadAction<string>) => {
-      state.currentCategory = action.payload;
       state.error = null;
     },
 
@@ -148,7 +138,6 @@ export const {
   setTheme,
   setSearchEngine,
   setLayout,
-  setCurrentCategory,
   setShowDescription,
   setGridColumns,
   updateSettings,
