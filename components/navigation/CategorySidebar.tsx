@@ -22,7 +22,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { setCurrentCategory } from '@/store/slices/settingsSlice';
+import { setCurrentCategory } from '@/store/slices/uiSlice';
 import {
   addCategory,
   deleteCategory,
@@ -135,7 +135,7 @@ const DraggableCategoryItem: React.FC<DraggableCategoryItemProps> = ({
  */
 const CategorySidebarBase: React.FC<CategorySidebarProps> = ({ className, style }) => {
   const dispatch = useAppDispatch();
-  const currentCategory = useAppSelector((state) => state.settings.currentCategory || '主页');
+  const currentCategory = useAppSelector((state) => state.ui.currentCategory || '主页');
   const categories = useAppSelector((state) => state.categories.items);
   const links = useAppSelector((state) => state.links.items);
   const [mounted, setMounted] = useState(false);

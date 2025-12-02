@@ -15,19 +15,16 @@ export type LayoutMode = 'grid' | 'list';
 export interface Settings {
   /** 主题模式 */
   theme: ThemeMode;
-  
+
   /** 当前搜索引擎 ID */
   searchEngine: string;
-  
+
   /** 布局模式 */
   layout: LayoutMode;
-  
-  /** 当前选中的分类 */
-  currentCategory?: string;
-  
+
   /** 是否显示描述 */
   showDescription?: boolean;
-  
+
   /** 每行显示的卡片数量（仅在 grid 模式下） */
   gridColumns?: number;
 }
