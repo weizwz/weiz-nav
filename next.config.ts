@@ -1,4 +1,8 @@
 import type { NextConfig } from 'next';
+import { updateVersion } from './scripts/update-version';
+
+// 自动更新版本号
+updateVersion();
 
 const nextConfig: NextConfig = {
   // 启用静态导出

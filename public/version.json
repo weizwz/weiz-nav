@@ -1,7 +1,7 @@
 {
-  "version": "1.0.4",
-  "buildTime": "2025-11-19T15:26:00.000Z",
-  "cacheVersion": "v4",
+  "version": "0.1.1",
+  "buildTime": "2025-12-02T08:58:52.853Z",
+  "cacheVersion": "v0_1_1",
   "changelog": [
     "修复 CSP 策略，支持所有 HTTPS 资源",
     "优化图标缓存策略",
