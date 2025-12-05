@@ -1,10 +1,15 @@
 import type { NextConfig } from 'next';
 import { updateVersion } from './scripts/update-version';
 
+import pkg from './package.json';
+
 // 自动更新版本号
 updateVersion();
 
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_APP_VERSION: pkg.version,
+  },
   // 启用静态导出
   output: 'export',
 
@@ -19,9 +24,12 @@ const nextConfig: NextConfig = {
   // 编译优化
   compiler: {
     // 移除 console.log（生产环境）
-    removeConsole: process.env.NODE_ENV === 'production' ? {
-      exclude: ['error', 'warn'],
-    } : false,
+    removeConsole:
+      process.env.NODE_ENV === 'production'
+        ? {
+            exclude: ['error', 'warn'],
+          }
+        : false,
   },
 
   // 实验性功能

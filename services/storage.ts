@@ -14,7 +14,7 @@ const STORAGE_KEYS = {
  * 当前数据版本
  * 用于未来的数据迁移
  */
-const CURRENT_VERSION = '1.0.0';
+const CURRENT_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || '0.1.1';
 
 /**
  * 存储服务类
