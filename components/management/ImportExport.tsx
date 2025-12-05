@@ -9,7 +9,8 @@ import { loadLinks } from '@/store/slices/linksSlice';
 import { loadCategories } from '@/store/slices/categoriesSlice';
 import { Link } from '@/types/link';
 import type { Category } from '@/types/category';
-import { showSuccess, showError, showWarning, showConfirm } from '@/utils/feedback';
+import { showSuccess, showError, showConfirm, showWarning } from '@/utils/feedback';
+import packageInfo from '@/package.json';
 
 /**
  * 验证链接数据格式
@@ -75,10 +76,10 @@ export const ImportExport: React.FC = () => {
       }
 
       // 构建树结构：将链接按分类组织
-      const categoryTree = categories.map(category => {
+      const categoryTree = categories.map((category) => {
         // 找到属于该分类的所有链接
         const categoryLinks = links
-          .filter(link => link.category === category.name)
+          .filter((link) => link.category === category.name)
           .sort((a, b) => a.order - b.order);
 
         return {
@@ -94,30 +95,30 @@ export const ImportExport: React.FC = () => {
 
       // 导出树结构格式
       const exportData = {
-        version: '1.0',
+        version: packageInfo.version,
         exportTime: Date.now(),
         data: categoryTree,
       };
 
       const jsonData = JSON.stringify(exportData, null, 2);
-      
+
       // 创建 Blob 对象
       const blob = new Blob([jsonData], { type: 'application/json' });
-      
+
       // 创建下载链接
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = `weiz_nav_${Date.now()}.json`;
-      
+
       // 触发下载
       document.body.appendChild(link);
       link.click();
-      
+
       // 清理
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      
+
       showSuccess('导出成功');
     } catch (error) {
       console.error('Export error:', error);
@@ -130,7 +131,7 @@ export const ImportExport: React.FC = () => {
    */
   const beforeUpload: UploadProps['beforeUpload'] = (file) => {
     const isJSON = file.type === 'application/json' || file.name.endsWith('.json');
-    
+
     if (!isJSON) {
       showError('只能上传 JSON 文件');
       return Upload.LIST_IGNORE;
@@ -156,7 +157,7 @@ export const ImportExport: React.FC = () => {
 
     const uploadFile = fileList[0];
     const file = uploadFile.originFileObj;
-    
+
     if (!file) {
       showError('无法读取文件，请重新选择');
       return;
@@ -167,7 +168,7 @@ export const ImportExport: React.FC = () => {
     reader.onload = (e) => {
       try {
         const content = e.target?.result as string;
-        
+
         if (!content || content.trim() === '') {
           showError('文件内容为空');
           return;
@@ -225,7 +226,7 @@ export const ImportExport: React.FC = () => {
         }
 
         // 合并链接数据：根据 URL 判断是否为同一链接
-        const existingLinksMap = new Map(links.map(link => [link.url, link]));
+        const existingLinksMap = new Map(links.map((link) => [link.url, link]));
         const mergedLinks: Link[] = [];
         let newLinksCount = 0;
         let updatedLinksCount = 0;
@@ -254,7 +255,7 @@ export const ImportExport: React.FC = () => {
         });
 
         // 添加未被更新的现有链接
-        existingLinksMap.forEach(link => {
+        existingLinksMap.forEach((link) => {
           mergedLinks.push(link);
         });
 
@@ -265,7 +266,7 @@ export const ImportExport: React.FC = () => {
         }));
 
         // 合并分类数据：根据分类名称判断
-        const existingCategoriesMap = new Map(categories.map(cat => [cat.name, cat]));
+        const existingCategoriesMap = new Map(categories.map((cat) => [cat.name, cat]));
         const updatedCategories: Category[] = [];
         const newCategories: Category[] = [];
         let updatedCategoriesCount = 0;
@@ -295,16 +296,18 @@ export const ImportExport: React.FC = () => {
 
         // 添加未被更新的现有分类
         const unchangedCategories: Category[] = [];
-        existingCategoriesMap.forEach(cat => {
+        existingCategoriesMap.forEach((cat) => {
           unchangedCategories.push(cat);
         });
 
         // 合并所有分类并按原有 order 排序
-        const allCategories = [...updatedCategories, ...unchangedCategories].sort((a, b) => a.order - b.order);
+        const allCategories = [...updatedCategories, ...unchangedCategories].sort(
+          (a, b) => a.order - b.order
+        );
 
         // 为新分类分配排序位置
-        const usedOrders = new Set(allCategories.map(cat => cat.order));
-        newCategories.forEach(newCat => {
+        const usedOrders = new Set(allCategories.map((cat) => cat.order));
+        newCategories.forEach((newCat) => {
           let targetOrder = newCat.order;
           // 如果目标位置已被占用，找到下一个可用位置
           while (usedOrders.has(targetOrder)) {
@@ -320,7 +323,8 @@ export const ImportExport: React.FC = () => {
         const newCategoriesCount = newCategories.length;
 
         // 显示确认对话框
-        const message = `即将导入数据：\n` +
+        const message =
+          `即将导入数据：\n` +
           `• 链接：新增 ${newLinksCount} 个，更新 ${updatedLinksCount} 个\n` +
           `• 分类：新增 ${newCategoriesCount} 个，更新 ${updatedCategoriesCount} 个\n` +
           `是否继续？`;
@@ -336,12 +340,14 @@ export const ImportExport: React.FC = () => {
               // 更新 Redux store
               dispatch(loadLinks(sortedLinks));
               dispatch(loadCategories(sortedCategories));
-              
+
               // 保存到 LocalStorage
               localStorage.setItem('nav_links', JSON.stringify(sortedLinks));
               localStorage.setItem('nav_categories', JSON.stringify(sortedCategories));
-              
-              showSuccess(`成功导入：新增 ${newLinksCount} 个链接，更新 ${updatedLinksCount} 个链接`);
+
+              showSuccess(
+                `成功导入：新增 ${newLinksCount} 个链接，更新 ${updatedLinksCount} 个链接`
+              );
               setFileList([]);
             } catch (saveError) {
               console.error('Save error:', saveError);
@@ -381,11 +387,7 @@ export const ImportExport: React.FC = () => {
   return (
     <Space size="middle">
       {/* 导出按钮 */}
-      <Button
-        icon={<DownloadOutlined />}
-        onClick={handleExport}
-        disabled={links.length === 0}
-      >
+      <Button icon={<DownloadOutlined />} onClick={handleExport} disabled={links.length === 0}>
         导出数据
       </Button>
 
@@ -402,19 +404,18 @@ export const ImportExport: React.FC = () => {
         >
           <Button icon={<UploadOutlined />}>选择文件</Button>
         </Upload>
-        
+
         {/* 已选择文件显示 */}
         {fileList.length > 0 && (
-          <span className="text-sm text-gray-600 dark:text-gray-400 max-w-[200px] truncate" title={fileList[0].name}>
+          <span
+            className="text-sm text-gray-600 dark:text-gray-400 max-w-[200px] truncate"
+            title={fileList[0].name}
+          >
             {fileList[0].name}
           </span>
         )}
-        
-        <Button
-          type="primary"
-          onClick={handleImport}
-          disabled={fileList.length === 0}
-        >
+
+        <Button type="primary" onClick={handleImport} disabled={fileList.length === 0}>
           导入
         </Button>
       </div>
