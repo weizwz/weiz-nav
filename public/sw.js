@@ -56,9 +56,14 @@ self.addEventListener('activate', (event) => {
 
 // 判断是否是图片请求
 function isImageRequest(url) {
-  return url.pathname.match(/\.(png|jpg|jpeg|svg|gif|webp|ico)$/i) || 
-         url.hostname === 'favicon.im' ||
-         url.hostname.includes('favicon');
+  return (
+    url.pathname.match(/\.(png|jpg|jpeg|svg|gif|webp|ico)$/i) ||
+    url.hostname === 'favicon.im' ||
+    url.hostname.includes('favicon') ||
+    url.hostname === 'cdn.simpleicons.org' ||
+    url.hostname === 'api.iconify.design' ||
+    url.hostname === 'p.weizwz.com'
+  );
 }
 
 // Fetch 事件 - 智能缓存策略
