@@ -7,6 +7,7 @@ import { ThemeProvider, useTheme } from 'next-themes';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import zhCN from 'antd/locale/zh_CN';
 import store, { initializeStore } from '@/store';
+import { storageService } from '@/services/storage';
 import MessageProvider from './MessageProvider';
 
 /**
@@ -16,12 +17,12 @@ import MessageProvider from './MessageProvider';
 function AntdThemeProvider({ children }: { children: React.ReactNode }) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  
+
   // 等待客户端挂载
   useEffect(() => {
     setMounted(true);
   }, []);
-  
+
   // 在挂载前使用默认主题，避免 hydration 不匹配
   const isDark = mounted ? resolvedTheme === 'dark' : false;
 
@@ -69,6 +70,37 @@ function DataInitializer() {
   useEffect(() => {
     // 初始化 store，从 LocalStorage 加载数据
     initializeStore();
+
+    // 监听 storage 事件，实现多标签页数据同步
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'nav_links') {
+        const savedLinks = storageService.loadLinks();
+        if (savedLinks) {
+          store.dispatch({ type: 'links/loadLinks', payload: savedLinks });
+        }
+      } else if (event.key === 'nav_settings') {
+        const savedSettings = storageService.loadSettings();
+        if (savedSettings) {
+          store.dispatch({ type: 'settings/loadSettings', payload: savedSettings });
+        }
+      } else if (event.key === 'nav_categories') {
+        try {
+          const savedCategories = localStorage.getItem('nav_categories');
+          if (savedCategories) {
+            const categories = JSON.parse(savedCategories);
+            store.dispatch({ type: 'categories/loadCategories', payload: categories });
+          }
+        } catch (error) {
+          console.error('Failed to sync categories from storage event:', error);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   return null;
