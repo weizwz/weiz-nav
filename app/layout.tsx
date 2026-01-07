@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import './globals.css';
 import Providers from '@/components/Providers';
 import RegisterServiceWorker from './register-sw';
@@ -82,6 +83,16 @@ export default function RootLayout({
           <RegisterServiceWorker />
           {children}
         </Providers>
+        {/* Cloudflare Web Analytics 不用时请删除 */}
+        {process.env.NODE_ENV === 'production' &&
+          process.env.NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN && (
+            <Script
+              defer
+              src="https://static.cloudflareinsights.com/beacon.min.js"
+              data-cf-beacon={`{"token": "${process.env.NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN}"}`}
+              strategy="afterInteractive"
+            />
+          )}
       </body>
     </html>
   );
