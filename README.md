@@ -60,7 +60,7 @@ pnpm dev
 pnpm build
 
 # 部署到 Cloudflare Pages
-pnpm deploy
+pnpm deploy:cloudflare
 ```
 
 详细说明请查看 [快速开始指南](./.kiro/specs/frontend-navigation-site/QUICKSTART.md)
@@ -85,17 +85,20 @@ pnpm deploy
 ## 📚 文档
 
 **快速指南**
+
 - [快速开始](./.kiro/specs/frontend-navigation-site/QUICKSTART.md) - 5 分钟快速部署
 - [部署指南](./.kiro/specs/frontend-navigation-site/DEPLOYMENT.md) - 详细部署说明
 - [PWA 使用指南](./.kiro/specs/frontend-navigation-site/PWA_GUIDE.md) - PWA 安装和使用
 - [缓存清除指南](./.kiro/specs/frontend-navigation-site/CACHE_CLEAR_GUIDE.md) - 解决缓存问题
 
 **开发文档**
+
 - [需求文档](./.kiro/specs/frontend-navigation-site/requirements.md) - 功能需求
 - [设计文档](./.kiro/specs/frontend-navigation-site/design.md) - 技术架构
 - [任务列表](./.kiro/specs/frontend-navigation-site/tasks.md) - 开发任务
 
 **技术指南**
+
 - [搜索实现](./.kiro/specs/frontend-navigation-site/SEARCH_IMPLEMENTATION.md) - 搜索功能详解
 - [错误处理](./.kiro/specs/frontend-navigation-site/ERROR_HANDLING.md) - 错误处理策略
 - [可访问性](./.kiro/specs/frontend-navigation-site/ACCESSIBILITY.md) - 无障碍访问
