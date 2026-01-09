@@ -9,7 +9,7 @@ import { performDebouncedSearch } from '@/store/slices/searchSlice';
 import { setSearchEngine } from '@/store/slices/settingsSlice';
 import { SEARCH_ENGINES, getSearchUrl, getSearchEngine } from '@/services/search';
 import { storageService } from '@/services/storage';
-import { getFaviconUrl } from '@/api/favicon';
+import { getFaviconUrl } from '@/services/api/favicon';
 
 /**
  * SearchBar 组件

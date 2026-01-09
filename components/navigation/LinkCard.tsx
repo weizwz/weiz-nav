@@ -8,7 +8,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import * as AntdIcons from '@ant-design/icons';
 import { Link } from '@/types/link';
-import { getFaviconUrl } from '@/api/favicon';
+import { getFaviconUrl } from '@/services/api/favicon';
 
 /**
  * 判断颜色是否为白色或接近白色
@@ -33,9 +33,9 @@ const isWhiteColor = (color?: string): boolean => {
  * 2. Favicon API 图标
  * 3. Ant Design 默认图标
  */
-const IconWithFallback: React.FC<{ 
-  src: string; 
-  alt: string; 
+const IconWithFallback: React.FC<{
+  src: string;
+  alt: string;
   fallbackUrl?: string;
   scale?: number;
   backgroundColor?: string;
@@ -46,13 +46,13 @@ const IconWithFallback: React.FC<{
   // 第一级：尝试加载用户自定义图标
   if (!hasError) {
     return (
-      <img 
-        src={src} 
+      <img
+        src={src}
         alt={`${alt}的图标`}
         loading="lazy"
         decoding="async"
         className="w-22 h-22 object-contain"
-        style={{ 
+        style={{
           transform: `scale(${scale})`,
         }}
         onError={() => {
@@ -66,13 +66,13 @@ const IconWithFallback: React.FC<{
   // 第二级：用户图标失败，尝试加载 Favicon
   if (hasError && fallbackUrl && !faviconError) {
     return (
-      <img 
-        src={fallbackUrl} 
+      <img
+        src={fallbackUrl}
         alt={`${alt}的图标`}
         loading="lazy"
         decoding="async"
         className="w-22 h-22 object-contain"
-        style={{ 
+        style={{
           transform: `scale(${scale})`,
         }}
         onError={() => {
@@ -89,14 +89,14 @@ const IconWithFallback: React.FC<{
   const DefaultIcon = AntdIcons.LinkOutlined;
   const defaultIconColor = isWhiteColor(backgroundColor) ? '#1890ff' : '#ffffff';
   const defaultIconSize = 48;
-  
+
   return (
-    <DefaultIcon 
-      style={{ 
+    <DefaultIcon
+      style={{
         fontSize: defaultIconSize,
         color: defaultIconColor,
-      }} 
-      aria-label={`${alt}的默认图标`} 
+      }}
+      aria-label={`${alt}的默认图标`}
     />
   );
 };
@@ -113,16 +113,14 @@ interface LinkCardProps {
  * 显示单个导航链接的卡片，支持自定义图标、背景色和悬停动画
  * 使用 React.memo 优化避免不必要的重渲染
  */
-const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDraggingEnabled = true }) => {
+const LinkCardBase: React.FC<LinkCardProps> = ({
+  link,
+  onEdit,
+  onDelete,
+  isDraggingEnabled = true,
+}) => {
   // 拖拽功能
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: link.id,
     disabled: !isDraggingEnabled,
   });
@@ -137,7 +135,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDragg
 
   // 使用 ref 跟踪组件挂载状态，避免在卸载后执行操作
   const isMountedRef = useRef(true);
-  
+
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
@@ -172,21 +170,24 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDragg
   }, [onDelete, link.id]);
 
   // 右键菜单项 - 使用 useMemo 缓存
-  const menuItems: MenuProps['items'] = React.useMemo(() => [
-    {
-      key: 'edit',
-      label: '编辑',
-      icon: <AntdIcons.EditOutlined />,
-      onClick: handleEdit,
-    },
-    {
-      key: 'delete',
-      label: '删除',
-      icon: <AntdIcons.DeleteOutlined />,
-      danger: true,
-      onClick: handleDelete,
-    },
-  ], [handleEdit, handleDelete]);
+  const menuItems: MenuProps['items'] = React.useMemo(
+    () => [
+      {
+        key: 'edit',
+        label: '编辑',
+        icon: <AntdIcons.EditOutlined />,
+        onClick: handleEdit,
+      },
+      {
+        key: 'delete',
+        label: '删除',
+        icon: <AntdIcons.DeleteOutlined />,
+        danger: true,
+        onClick: handleDelete,
+      },
+    ],
+    [handleEdit, handleDelete]
+  );
 
   // 渲染图标 - 使用 useMemo 缓存
   const renderIcon = React.useMemo(() => {
@@ -201,12 +202,16 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDragg
     };
 
     // 情况1: 用户提供了自定义图标 URL（但不是 favicon.im 的 URL）
-    if (link.icon && 
-        (link.icon.startsWith('http://') || link.icon.startsWith('https://') || link.icon.startsWith('/')) &&
-        !isFaviconUrl(link.icon)) {
+    if (
+      link.icon &&
+      (link.icon.startsWith('http://') ||
+        link.icon.startsWith('https://') ||
+        link.icon.startsWith('/')) &&
+      !isFaviconUrl(link.icon)
+    ) {
       return (
-        <IconWithFallback 
-          src={link.icon} 
+        <IconWithFallback
+          src={link.icon}
           alt={link.name}
           fallbackUrl={faviconUrl || undefined}
           scale={scale}
@@ -216,7 +221,12 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDragg
     }
 
     // 情况2: 用户提供了 Ant Design 图标名称
-    if (link.icon && !link.icon.startsWith('http://') && !link.icon.startsWith('https://') && !link.icon.startsWith('/')) {
+    if (
+      link.icon &&
+      !link.icon.startsWith('http://') &&
+      !link.icon.startsWith('https://') &&
+      !link.icon.startsWith('/')
+    ) {
       const IconComponent = (AntdIcons as any)[link.icon];
       if (IconComponent) {
         const antdIconSize = Math.round(60 * scale);
@@ -227,8 +237,8 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDragg
     // 情况3: 没有自定义图标，或者图标是 favicon.im URL，尝试使用 favicon
     if (faviconUrl) {
       return (
-        <IconWithFallback 
-          src={faviconUrl} 
+        <IconWithFallback
+          src={faviconUrl}
           alt={link.name}
           scale={scale}
           backgroundColor={backgroundColor}
@@ -242,13 +252,13 @@ const LinkCardBase: React.FC<LinkCardProps> = ({ link, onEdit, onDelete, isDragg
     const DefaultIcon = AntdIcons.LinkOutlined;
     const defaultIconColor = isWhiteColor(backgroundColor) ? '#1890ff' : '#ffffff';
     const defaultIconSize = 48;
-    
+
     return (
-      <DefaultIcon 
-        style={{ 
+      <DefaultIcon
+        style={{
           fontSize: defaultIconSize,
           color: defaultIconColor,
-        }} 
+        }}
       />
     );
   }, [link.icon, link.name, link.url, link.iconScale, link.backgroundColor]);

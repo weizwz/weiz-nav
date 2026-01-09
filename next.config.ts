@@ -11,11 +11,11 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_APP_VERSION: pkg.version,
   },
   // 启用静态导出
-  output: 'export',
+  // output: 'export',
 
   // 图片优化配置
   images: {
-    unoptimized: true, // 静态导出需要
+    unoptimized: true, // 静态导出需要，动态部署若无 Image Resizing 也建议保留
   },
 
   // URL 配置
