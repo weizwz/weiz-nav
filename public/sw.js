@@ -1,15 +1,10 @@
 // Service Worker for PWA
-const CACHE_NAME = 'weiz-nav-v0_1_1';
-const RUNTIME_CACHE = 'weiz-nav-runtime-v0_1_1';
-const IMAGE_CACHE = 'weiz-nav-images-v0_1_1';
+const CACHE_NAME = 'weiz-nav-v0_1_2';
+const RUNTIME_CACHE = 'weiz-nav-runtime-v0_1_2';
+const IMAGE_CACHE = 'weiz-nav-images-v0_1_2';
 
 // 需要预缓存的静态资源
-const PRECACHE_URLS = [
-  '/',
-  '/manifest.json',
-  '/favicon.ico',
-  '/logo.png',
-];
+const PRECACHE_URLS = ['/', '/manifest.json', '/favicon.ico', '/logo.png'];
 
 // 安装事件 - 预缓存静态资源
 self.addEventListener('install', (event) => {
@@ -31,7 +26,9 @@ self.addEventListener('activate', (event) => {
         return Promise.all(
           cacheNames
             .filter((cacheName) => {
-              return cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE && cacheName !== IMAGE_CACHE;
+              return (
+                cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE && cacheName !== IMAGE_CACHE
+              );
             })
             .map((cacheName) => {
               console.log('删除旧缓存:', cacheName);
@@ -81,6 +78,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // 跳过 Cloudflare Analytics
+  if (url.hostname === 'static.cloudflareinsights.com') {
+    return;
+  }
+
   // 对于图片资源（包括 favicon），使用缓存优先策略，长期缓存
   if (isImageRequest(url)) {
     event.respondWith(
@@ -88,29 +90,33 @@ self.addEventListener('fetch', (event) => {
         return cache.match(request).then((cachedResponse) => {
           if (cachedResponse) {
             // 从缓存返回，同时在后台更新缓存（stale-while-revalidate）
-            const fetchPromise = fetch(request).then((response) => {
-              if (response && response.status === 200) {
-                cache.put(request, response.clone());
-              }
-              return response;
-            }).catch(() => {
-              // 网络失败时忽略，继续使用缓存
-            });
+            const fetchPromise = fetch(request)
+              .then((response) => {
+                if (response && response.status === 200) {
+                  cache.put(request, response.clone());
+                }
+                return response;
+              })
+              .catch(() => {
+                // 网络失败时忽略，继续使用缓存
+              });
             return cachedResponse;
           }
 
           // 缓存中没有，从网络获取
-          return fetch(request).then((response) => {
-            if (!response || response.status !== 200 || response.type === 'error') {
+          return fetch(request)
+            .then((response) => {
+              if (!response || response.status !== 200 || response.type === 'error') {
+                return response;
+              }
+              // 缓存图片，设置较长的过期时间
+              cache.put(request, response.clone());
               return response;
-            }
-            // 缓存图片，设置较长的过期时间
-            cache.put(request, response.clone());
-            return response;
-          }).catch(() => {
-            // 网络失败，返回默认图标（可选）
-            return new Response('', { status: 404, statusText: 'Not Found' });
-          });
+            })
+            .catch(() => {
+              // 网络失败，返回默认图标（可选）
+              return new Response('', { status: 404, statusText: 'Not Found' });
+            });
         });
       })
     );

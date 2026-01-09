@@ -7,7 +7,7 @@ import { UndoOutlined, ZoomInOutlined, ZoomOutOutlined, BgColorsOutlined } from 
 import * as Icons from '@ant-design/icons';
 import { Link } from '@/types/link';
 import { PRESET_COLORS, isValidColor, getDefaultColor } from '@/utils/colorUtils';
-import { getFaviconUrl } from '@/api/favicon';
+import { getFaviconUrl } from '@/services/api/favicon';
 import { showError } from '@/utils/feedback';
 import { useAppSelector } from '@/store/hooks';
 import { IconifySelector } from './IconifySelector';
@@ -23,12 +23,7 @@ interface EditLinkModalProps {
  * 编辑链接弹窗组件
  * 支持添加新链接和编辑现有链接
  */
-export const EditLinkModal: React.FC<EditLinkModalProps> = ({
-  open,
-  link,
-  onCancel,
-  onSubmit,
-}) => {
+export const EditLinkModal: React.FC<EditLinkModalProps> = ({ open, link, onCancel, onSubmit }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [iconType, setIconType] = useState<'1' | '2' | '3'>('1'); // 1: Favicon, 2: Iconify, 3: 自定义
@@ -65,12 +60,12 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
         const bgColor = link.backgroundColor || getDefaultColor();
         const scale = link.iconScale || 0.7;
         let iconUrl = link.icon || '';
-        
+
         // 如果图标为空，自动获取 favicon
         if (!iconUrl && link.url) {
           iconUrl = getFaviconUrl(link.url, { larger: true }) || '';
         }
-        
+
         form.setFieldsValue({
           name: link.name,
           url: link.url,
@@ -80,11 +75,11 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
           backgroundColor: bgColor,
           iconScale: scale,
         });
-        
+
         setPreviewIcon(iconUrl);
         setPreviewBgColor(bgColor);
         setIconScale(scale);
-        
+
         // 判断图标类型
         if (iconUrl && iconUrl.includes('api.iconify.design')) {
           setIconType('2'); // Iconify 图标
@@ -108,7 +103,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
           backgroundColor: defaultBg,
           iconScale: 0.7,
         });
-        
+
         setPreviewIcon('');
         setPreviewBgColor(defaultBg);
         setIconScale(0.7);
@@ -121,103 +116,124 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
   }, [open, link, form, defaultCategory]);
 
   // 处理 URL 输入变化，自动获取 favicon
-  const handleUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const url = e.target.value.trim();
-    
-    // 验证 URL 格式
-    if (!url || !/^https?:\/\/.+/.test(url)) {
-      setPreviewIcon('');
-      return;
-    }
+  const handleUrlChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const url = e.target.value.trim();
 
-    // 只有在 Favicon 模式下才自动更新
-    if (iconType === '1') {
-      const faviconUrl = getFaviconUrl(url, {larger: true});
-      form.setFieldsValue({ icon: faviconUrl || '' });
-      setPreviewIcon(faviconUrl || '');
-    }
-  }, [iconType, form]);
-
-  // 处理图标类型切换
-  const handleIconTypeChange = useCallback((value: '1' | '2' | '3') => {
-    setIconType(value);
-    
-    if (value === '1') {
-      // 切换到 Favicon 模式，保存当前图标并自动获取 favicon
-      const currentIcon = form.getFieldValue('icon');
-      if (currentIcon) {
-        if (currentIcon.includes('api.iconify.design')) {
-          setSavedIconifyIcon(currentIcon);
-        } else if (!currentIcon.includes('favicon.im')) {
-          setSavedCustomIcon(currentIcon);
-        }
+      // 验证 URL 格式
+      if (!url || !/^https?:\/\/.+/.test(url)) {
+        setPreviewIcon('');
+        return;
       }
-      
-      const url = form.getFieldValue('url');
-      if (url && /^https?:\/\/.+/.test(url)) {
-        const faviconUrl = getFaviconUrl(url, {larger: true});
+
+      // 只有在 Favicon 模式下才自动更新
+      if (iconType === '1') {
+        const faviconUrl = getFaviconUrl(url, { larger: true });
         form.setFieldsValue({ icon: faviconUrl || '' });
         setPreviewIcon(faviconUrl || '');
       }
-    } else if (value === '2') {
-      // 切换到 Iconify 模式，恢复之前保存的 Iconify 图标
-      const iconToRestore = savedIconifyIcon || '';
-      form.setFieldsValue({ icon: iconToRestore });
-      setPreviewIcon(iconToRestore);
-    } else if (value === '3') {
-      // 切换到自定义模式，恢复之前保存的自定义图标
-      const iconToRestore = savedCustomIcon || '';
-      form.setFieldsValue({ icon: iconToRestore });
-      setPreviewIcon(iconToRestore);
-    }
-  }, [form, savedCustomIcon, savedIconifyIcon]);
+    },
+    [iconType, form]
+  );
+
+  // 处理图标类型切换
+  const handleIconTypeChange = useCallback(
+    (value: '1' | '2' | '3') => {
+      setIconType(value);
+
+      if (value === '1') {
+        // 切换到 Favicon 模式，保存当前图标并自动获取 favicon
+        const currentIcon = form.getFieldValue('icon');
+        if (currentIcon) {
+          if (currentIcon.includes('api.iconify.design')) {
+            setSavedIconifyIcon(currentIcon);
+          } else if (!currentIcon.includes('favicon.im')) {
+            setSavedCustomIcon(currentIcon);
+          }
+        }
+
+        const url = form.getFieldValue('url');
+        if (url && /^https?:\/\/.+/.test(url)) {
+          const faviconUrl = getFaviconUrl(url, { larger: true });
+          form.setFieldsValue({ icon: faviconUrl || '' });
+          setPreviewIcon(faviconUrl || '');
+        }
+      } else if (value === '2') {
+        // 切换到 Iconify 模式，恢复之前保存的 Iconify 图标
+        const iconToRestore = savedIconifyIcon || '';
+        form.setFieldsValue({ icon: iconToRestore });
+        setPreviewIcon(iconToRestore);
+      } else if (value === '3') {
+        // 切换到自定义模式，恢复之前保存的自定义图标
+        const iconToRestore = savedCustomIcon || '';
+        form.setFieldsValue({ icon: iconToRestore });
+        setPreviewIcon(iconToRestore);
+      }
+    },
+    [form, savedCustomIcon, savedIconifyIcon]
+  );
 
   // 处理图标 URL 输入
-  const handleIconUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const iconUrl = e.target.value.trim();
-    form.setFieldsValue({ icon: iconUrl });
-    setPreviewIcon(iconUrl);
-    // 实时保存自定义图标
-    if (iconType === '3') {
-      setSavedCustomIcon(iconUrl);
-    }
-  }, [form, iconType]);
+  const handleIconUrlChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const iconUrl = e.target.value.trim();
+      form.setFieldsValue({ icon: iconUrl });
+      setPreviewIcon(iconUrl);
+      // 实时保存自定义图标
+      if (iconType === '3') {
+        setSavedCustomIcon(iconUrl);
+      }
+    },
+    [form, iconType]
+  );
 
   // 处理 Iconify 图标选择
-  const handleIconifyChange = useCallback((iconUrl: string) => {
-    form.setFieldsValue({ icon: iconUrl });
-    setPreviewIcon(iconUrl);
-    setSavedIconifyIcon(iconUrl);
-  }, [form]);
+  const handleIconifyChange = useCallback(
+    (iconUrl: string) => {
+      form.setFieldsValue({ icon: iconUrl });
+      setPreviewIcon(iconUrl);
+      setSavedIconifyIcon(iconUrl);
+    },
+    [form]
+  );
 
   // 处理 Iconify 颜色变化
-  const handleIconifyColorChange = useCallback((color: string) => {
-    setIconifyColor(color);
-    const currentIcon = form.getFieldValue('icon');
-    if (currentIcon) {
-      // 移除现有的 color 参数
-      const baseUrl = currentIcon.split('?')[0];
-      // 添加新的颜色参数
-      const newUrl = color ? `${baseUrl}?color=${encodeURIComponent(color)}` : baseUrl;
-      form.setFieldsValue({ icon: newUrl });
-      setPreviewIcon(newUrl);
-      setSavedIconifyIcon(newUrl);
-    }
-  }, [form]);
+  const handleIconifyColorChange = useCallback(
+    (color: string) => {
+      setIconifyColor(color);
+      const currentIcon = form.getFieldValue('icon');
+      if (currentIcon) {
+        // 移除现有的 color 参数
+        const baseUrl = currentIcon.split('?')[0];
+        // 添加新的颜色参数
+        const newUrl = color ? `${baseUrl}?color=${encodeURIComponent(color)}` : baseUrl;
+        form.setFieldsValue({ icon: newUrl });
+        setPreviewIcon(newUrl);
+        setSavedIconifyIcon(newUrl);
+      }
+    },
+    [form]
+  );
 
   // 处理背景色变化
-  const handleBgColorChange = useCallback((color: Color) => {
-    const colorValue = color.toHexString();
-    setPreviewBgColor(colorValue);
-    form.setFieldsValue({ backgroundColor: colorValue });
-  }, [form]);
+  const handleBgColorChange = useCallback(
+    (color: Color) => {
+      const colorValue = color.toHexString();
+      setPreviewBgColor(colorValue);
+      form.setFieldsValue({ backgroundColor: colorValue });
+    },
+    [form]
+  );
 
   // 处理图标缩放
-  const handleScaleChange = useCallback((delta: number) => {
-    const newScale = Math.max(0.3, Math.min(1.5, iconScale + delta));
-    setIconScale(newScale);
-    form.setFieldsValue({ iconScale: newScale });
-  }, [form, iconScale]);
+  const handleScaleChange = useCallback(
+    (delta: number) => {
+      const newScale = Math.max(0.3, Math.min(1.5, iconScale + delta));
+      setIconScale(newScale);
+      form.setFieldsValue({ iconScale: newScale });
+    },
+    [form, iconScale]
+  );
 
   // 重置缩放
   const handleResetScale = useCallback(() => {
@@ -231,7 +247,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({
       // @ts-ignore - EyeDropper API 还没有 TypeScript 类型定义
       const eyeDropper = new window.EyeDropper();
       const result = await eyeDropper.open();
-      
+
       if (result?.sRGBHex) {
         const color = result.sRGBHex;
         setPreviewBgColor(color);

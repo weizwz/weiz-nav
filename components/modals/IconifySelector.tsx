@@ -4,7 +4,7 @@ import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { Button, Input, List, Popover, Spin, Empty, ColorPicker } from 'antd';
 import type { Color } from 'antd/es/color-picker';
 import { SearchOutlined, CheckOutlined } from '@ant-design/icons';
-import { iconifyApi, type IconOption } from '@/api/iconify';
+import { iconifyApi, IconOption } from '@/services/api/iconify';
 import { PRESET_COLORS } from '@/utils/colorUtils';
 import { debounce } from '@/utils/debounce';
 
