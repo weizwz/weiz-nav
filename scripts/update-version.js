@@ -1,15 +1,14 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 /**
  * 更新版本号
- * 读取 package.json 的版本号，同步到 public/version.json 和 public/sw.js
+ * 读取 package.json 的版本号，同步到 public/sw.js
  */
-export function updateVersion() {
+function updateVersion() {
   // 路径配置
   const PATHS = {
     package: path.join(process.cwd(), 'package.json'),
-    version: path.join(process.cwd(), 'public/version.json'),
     sw: path.join(process.cwd(), 'public/sw.js'),
   };
 
@@ -19,28 +18,9 @@ export function updateVersion() {
     const version = pkg.version;
     const cacheVersion = `v${version.replace(/\./g, '_')}`; // e.g., 1.0.5 -> v1_0_5
 
-    // 1. 更新 public/version.json
-    let versionData: any = {};
-    if (fs.existsSync(PATHS.version)) {
-      versionData = JSON.parse(fs.readFileSync(PATHS.version, 'utf8'));
-    }
+    console.log(`Updating Service Worker to version ${version} (Cache: ${cacheVersion})...`);
 
-    // 检查是否需要更新
-    if (versionData.version === version) {
-      // 版本号相同，不更新
-      return;
-    }
-
-    console.log(`Updating version to ${version} (Cache: ${cacheVersion})...`);
-
-    versionData.version = version;
-    versionData.buildTime = new Date().toISOString();
-    versionData.cacheVersion = cacheVersion;
-
-    fs.writeFileSync(PATHS.version, JSON.stringify(versionData, null, 2) + '\n');
-    console.log('✓ Updated public/version.json');
-
-    // 2. 更新 public/sw.js
+    // 更新 public/sw.js
     let swContent = fs.readFileSync(PATHS.sw, 'utf8');
 
     // 更新 CACHE_NAME
@@ -67,6 +47,8 @@ export function updateVersion() {
     console.log('Version update complete!');
   } catch (error) {
     console.error('✗ Failed to update version:', error);
-    // 不抛出错误，以免影响构建流程
+    process.exit(1);
   }
 }
+
+updateVersion();

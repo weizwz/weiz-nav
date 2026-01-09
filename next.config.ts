@@ -1,10 +1,8 @@
 import type { NextConfig } from 'next';
-import { updateVersion } from './scripts/update-version';
-
 import pkg from './package.json';
 
-// 自动更新版本号
-updateVersion();
+// 自动更新版本号已移至 prebuild 脚本
+// updateVersion();
 
 const nextConfig: NextConfig = {
   env: {
