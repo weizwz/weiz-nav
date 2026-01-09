@@ -2,17 +2,22 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button, Spin, Popconfirm } from 'antd';
-import { 
-  PlusOutlined, 
-  ArrowLeftOutlined, 
-  ReloadOutlined, 
-  DeleteOutlined, 
-  TagsOutlined 
+import {
+  PlusOutlined,
+  ArrowLeftOutlined,
+  ReloadOutlined,
+  DeleteOutlined,
+  TagsOutlined,
 } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { addLink, updateLink, deleteLink, resetLinks } from '@/store/slices/linksSlice';
-import { resetCategories, defaultCategories, updateCategory, deleteCategory } from '@/store/slices/categoriesSlice';
+import {
+  resetCategories,
+  defaultCategories,
+  updateCategory,
+  deleteCategory,
+} from '@/store/slices/categoriesSlice';
 import { DataTable } from '@/components/management/DataTable';
 import { EditLinkModal } from '@/components/modals/EditLinkModal';
 import { EditCategoryModal } from '@/components/modals/EditCategoryModal';
@@ -101,10 +106,12 @@ export default function ManagePage() {
   const handleBatchCategorySubmit = (category: string) => {
     try {
       selectedRowKeys.forEach((id) => {
-        dispatch(updateLink({
-          id: id as string,
-          category,
-        }));
+        dispatch(
+          updateLink({
+            id: id as string,
+            category,
+          })
+        );
       });
       showSuccess(`成功将 ${selectedRowKeys.length} 个链接分类到"${category}"`);
       setSelectedRowKeys([]);
@@ -124,27 +131,30 @@ export default function ManagePage() {
   // 处理删除分类
   const handleDeleteCategory = (category: Category) => {
     // 查找该分类下的链接数量
-    const linksInCategory = links.filter(link => link.category === category.name);
-    
+    const linksInCategory = links.filter((link) => link.category === category.name);
+
     showConfirm({
       title: '确认删除分类',
-      content: linksInCategory.length > 0 
-        ? `该分类下有 ${linksInCategory.length} 个链接，删除后这些链接的分类将被清空。确定要删除吗？`
-        : '确定要删除这个分类吗？',
+      content:
+        linksInCategory.length > 0
+          ? `该分类下有 ${linksInCategory.length} 个链接，删除后这些链接的分类将被清空。确定要删除吗？`
+          : '确定要删除这个分类吗？',
       okText: '删除',
       cancelText: '取消',
       okType: 'danger',
       onOk: () => {
         // 将该分类下的所有链接的分类字段置空
         if (linksInCategory.length > 0) {
-          linksInCategory.forEach(link => {
-            dispatch(updateLink({
-              id: link.id,
-              category: '',
-            }));
+          linksInCategory.forEach((link) => {
+            dispatch(
+              updateLink({
+                id: link.id,
+                category: '',
+              })
+            );
           });
         }
-        
+
         // 删除分类
         dispatch(deleteCategory(category.id));
         showSuccess('分类已删除');
@@ -158,20 +168,24 @@ export default function ManagePage() {
       try {
         // 更新分类
         const oldName = currentCategory.name;
-        dispatch(updateCategory({
-          id: currentCategory.id,
-          ...data,
-        }));
-        
+        dispatch(
+          updateCategory({
+            id: currentCategory.id,
+            ...data,
+          })
+        );
+
         // 更新所有使用该分类的链接
-        const linksToUpdate = links.filter(link => link.category === oldName);
-        linksToUpdate.forEach(link => {
-          dispatch(updateLink({
-            id: link.id,
-            category: data.name,
-          }));
+        const linksToUpdate = links.filter((link) => link.category === oldName);
+        linksToUpdate.forEach((link) => {
+          dispatch(
+            updateLink({
+              id: link.id,
+              category: data.name,
+            })
+          );
         });
-        
+
         showSuccess('分类已更新');
         setCategoryEditModalOpen(false);
         setCurrentCategory(null);
@@ -229,7 +243,7 @@ export default function ManagePage() {
     try {
       // 清除 LocalStorage
       const clearResult = storageService.clear();
-      
+
       if (!clearResult.success) {
         showError(clearResult.error || '清除数据失败，请检查浏览器设置');
         return;
@@ -241,7 +255,7 @@ export default function ManagePage() {
 
       // 保存默认数据到 LocalStorage
       const saveResult = storageService.saveLinks(defaultLinks);
-      
+
       if (!saveResult.success) {
         showError(saveResult.error || '保存默认数据失败');
         return;
@@ -283,16 +297,15 @@ export default function ManagePage() {
   return (
     <div className="h-screen flex flex-col bg-(--background) transition-theme">
       {/* 页头 */}
-      <header className="flex-none w-full bg-(--background-main) border-b border-gray-200 dark:border-neutral-700 transition-theme" role="banner">
+      <header
+        className="flex-none w-full bg-(--background-main) border-b border-gray-200 dark:border-neutral-700 transition-theme"
+        role="banner"
+      >
         <div className="container mx-auto px-4 py-3 sm:px-8 ">
           <div className="flex justify-between items-center">
             {/* Logo/标题 */}
             <div className="flex items-center gap-3 py-2">
-              <img 
-                src="/logo.png" 
-                alt="网站Logo" 
-                className="w-5 h-5 object-contain"
-              />
+              <img src="/logo.png" alt="网站Logo" className="w-6 h-6 object-contain" />
               <h1 className="text-base font-bold text-gray-800 dark:text-white whitespace-nowrap">
                 数据管理
               </h1>
@@ -309,7 +322,7 @@ export default function ManagePage() {
         </div>
       </header>
       {/* 数据表格 */}
-      <div className='flex-1 overflow-y-auto'>
+      <div className="flex-1 overflow-y-auto">
         <div className="container flex flex-col mx-auto p-4 sm:px-8">
           {/* 导入导出工具栏 */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-4">
@@ -320,7 +333,7 @@ export default function ManagePage() {
                   已选择 {selectedRowKeys.length} 项
                 </span>
               </div>
-              <div className='flex flex-wrap gap-2 lg:gap-4'>
+              <div className="flex flex-wrap gap-2 lg:gap-4">
                 <Button
                   danger
                   icon={<ReloadOutlined aria-hidden="true" />}
@@ -336,11 +349,15 @@ export default function ManagePage() {
                   cancelText="取消"
                   disabled={selectedRowKeys.length === 0}
                 >
-                  <Button 
+                  <Button
                     danger
                     icon={<DeleteOutlined aria-hidden="true" />}
                     onClick={handleBatchDeleteClick}
-                    aria-label={selectedRowKeys.length > 0 ? `批量删除选中的 ${selectedRowKeys.length} 个链接` : '批量删除'}
+                    aria-label={
+                      selectedRowKeys.length > 0
+                        ? `批量删除选中的 ${selectedRowKeys.length} 个链接`
+                        : '批量删除'
+                    }
                   >
                     <span className="hidden md:inline">批量删除</span>
                   </Button>
@@ -348,7 +365,11 @@ export default function ManagePage() {
                 <Button
                   icon={<TagsOutlined aria-hidden="true" />}
                   onClick={handleBatchCategoryClick}
-                  aria-label={selectedRowKeys.length > 0 ? `批量分类选中的 ${selectedRowKeys.length} 个链接` : '批量分类'}
+                  aria-label={
+                    selectedRowKeys.length > 0
+                      ? `批量分类选中的 ${selectedRowKeys.length} 个链接`
+                      : '批量分类'
+                  }
                 >
                   <span className="hidden md:inline">批量分类</span>
                 </Button>
@@ -410,7 +431,7 @@ export default function ManagePage() {
             onCancel={() => setBatchCategoryModalOpen(false)}
             onSubmit={handleBatchCategorySubmit}
           />
-      </div>
+        </div>
       </div>
     </div>
   );
