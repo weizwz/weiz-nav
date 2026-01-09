@@ -9,7 +9,7 @@ Add Cloudflare Web Analytics to the Next.js application, ensuring it only loads 
 ### 1. Environment Configuration
 
 - **File**: `.env.production`
-- **Action**: Added `NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN` with the provided token.
+- **Action**: Added `NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN` with the provided token.
 - **Reason**: To store the sensitive token securely and ensure it's available in the production environment.
 
 ### 2. Root Layout Modification
@@ -19,7 +19,7 @@ Add Cloudflare Web Analytics to the Next.js application, ensuring it only loads 
   - Imported `Script` from `next/script`.
   - Added conditional rendering logic to include the Cloudflare Web Analytics script only when:
     - `process.env.NODE_ENV` is `'production'`.
-    - `process.env.NEXT_PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN` is present.
+    - `process.env.NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN` is present.
 - **Reason**: To load the analytics script only in the production environment as requested, avoiding unnecessary tracking in development.
 
 ## Verification
