@@ -19,7 +19,7 @@
     "serve:static": "npx serve@latest out -p 3000",
     "deploy:vercel": "vercel --prod",
     "pages:build": "pnpm update-version && npx @cloudflare/next-on-pages",
-    "deploy:cloudflare": "pnpm pages:build && wrangler pages deploy .vercel/output/static --project-name=weiz-nav",
+    "deploy:cloudflare": "pnpm build && wrangler pages deploy out --project-name=weiz-nav",
     "deploy": "pnpm deploy:cloudflare",
     "prebuild": "pnpm clean"
   },
