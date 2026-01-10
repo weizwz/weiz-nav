@@ -1,21 +1,19 @@
 import type { NextConfig } from 'next';
-import { updateVersion } from './scripts/update-version';
-
 import pkg from './package.json';
 
-// 自动更新版本号
-updateVersion();
+// 自动更新版本号已移至 prebuild 脚本
+// updateVersion();
 
 const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_APP_VERSION: pkg.version,
   },
   // 启用静态导出
-  // output: 'export',
+  output: 'export',
 
   // 图片优化配置
   images: {
-    unoptimized: true, // 静态导出需要，动态部署若无 Image Resizing 也建议保留
+    unoptimized: true, // 静态导出需要
   },
 
   // URL 配置
