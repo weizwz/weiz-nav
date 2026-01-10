@@ -52,7 +52,7 @@ pnpm install
 # 配置环境变量（可选）
 cp .env.example .env.local
 # 编辑 .env.local 设置你的网站 URL
-# 静态部署时，cloudflare 上的环境变量无效，需要提交 .env.production 到代码中
+# 静态部署时，cloudflare 上的环境变量无效，需要配置 .env.production/.env.local 且提交代码
 
 # 启动开发服务器
 pnpm dev
