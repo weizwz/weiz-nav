@@ -77,7 +77,9 @@ export function getFaviconUrl(url: string, options: FaviconOptions = {}): string
     params.append('larger', 'true');
   }
 
-  return `${FAVICON_API_BASE}/${domain}?${params.toString()}&t=${Date.now()}`;
+  // 使用按天更新的时间戳，避免 hydration 错误
+  const dailyTimestamp = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) * (1000 * 60 * 60 * 24);
+  return `${FAVICON_API_BASE}/${domain}?${params.toString()}&t=${dailyTimestamp}`;
 }
 
 /**
