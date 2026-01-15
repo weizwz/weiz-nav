@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { FloatButton, Drawer } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import store from '@/store';
 import { addLink, updateLink, deleteLink, loadLinks } from '@/store/slices/linksSlice';
 import { storageService } from '@/services/storage';
 import { defaultLinks } from '@/services/defaultData';
@@ -26,21 +27,21 @@ import { Link } from '@/types/link';
 export default function Home() {
   const dispatch = useAppDispatch();
   const links = useAppSelector((state) => state.links.items);
-  
+
   // 编辑弹窗状态
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<Link | null>(null);
-  
+
   // 删除确认弹窗状态
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deletingLinkId, setDeletingLinkId] = useState<string | null>(null);
-  
+
   // 侧边栏抽屉状态（移动端）
   const [drawerOpen, setDrawerOpen] = useState(false);
-  
+
   // 加载状态
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // 页面加载时从 Redux store 加载链接数据
   useEffect(() => {
     // 如果 store 中没有数据，尝试从 LocalStorage 加载
@@ -68,7 +69,7 @@ export default function Home() {
   }, [dispatch, links.length]);
 
   // 使用 useCallback 缓存事件处理函数，避免子组件不必要的重渲染
-  
+
   // 处理添加链接按钮点击
   const handleAddClick = useCallback(() => {
     setEditingLink(null);
@@ -88,27 +89,52 @@ export default function Home() {
   }, []);
 
   // 处理编辑弹窗提交
-  const handleEditSubmit = useCallback((linkData: Partial<Link>) => {
-    try {
-      if (editingLink) {
-        // 更新现有链接
-        dispatch(updateLink({
-          ...linkData,
-          id: editingLink.id,
-        }));
-        showSuccess('链接更新成功');
-      } else {
-        // 添加新链接
-        dispatch(addLink(linkData as any));
-        showSuccess('链接添加成功');
+  const handleEditSubmit = useCallback(
+    (linkData: Partial<Link>) => {
+      try {
+        if (editingLink) {
+          // 更新现有链接
+          dispatch(
+            updateLink({
+              ...linkData,
+              id: editingLink.id,
+            })
+          );
+
+          // 检查是否有错误
+          const error = store.getState().links.error;
+          if (error) {
+            showError(error);
+            // 清除错误状态
+            dispatch({ type: 'links/clearError' });
+            return;
+          }
+
+          showSuccess('链接更新成功');
+        } else {
+          // 添加新链接
+          dispatch(addLink(linkData as any));
+
+          // 检查是否有错误
+          const error = store.getState().links.error;
+          if (error) {
+            showError(error);
+            // 清除错误状态
+            dispatch({ type: 'links/clearError' });
+            return;
+          }
+
+          showSuccess('链接添加成功');
+        }
+        setEditModalOpen(false);
+        setEditingLink(null);
+      } catch (error) {
+        console.error('保存链接失败:', error);
+        showError('保存链接失败，请重试');
       }
-      setEditModalOpen(false);
-      setEditingLink(null);
-    } catch (error) {
-      console.error('保存链接失败:', error);
-      showError('保存链接失败，请重试');
-    }
-  }, [dispatch, editingLink]);
+    },
+    [dispatch, editingLink]
+  );
 
   // 处理编辑弹窗取消
   const handleEditCancel = useCallback(() => {
@@ -138,10 +164,8 @@ export default function Home() {
   }, []);
 
   // 获取要删除的链接名称 - 使用 useMemo 缓存
-  const deletingLinkName = React.useMemo(() => 
-    deletingLinkId
-      ? links.find(link => link.id === deletingLinkId)?.name
-      : '',
+  const deletingLinkName = React.useMemo(
+    () => (deletingLinkId ? links.find((link) => link.id === deletingLinkId)?.name : ''),
     [deletingLinkId, links]
   );
 
@@ -151,12 +175,11 @@ export default function Home() {
       <div className="flex-none">
         <Header onMenuClick={() => setDrawerOpen(true)} />
       </div>
-      
+
       {/* 主内容区域 - 固定高度，内部滚动 */}
       <div className="flex-1 flex overflow-hidden">
-
         {/* 左侧分类导航 - Desktop - 固定，内部滚动 */}
-        <aside 
+        <aside
           className="hidden lg:flex flex-col w-48 bg-white dark:bg-antd-dark border-r border-gray-200 dark:border-neutral-700 transition-theme overflow-hidden"
           aria-label="分类导航侧边栏"
         >
@@ -172,15 +195,15 @@ export default function Home() {
           className="lg:hidden"
           width={280}
           styles={{
-            body: { padding: 0, height: '100%' }
+            body: { padding: 0, height: '100%' },
           }}
         >
           <CategorySidebar className="h-full" />
         </Drawer>
 
         {/* 右侧内容区域 - 只有这里滚动 */}
-        <main 
-          id="main-content" 
+        <main
+          id="main-content"
           className="flex-1 overflow-y-auto overflow-x-hidden"
           role="main"
           aria-label="导航链接主内容区"
@@ -188,10 +211,7 @@ export default function Home() {
           {isLoading ? (
             <LinkGridSkeleton />
           ) : (
-            <LinkGrid
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
+            <LinkGrid onEdit={handleEdit} onDelete={handleDelete} />
           )}
         </main>
       </div>

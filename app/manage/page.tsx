@@ -11,6 +11,7 @@ import {
 } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import store from '@/store';
 import { addLink, updateLink, deleteLink, resetLinks } from '@/store/slices/linksSlice';
 import {
   resetCategories,
@@ -208,10 +209,30 @@ export default function ManagePage() {
       if (linkData.id) {
         // 更新现有链接
         dispatch(updateLink(linkData as any));
+
+        // 检查是否有错误
+        const error = store.getState().links.error;
+        if (error) {
+          showError(error);
+          // 清除错误状态
+          dispatch({ type: 'links/clearError' });
+          return;
+        }
+
         showSuccess('更新成功');
       } else {
         // 添加新链接
         dispatch(addLink(linkData as any));
+
+        // 检查是否有错误
+        const error = store.getState().links.error;
+        if (error) {
+          showError(error);
+          // 清除错误状态
+          dispatch({ type: 'links/clearError' });
+          return;
+        }
+
         showSuccess('添加成功');
       }
       setEditModalOpen(false);
