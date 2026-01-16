@@ -193,7 +193,7 @@ export default function Home() {
           onClose={() => setDrawerOpen(false)}
           open={drawerOpen}
           className="lg:hidden"
-          width={280}
+          size="default"
           styles={{
             body: { padding: 0, height: '100%' },
           }}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, memo, useState, useEffect, useRef } from 'react';
+import React, { useCallback, memo, useState } from 'react';
 import { Card, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { motion } from 'framer-motion';
@@ -132,16 +132,6 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
     zIndex: isDragging ? 1000 : 'auto',
     position: isDragging ? 'relative' : 'static',
   };
-
-  // 使用 ref 跟踪组件挂载状态，避免在卸载后执行操作
-  const isMountedRef = useRef(true);
-
-  useEffect(() => {
-    isMountedRef.current = true;
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
 
   // 使用 useCallback 缓存事件处理函数
   const handleClick = useCallback(() => {
@@ -284,7 +274,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
           <Card
             hoverable
             onClick={handleClick}
-            onKeyDown={(e) => {
+            onKeyDown={(e: React.KeyboardEvent) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 handleClick();
