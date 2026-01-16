@@ -442,7 +442,9 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({ open, link, onCanc
                     ]}
                     showText
                     format="hex"
+                    value={previewBgColor}
                     onChange={handleBgColorChange}
+                    allowClear={false}
                   />
                 </Form.Item>
                 {supportsEyeDropper && (

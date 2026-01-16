@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
-import { Button, Input, List, Popover, Spin, Empty, ColorPicker } from 'antd';
+import { Button, Input, Popover, Spin, Empty, ColorPicker } from 'antd';
 import type { Color } from 'antd/es/color-picker';
 import { SearchOutlined, CheckOutlined } from '@ant-design/icons';
 import { iconifyApi, IconOption } from '@/services/api/iconify';
@@ -44,38 +44,38 @@ const IconOptionItem: React.FC<{
   };
 
   return (
-    <List.Item
+    <div
       onClick={onClick}
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="option"
       aria-selected={selected}
       aria-label={`${icon.label} 图标`}
-      className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors px-4 py-2"
-      style={{
-        backgroundColor: selected ? 'rgba(24, 144, 255, 0.1)' : undefined,
-      }}
+      className={`
+        flex items-center justify-between w-full px-4 py-3 cursor-pointer transition-colors
+        hover:bg-gray-50 dark:hover:bg-gray-800
+        border-b border-gray-100 dark:border-gray-700 last:border-b-0
+        ${selected ? 'bg-blue-50 dark:bg-blue-900/20' : ''}
+      `}
     >
-      <div className="flex items-center justify-between w-full">
-        <div className="flex items-center gap-3 flex-1 min-w-0">
-          {!imageError ? (
-            <img
-              src={icon.url}
-              alt={icon.label}
-              className="w-6 h-6 shrink-0"
-              loading="lazy"
-              onError={() => setImageError(true)}
-            />
-          ) : (
-            <div className="w-6 h-6 shrink-0 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center text-xs text-gray-400">
-              ?
-            </div>
-          )}
-          <span className="overflow-hidden text-ellipsis whitespace-nowrap">{icon.label}</span>
-        </div>
-        {selected && <CheckOutlined className="text-blue-500 shrink-0 ml-2" />}
+      <div className="flex items-center gap-3 flex-1 min-w-0">
+        {!imageError ? (
+          <img
+            src={icon.url}
+            alt={icon.label}
+            className="w-6 h-6 shrink-0"
+            loading="lazy"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="w-6 h-6 shrink-0 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center text-xs text-gray-400">
+            ?
+          </div>
+        )}
+        <span className="overflow-hidden text-ellipsis whitespace-nowrap">{icon.label}</span>
       </div>
-    </List.Item>
+      {selected && <CheckOutlined className="text-blue-500 shrink-0 ml-2" />}
+    </div>
   );
 };
 
@@ -286,17 +286,16 @@ export const IconifySelector: React.FC<IconifySelectorProps> = ({
             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={error} className="py-8" />
           </div>
         ) : options.length > 0 ? (
-          <List
-            dataSource={options}
-            renderItem={(icon) => (
+          <div role="listbox" aria-label="图标选项列表">
+            {options.map((icon) => (
               <IconOptionItem
                 key={icon.value}
                 icon={icon}
                 selected={selectedIcon?.value === icon.value}
                 onClick={() => handleIconSelect(icon)}
               />
-            )}
-          />
+            ))}
+          </div>
         ) : (
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}
