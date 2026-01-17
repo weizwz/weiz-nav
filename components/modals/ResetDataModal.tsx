@@ -16,11 +16,7 @@ interface ResetDataModalProps {
  * 数据重置确认对话框
  * 实现二次确认机制，要求用户输入"确认"文本
  */
-export const ResetDataModal: React.FC<ResetDataModalProps> = ({
-  open,
-  onConfirm,
-  onCancel,
-}) => {
+export const ResetDataModal: React.FC<ResetDataModalProps> = ({ open, onConfirm, onCancel }) => {
   const [confirmText, setConfirmText] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -54,7 +50,10 @@ export const ResetDataModal: React.FC<ResetDataModalProps> = ({
       open={open}
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <ExclamationCircleOutlined style={{ color: '#ff4d4f', fontSize: '20px' }} aria-hidden="true" />
+          <ExclamationCircleOutlined
+            style={{ color: '#ff4d4f', fontSize: '20px' }}
+            aria-hidden="true"
+          />
           <span id="reset-modal-title">重置所有数据</span>
         </div>
       }
@@ -77,19 +76,22 @@ export const ResetDataModal: React.FC<ResetDataModalProps> = ({
       aria-labelledby="reset-modal-title"
       aria-describedby="reset-modal-description"
     >
-      <Space direction="vertical" size="middle" style={{ width: '100%' }} id="reset-modal-description">
+      <Space
+        orientation="vertical"
+        size="middle"
+        style={{ width: '100%' }}
+        id="reset-modal-description"
+      >
         <Alert
-          message="警告：此操作不可撤销！建议先导出数据进行备份"
+          title="警告：此操作不可撤销！建议先导出数据进行备份"
           type="error"
           role="alert"
           aria-live="polite"
         />
 
         <div>
-          <Paragraph>
-            此操作将：
-          </Paragraph>
-          <ul className='pl-4 font-medium'>
+          <Paragraph>此操作将：</Paragraph>
+          <ul className="pl-4 font-medium">
             <li>删除所有用户数据，包括导航链接和分类</li>
             <li>清除所有用户自定义设置</li>
             <li>恢复数据和设置到初始默认状态</li>
@@ -98,7 +100,11 @@ export const ResetDataModal: React.FC<ResetDataModalProps> = ({
 
         <div>
           <Paragraph>
-            请输入 <Text strong code>{CONFIRM_KEYWORD}</Text> 以确认重置操作：
+            请输入{' '}
+            <Text strong code>
+              {CONFIRM_KEYWORD}
+            </Text>{' '}
+            以确认重置操作：
           </Paragraph>
           <Input
             placeholder={`请输入"${CONFIRM_KEYWORD}"`}
@@ -114,8 +120,8 @@ export const ResetDataModal: React.FC<ResetDataModalProps> = ({
             aria-describedby="confirm-text-error"
           />
           {confirmText && !isConfirmValid && (
-            <Text 
-              type="danger" 
+            <Text
+              type="danger"
               style={{ fontSize: '12px', marginTop: '4px', display: 'block' }}
               id="confirm-text-error"
               role="alert"
