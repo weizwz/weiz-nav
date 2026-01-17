@@ -31,7 +31,7 @@ function AntdThemeProvider({ children }: { children: React.ReactNode }) {
       locale={zhCN}
       theme={{
         algorithm: isDark ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
-        cssVar: true,
+        cssVar: { key: 'app' },
         hashed: false, // 禁用 hash 类名，减少 CSS-in-JS 警告
         token: {
           colorPrimary: '#1890ff',
