@@ -1,6 +1,6 @@
 {
   "version": "0.1.3",
-  "exportTime": 1768641989756,
+  "exportTime": 1768642391119,
   "data": [
     {
       "id": "主页",
@@ -567,13 +567,13 @@
           "url": "https://cover.weizwz.com/",
           "description": "一个免费、漂亮的封面生成器",
           "category": "开发常用",
-          "icon": "https://p.weizwz.com/cover/cover_full_441653186ab35580.webp",
+          "icon": "https://favicon.im/cover.weizwz.com?larger=true",
           "backgroundColor": "#4c38da",
           "iconScale": 1,
           "tags": [],
           "order": 39,
           "createdAt": 1764324547789,
-          "updatedAt": 1768641853635
+          "updatedAt": 1768642359303
         },
         {
           "url": "https://yarnpkg.com/",
