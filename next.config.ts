@@ -47,6 +47,21 @@ const nextConfig: NextConfig = {
 
   // 性能指标
   poweredByHeader: false, // 移除 X-Powered-By 头
+
+  // Webpack 配置
+  webpack: (config, { isServer }) => {
+    // 抑制 Ant Design CSS-in-JS 警告
+    if (!isServer) {
+      config.ignoreWarnings = [
+        ...(config.ignoreWarnings || []),
+        {
+          module: /node_modules\/@ant-design/,
+          message: /registering a cleanup function after unmount/,
+        },
+      ];
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

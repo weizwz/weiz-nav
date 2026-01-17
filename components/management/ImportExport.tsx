@@ -225,16 +225,21 @@ export const ImportExport: React.FC = () => {
           return;
         }
 
-        // 合并链接数据：根据 URL 判断是否为同一链接
-        const existingLinksMap = new Map(links.map((link) => [link.url, link]));
+        // 合并链接数据：根据 URL + 分类 判断是否为同一链接
+        // 允许相同 URL 在不同分类中存在，但同一分类中 URL 不能重复
+        const existingLinksMap = new Map(
+          links.map((link) => [`${link.url}::${link.category}`, link])
+        );
         const mergedLinks: Link[] = [];
         let newLinksCount = 0;
         let updatedLinksCount = 0;
 
         linksData.forEach((importedLink: Link) => {
-          const existingLink = existingLinksMap.get(importedLink.url);
+          const compositeKey = `${importedLink.url}::${importedLink.category}`;
+          const existingLink = existingLinksMap.get(compositeKey);
+
           if (existingLink) {
-            // URL 相同，更新其他字段
+            // URL + 分类相同，更新其他字段
             mergedLinks.push({
               ...existingLink,
               ...importedLink,
@@ -243,9 +248,9 @@ export const ImportExport: React.FC = () => {
               updatedAt: Date.now(), // 更新修改时间
             });
             updatedLinksCount++;
-            existingLinksMap.delete(importedLink.url); // 标记为已处理
+            existingLinksMap.delete(compositeKey); // 标记为已处理
           } else {
-            // 新链接
+            // 新链接（新 URL 或相同 URL 但不同分类）
             mergedLinks.push({
               ...importedLink,
               updatedAt: Date.now(),

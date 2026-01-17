@@ -28,10 +28,9 @@ export interface FaviconOptions {
 function extractDomain(url: string): string | null {
   try {
     // 如果 URL 不包含协议，添加 https://
-    const urlWithProtocol = url.startsWith('http://') || url.startsWith('https://')
-      ? url
-      : `https://${url}`;
-    
+    const urlWithProtocol =
+      url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
+
     const urlObject = new URL(urlWithProtocol);
     return urlObject.hostname;
   } catch (error) {
@@ -47,9 +46,8 @@ function extractDomain(url: string): string | null {
  */
 export function isValidUrl(url: string): boolean {
   try {
-    const urlWithProtocol = url.startsWith('http://') || url.startsWith('https://')
-      ? url
-      : `https://${url}`;
+    const urlWithProtocol =
+      url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
     new URL(urlWithProtocol);
     return true;
   } catch {
@@ -70,7 +68,7 @@ export function getFaviconUrl(url: string, options: FaviconOptions = {}): string
   }
 
   const { larger = false } = options;
-  
+
   // 构建 Favicon.im API URL
   // 格式: https://favicon.im/{domain}?larger=true
   // 官方文档: https://favicon.im/zh/
@@ -78,8 +76,10 @@ export function getFaviconUrl(url: string, options: FaviconOptions = {}): string
   if (larger) {
     params.append('larger', 'true');
   }
-  
-  return `${FAVICON_API_BASE}/${domain}?${params.toString()}`;
+
+  // 使用按天更新的时间戳，避免 hydration 错误
+  const dailyTimestamp = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) * (1000 * 60 * 60 * 24);
+  return `${FAVICON_API_BASE}/${domain}?${params.toString()}&t=${dailyTimestamp}`;
 }
 
 /**
@@ -90,34 +90,34 @@ export function getFaviconUrl(url: string, options: FaviconOptions = {}): string
 export async function preloadFavicon(url: string): Promise<string | null> {
   return new Promise((resolve) => {
     const img = new Image();
-    
+
     img.onload = () => {
       resolve(url);
     };
-    
+
     img.onerror = () => {
       console.error('Failed to load favicon:', url);
       resolve(null);
     };
-    
+
     // 设置超时（5秒）
     const timeout = setTimeout(() => {
       img.src = ''; // 取消加载
       console.warn('Favicon loading timeout:', url);
       resolve(null);
     }, 5000);
-    
+
     img.onload = () => {
       clearTimeout(timeout);
       resolve(url);
     };
-    
+
     img.onerror = () => {
       clearTimeout(timeout);
       console.error('Failed to load favicon:', url);
       resolve(null);
     };
-    
+
     img.src = url;
   });
 }
@@ -133,18 +133,18 @@ export async function fetchFavicon(
   options: FaviconOptions = {}
 ): Promise<string | null> {
   const faviconUrl = getFaviconUrl(url, options);
-  
+
   if (!faviconUrl) {
     return options.fallback || null;
   }
 
   // 尝试预加载图片以验证其有效性
   const loadedUrl = await preloadFavicon(faviconUrl);
-  
+
   if (!loadedUrl && options.fallback) {
     return options.fallback;
   }
-  
+
   return loadedUrl;
 }
 
@@ -159,15 +159,15 @@ export async function fetchMultipleFavicons(
   options: FaviconOptions = {}
 ): Promise<Map<string, string | null>> {
   const results = new Map<string, string | null>();
-  
+
   // 并发获取所有 Favicon
   const promises = urls.map(async (url) => {
     const faviconUrl = await fetchFavicon(url, options);
     results.set(url, faviconUrl);
   });
-  
+
   await Promise.all(promises);
-  
+
   return results;
 }
 
@@ -191,10 +191,10 @@ export function getWebsiteName(url: string): string {
   if (!domain) {
     return 'Website';
   }
-  
+
   // 移除 www. 前缀
   const name = domain.replace(/^www\./, '');
-  
+
   // 首字母大写
   return name.charAt(0).toUpperCase() + name.slice(1);
 }

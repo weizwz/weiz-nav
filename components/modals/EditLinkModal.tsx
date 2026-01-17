@@ -341,6 +341,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({ open, link, onCanc
       cancelText="取消"
       width={600}
       destroyOnHidden
+      focusable={{ trap: false }}
       aria-labelledby="edit-link-modal-title"
       aria-describedby="edit-link-modal-description"
     >
@@ -442,7 +443,9 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({ open, link, onCanc
                     ]}
                     showText
                     format="hex"
+                    value={previewBgColor}
                     onChange={handleBgColorChange}
+                    allowClear={false}
                   />
                 </Form.Item>
                 {supportsEyeDropper && (
