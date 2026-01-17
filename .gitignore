@@ -41,4 +41,6 @@ next-env.d.ts
 
 # HTTPS certificates
 /certs
+
+# build version
 public/sw.js
