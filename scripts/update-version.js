@@ -3,12 +3,13 @@ const path = require('path');
 
 /**
  * 更新版本号
- * 读取 package.json 的版本号，同步到 public/sw.js
+ * 读取 package.json 的版本号，根据 scripts/sw-template.js 生成 public/sw.js
  */
 function updateVersion() {
   // 路径配置
   const PATHS = {
     package: path.join(process.cwd(), 'package.json'),
+    template: path.join(process.cwd(), 'scripts/sw-template.js'),
     sw: path.join(process.cwd(), 'public/sw.js'),
   };
 
@@ -20,29 +21,18 @@ function updateVersion() {
 
     console.log(`Updating Service Worker to version ${version} (Cache: ${cacheVersion})...`);
 
-    // 更新 public/sw.js
-    let swContent = fs.readFileSync(PATHS.sw, 'utf8');
+    // 读取模板文件
+    if (!fs.existsSync(PATHS.template)) {
+      throw new Error('Service Worker template not found: ' + PATHS.template);
+    }
+    let swContent = fs.readFileSync(PATHS.template, 'utf8');
 
-    // 更新 CACHE_NAME
-    swContent = swContent.replace(
-      /const CACHE_NAME = ['"]weiz-nav-v[^'"]+['"];/,
-      `const CACHE_NAME = 'weiz-nav-${cacheVersion}';`
-    );
+    // 替换版本号占位符
+    swContent = swContent.replace(/{{VERSION}}/g, cacheVersion);
 
-    // 更新 RUNTIME_CACHE
-    swContent = swContent.replace(
-      /const RUNTIME_CACHE = ['"]weiz-nav-runtime-v[^'"]+['"];/,
-      `const RUNTIME_CACHE = 'weiz-nav-runtime-${cacheVersion}';`
-    );
-
-    // 更新 IMAGE_CACHE
-    swContent = swContent.replace(
-      /const IMAGE_CACHE = ['"]weiz-nav-images-v[^'"]+['"];/,
-      `const IMAGE_CACHE = 'weiz-nav-images-${cacheVersion}';`
-    );
-
+    // 写入 public/sw.js
     fs.writeFileSync(PATHS.sw, swContent);
-    console.log('✓ Updated public/sw.js');
+    console.log('✓ Generated public/sw.js from template');
 
     console.log('Version update complete!');
   } catch (error) {
