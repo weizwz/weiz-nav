@@ -1,5 +1,5 @@
 # Cloudflare Pages 重定向规则
 # 用于支持客户端路由
 
-# 所有路径重定向到 index.html（SPA 模式）
-/* /index.html 200
+# 所有路径重定向到 404.html（静态导出推荐配置）
+/* /404.html 404
