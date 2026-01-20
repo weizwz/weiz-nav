@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Upload, Space } from 'antd';
+import { Button, Upload, Space, App } from 'antd';
 import { DownloadOutlined, UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -10,49 +10,94 @@ import { loadCategories } from '@/store/slices/categoriesSlice';
 import { Link } from '@/types/link';
 import type { Category } from '@/types/category';
 import { showSuccess, showError, showConfirm, showWarning } from '@/utils/feedback';
+import { isValidColor } from '@/utils/colorUtils';
 import packageInfo from '@/package.json';
 
 /**
- * 验证链接数据格式
+ * 验证单个链接数据格式
+ * 规则参考 EditLinkModal 的校验要求
  */
-const validateLinkData = (data: any): data is Link[] => {
-  if (!Array.isArray(data)) {
-    return false;
+const validateImportedLink = (item: any): { valid: boolean; reason?: string } => {
+  if (!item || typeof item !== 'object') {
+    return { valid: false, reason: '数据格式错误' };
   }
 
-  return data.every((item) => {
-    // 检查必需字段
-    if (
-      typeof item.id !== 'string' ||
-      typeof item.name !== 'string' ||
-      typeof item.url !== 'string' ||
-      typeof item.description !== 'string' ||
-      typeof item.order !== 'number' ||
-      typeof item.createdAt !== 'number' ||
-      typeof item.updatedAt !== 'number'
-    ) {
-      return false;
-    }
+  // 检查必需系统字段
+  if (typeof item.id !== 'string') return { valid: false, reason: '缺少ID或ID类型错误' };
+  if (typeof item.order !== 'number') return { valid: false, reason: '排序字段(order)缺失或无效' };
+  if (typeof item.createdAt !== 'number')
+    return { valid: false, reason: '创建时间(createdAt)缺失或无效' };
+  if (typeof item.updatedAt !== 'number')
+    return { valid: false, reason: '更新时间(updatedAt)缺失或无效' };
 
-    // 检查可选字段类型
-    if (item.icon !== undefined && typeof item.icon !== 'string') {
-      return false;
-    }
-    if (item.backgroundColor !== undefined && typeof item.backgroundColor !== 'string') {
-      return false;
-    }
-    if (item.category !== undefined && typeof item.category !== 'string') {
-      return false;
-    }
-    if (item.tags !== undefined && !Array.isArray(item.tags)) {
-      return false;
-    }
-    if (item.tags && !item.tags.every((tag: any) => typeof tag === 'string')) {
-      return false;
-    }
+  // 检查业务字段 (参考 EditLinkModal)
+  // 1. URL: 必填, http/https开头, max 500
+  if (typeof item.url !== 'string' || !item.url.trim()) {
+    return { valid: false, reason: 'URL不能为空' };
+  }
+  if (!/^https?:\/\/.+/.test(item.url)) {
+    return { valid: false, reason: 'URL必须以http://或https://开头' };
+  }
+  if (item.url.length > 500) {
+    return { valid: false, reason: 'URL长度不能超过500字符' };
+  }
 
-    return true;
-  });
+  // 2. Name: 必填, max 30
+  if (typeof item.name !== 'string' || !item.name.trim()) {
+    return { valid: false, reason: '名称不能为空' };
+  }
+  if (item.name.length > 30) {
+    return { valid: false, reason: '名称长度不能超过30字符' };
+  }
+
+  // 3. Description: 选填, max 200
+  if (item.description !== undefined) {
+    if (typeof item.description !== 'string') {
+      return { valid: false, reason: '描述必须是字符串' };
+    }
+    if (item.description.length > 200) {
+      return { valid: false, reason: '描述长度不能超过200字符' };
+    }
+  }
+
+  // 4. BackgroundColor: 选填, valid color
+  if (
+    item.backgroundColor !== undefined &&
+    item.backgroundColor !== null &&
+    item.backgroundColor !== ''
+  ) {
+    if (typeof item.backgroundColor !== 'string') {
+      return { valid: false, reason: '背景颜色格式错误' };
+    }
+    if (!isValidColor(item.backgroundColor)) {
+      return { valid: false, reason: '背景颜色无效' };
+    }
+  }
+
+  // 5. IconScale: 选填, number
+  if (item.iconScale !== undefined && item.iconScale !== null) {
+    if (typeof item.iconScale !== 'number') {
+      return { valid: false, reason: '图标缩放比例必须是数字' };
+    }
+  }
+
+  // 检查其他可选字段类型
+  if (item.icon !== undefined && typeof item.icon !== 'string') {
+    return { valid: false, reason: '图标格式错误' };
+  }
+  if (item.category !== undefined && typeof item.category !== 'string') {
+    return { valid: false, reason: '分类格式错误' };
+  }
+  if (item.tags !== undefined) {
+    if (!Array.isArray(item.tags)) {
+      return { valid: false, reason: '标签必须是数组' };
+    }
+    if (!item.tags.every((tag: any) => typeof tag === 'string')) {
+      return { valid: false, reason: '标签项必须是字符串' };
+    }
+  }
+
+  return { valid: true };
 };
 
 /**
@@ -60,6 +105,7 @@ const validateLinkData = (data: any): data is Link[] => {
  * 提供数据的导入和导出功能
  */
 export const ImportExport: React.FC = () => {
+  const { modal } = App.useApp();
   const dispatch = useAppDispatch();
   const links = useAppSelector((state) => state.links.items);
   const categories = useAppSelector((state) => state.categories.items);
@@ -214,14 +260,28 @@ export const ImportExport: React.FC = () => {
           return;
         }
 
-        // 验证链接数据格式
-        if (!validateLinkData(linksData)) {
-          showError('链接数据格式不正确');
-          return;
-        }
+        // 验证并过滤链接数据
+        const validLinks: Link[] = [];
+        const invalidLinks: { name: string; reason: string }[] = [];
 
-        if (linksData.length === 0) {
-          showWarning('导入的文件中没有链接数据');
+        linksData.forEach((link: any) => {
+          const result = validateImportedLink(link);
+          if (result.valid) {
+            validLinks.push(link);
+          } else {
+            invalidLinks.push({
+              name: link.name || '未命名',
+              reason: result.reason || '未知错误',
+            });
+          }
+        });
+
+        if (validLinks.length === 0) {
+          if (invalidLinks.length > 0) {
+            showWarning(`未找到有效链接。忽略了 ${invalidLinks.length} 条无效数据。`);
+          } else {
+            showWarning('导入的文件中没有链接数据');
+          }
           return;
         }
 
@@ -234,7 +294,7 @@ export const ImportExport: React.FC = () => {
         let newLinksCount = 0;
         let updatedLinksCount = 0;
 
-        linksData.forEach((importedLink: Link) => {
+        validLinks.forEach((importedLink: Link) => {
           const compositeKey = `${importedLink.url}::${importedLink.category}`;
           const existingLink = existingLinksMap.get(compositeKey);
 
@@ -328,10 +388,11 @@ export const ImportExport: React.FC = () => {
         const newCategoriesCount = newCategories.length;
 
         // 显示确认对话框
-        const message =
+        let message =
           `即将导入数据：\n` +
-          `• 链接：新增 ${newLinksCount} 个，更新 ${updatedLinksCount} 个\n` +
-          `• 分类：新增 ${newCategoriesCount} 个，更新 ${updatedCategoriesCount} 个\n` +
+          `• 链接：新增 ${newLinksCount} 个，更新 ${updatedLinksCount} 个` +
+          (invalidLinks.length > 0 ? `\n• 过滤：${invalidLinks.length} 条数据格式不符` : '') +
+          `\n• 分类：新增 ${newCategoriesCount} 个，更新 ${updatedCategoriesCount} 个\n` +
           `是否继续？`;
 
         showConfirm({
@@ -350,9 +411,41 @@ export const ImportExport: React.FC = () => {
               localStorage.setItem('nav_links', JSON.stringify(sortedLinks));
               localStorage.setItem('nav_categories', JSON.stringify(sortedCategories));
 
-              showSuccess(
-                `成功导入：新增 ${newLinksCount} 个链接，更新 ${updatedLinksCount} 个链接`
-              );
+              if (invalidLinks.length > 0) {
+                // 使用 Modal 展示详细的错误报告
+                modal.warning({
+                  title: '导入完成（部分数据被忽略）',
+                  width: 500,
+                  content: (
+                    <div className="mt-2">
+                      <p className="mb-2">
+                        成功导入 {validLinks.length} 条数据。以下 {invalidLinks.length}{' '}
+                        条数据因格式不符被忽略：
+                      </p>
+                      <div className="max-h-[300px] overflow-y-auto border border-gray-200 dark:border-gray-700 rounded p-2 bg-gray-50 dark:bg-gray-800">
+                        <ul className="space-y-1.5">
+                          {invalidLinks.map((item, index) => (
+                            <li
+                              key={index}
+                              className="text-sm text-gray-600 dark:text-gray-400 flex flex-col"
+                            >
+                              <span className="font-medium text-gray-800 dark:text-gray-200">
+                                {item.name}
+                              </span>
+                              <span className="text-xs text-red-500">{item.reason}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  ),
+                  okText: '知道了',
+                });
+              } else {
+                showSuccess(
+                  `成功导入：新增 ${newLinksCount} 个链接，更新 ${updatedLinksCount} 个链接`
+                );
+              }
               setFileList([]);
             } catch (saveError) {
               console.error('Save error:', saveError);
