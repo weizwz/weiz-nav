@@ -126,9 +126,10 @@ export default function SearchBar() {
         alt={`${name} 图标`}
         width={size}
         height={size}
+        loading="lazy"
+        decoding="async"
         style={{ objectFit: 'contain', borderRadius: '50%' }}
         onError={() => {
-          console.warn(`搜索引擎图标加载失败: ${faviconUrl}`);
           setHasError(true);
         }}
       />

@@ -14,10 +14,19 @@ const FAVICON_API_BASE = process.env.NEXT_PUBLIC_FAVICON_API_URL || 'https://fav
  * Favicon API 选项
  */
 export interface FaviconOptions {
-  /** 是否使用较大的图标 */
+  /** 是否使用较大的图标（更高质量） */
   larger?: boolean;
-  /** 回退图标 URL */
+  /**
+   * 未找到图标时的回退图片 URL
+   * 对应 favicon.im 的 default-avatar 参数，URL 会自动编码
+   */
   fallback?: string;
+  /**
+   * 未找到图标时返回 HTTP 404，便于通过 onerror 自定义替代图片
+   * 对应 favicon.im 的 throw-error-on-404 参数
+   * 默认 true，推荐开启以配合 img 的 onError 事件处理
+   */
+  throwErrorOn404?: boolean;
 }
 
 /**
@@ -27,16 +36,28 @@ export interface FaviconOptions {
  */
 function extractDomain(url: string): string | null {
   try {
-    // 如果 URL 不包含协议，添加 https://
     const urlWithProtocol =
       url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
-
     const urlObject = new URL(urlWithProtocol);
     return urlObject.hostname;
-  } catch (error) {
-    console.error('Invalid URL:', url, error);
+  } catch {
     return null;
   }
+}
+
+/**
+ * 提取主域名（去掉子域名，保留 eTLD+1）
+ * 例如：events.vercount.one → vercount.one
+ *       www.github.com → github.com（www 也视为子域名）
+ *       github.com → github.com（已是主域名，不变）
+ * 注意：对于 .co.uk / .com.cn 等多级 TLD 仅做简单处理，保留最后两段
+ */
+function extractRootDomain(hostname: string): string {
+  const parts = hostname.split('.');
+  // 少于等于 2 段说明已经是根域名（如 github.com）
+  if (parts.length <= 2) return hostname;
+  // 取最后两段作为根域名（适用于绝大多数 .com/.org/.io/.one 等）
+  return parts.slice(-2).join('.');
 }
 
 /**
@@ -57,128 +78,70 @@ export function isValidUrl(url: string): boolean {
 
 /**
  * 获取网站的 Favicon URL
+ *
+ * 根据 favicon.im 官方建议：
+ * - 使用 throw-error-on-404=true 配合 img 的 onError 事件处理 404
+ * - 使用 default-avatar 指定找不到图标时的回退图片
+ * - 在页面中直接引用 URL，使用 loading="lazy" 避免一次性加载过多图标
+ *
  * @param url 网站 URL
  * @param options Favicon 选项
- * @returns Favicon 图片 URL
+ * @returns Favicon 图片 URL，域名无效时返回 null
  */
 export function getFaviconUrl(url: string, options: FaviconOptions = {}): string | null {
   const domain = extractDomain(url);
-  if (!domain) {
-    return options.fallback || null;
-  }
+  if (!domain) return null;
 
-  const { larger = false } = options;
+  const { larger = false, fallback, throwErrorOn404 = true } = options;
 
-  // 构建 Favicon.im API URL
-  // 格式: https://favicon.im/{domain}?larger=true
-  // 官方文档: https://favicon.im/zh/
   const params = new URLSearchParams();
+
   if (larger) {
     params.append('larger', 'true');
   }
 
-  // 使用按天更新的时间戳，避免 hydration 错误
-  const dailyTimestamp = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) * (1000 * 60 * 60 * 24);
-  return `${FAVICON_API_BASE}/${domain}?${params.toString()}&t=${dailyTimestamp}`;
+  // 未找到图标时返回 404，配合 img onError 使用
+  if (throwErrorOn404) {
+    params.append('throw-error-on-404', 'true');
+  }
+
+  // 未找到图标时重定向到该 URL（需编码）
+  if (fallback) {
+    params.append('default-avatar', encodeURIComponent(fallback));
+  }
+
+  const queryString = params.toString();
+  return `${FAVICON_API_BASE}/${domain}${queryString ? `?${queryString}` : ''}`;
 }
 
 /**
- * 预加载 Favicon 图片
- * @param url Favicon URL
- * @returns Promise，成功时返回 URL，失败时返回 null
- */
-export async function preloadFavicon(url: string): Promise<string | null> {
-  return new Promise((resolve) => {
-    const img = new Image();
-
-    img.onload = () => {
-      resolve(url);
-    };
-
-    img.onerror = () => {
-      console.error('Failed to load favicon:', url);
-      resolve(null);
-    };
-
-    // 设置超时（5秒）
-    const timeout = setTimeout(() => {
-      img.src = ''; // 取消加载
-      console.warn('Favicon loading timeout:', url);
-      resolve(null);
-    }, 5000);
-
-    img.onload = () => {
-      clearTimeout(timeout);
-      resolve(url);
-    };
-
-    img.onerror = () => {
-      clearTimeout(timeout);
-      console.error('Failed to load favicon:', url);
-      resolve(null);
-    };
-
-    img.src = url;
-  });
-}
-
-/**
- * 获取并验证 Favicon
+ * 获取根域名的 Favicon URL（用于子域名找不到图标时的回退）
+ *
+ * 例如 events.vercount.one 找不到图标时，自动尝试 vercount.one
+ * 如果传入的已经是根域名，返回 null（无需回退）
+ *
  * @param url 网站 URL
  * @param options Favicon 选项
- * @returns Promise，成功时返回 Favicon URL，失败时返回 fallback 或 null
+ * @returns 根域名的 Favicon URL，或 null（已是根域名 / 域名无效）
  */
-export async function fetchFavicon(
+export function getFaviconRootFallbackUrl(
   url: string,
   options: FaviconOptions = {}
-): Promise<string | null> {
-  const faviconUrl = getFaviconUrl(url, options);
+): string | null {
+  const domain = extractDomain(url);
+  if (!domain) return null;
 
-  if (!faviconUrl) {
-    return options.fallback || null;
-  }
+  const rootDomain = extractRootDomain(domain);
+  // 已经是根域名，不需要回退
+  if (rootDomain === domain) return null;
 
-  // 尝试预加载图片以验证其有效性
-  const loadedUrl = await preloadFavicon(faviconUrl);
+  const { larger = false, throwErrorOn404 = true } = options;
+  const params = new URLSearchParams();
+  if (larger) params.append('larger', 'true');
+  if (throwErrorOn404) params.append('throw-error-on-404', 'true');
 
-  if (!loadedUrl && options.fallback) {
-    return options.fallback;
-  }
-
-  return loadedUrl;
-}
-
-/**
- * 批量获取多个网站的 Favicon
- * @param urls 网站 URL 数组
- * @param options Favicon 选项
- * @returns Promise，返回 URL 到 Favicon URL 的映射
- */
-export async function fetchMultipleFavicons(
-  urls: string[],
-  options: FaviconOptions = {}
-): Promise<Map<string, string | null>> {
-  const results = new Map<string, string | null>();
-
-  // 并发获取所有 Favicon
-  const promises = urls.map(async (url) => {
-    const faviconUrl = await fetchFavicon(url, options);
-    results.set(url, faviconUrl);
-  });
-
-  await Promise.all(promises);
-
-  return results;
-}
-
-/**
- * 获取默认的 Favicon URL（不验证）
- * 用于快速显示，不等待加载验证
- * @param url 网站 URL
- * @returns Favicon URL 或 null
- */
-export function getDefaultFaviconUrl(url: string): string | null {
-  return getFaviconUrl(url);
+  const queryString = params.toString();
+  return `${FAVICON_API_BASE}/${rootDomain}${queryString ? `?${queryString}` : ''}`;
 }
 
 /**
@@ -188,14 +151,8 @@ export function getDefaultFaviconUrl(url: string): string | null {
  */
 export function getWebsiteName(url: string): string {
   const domain = extractDomain(url);
-  if (!domain) {
-    return 'Website';
-  }
-
-  // 移除 www. 前缀
+  if (!domain) return 'Website';
   const name = domain.replace(/^www\./, '');
-
-  // 首字母大写
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
@@ -206,6 +163,5 @@ export function getWebsiteName(url: string): string {
  * @returns alt 文本
  */
 export function getFaviconAlt(url: string, name?: string): string {
-  const websiteName = name || getWebsiteName(url);
-  return `${websiteName} favicon`;
+  return `${name || getWebsiteName(url)} favicon`;
 }
