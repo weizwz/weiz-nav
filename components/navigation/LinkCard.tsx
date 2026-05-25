@@ -8,7 +8,8 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import * as AntdIcons from '@ant-design/icons';
 import { Link } from '@/types/link';
-import { getFaviconUrl } from '@/services/api/favicon';
+import { getFaviconUrl, getFaviconRootFallbackUrl } from '@/services/api/favicon';
+import { showSuccess, showError } from '@/utils/feedback';
 
 /**
  * 判断颜色是否为白色或接近白色
@@ -29,22 +30,22 @@ const isWhiteColor = (color?: string): boolean => {
 
 /**
  * 图标组件，支持多级回退
- * 1. 用户自定义图标
- * 2. Favicon API 图标
+ * 1. 用户自定义图标（或子域名 favicon）
+ * 2. 根域名 favicon（子域名找不到时自动回退）
  * 3. Ant Design 默认图标
  */
 const IconWithFallback: React.FC<{
   src: string;
   alt: string;
-  fallbackUrl?: string;
+  rootFallbackUrl?: string;
   scale?: number;
   backgroundColor?: string;
-}> = ({ src, alt, fallbackUrl, scale = 0.8, backgroundColor }) => {
-  const [hasError, setHasError] = useState(false);
-  const [faviconError, setFaviconError] = useState(false);
+}> = ({ src, alt, rootFallbackUrl, scale = 0.8, backgroundColor }) => {
+  const [srcError, setSrcError] = useState(false);
+  const [rootError, setRootError] = useState(false);
 
-  // 第一级：尝试加载用户自定义图标
-  if (!hasError) {
+  // 第一级：尝试加载主图标（自定义图标 或 子域名 favicon）
+  if (!srcError) {
     return (
       <img
         src={src}
@@ -52,50 +53,34 @@ const IconWithFallback: React.FC<{
         loading="lazy"
         decoding="async"
         className="w-22 h-22 object-contain"
-        style={{
-          transform: `scale(${scale})`,
-        }}
-        onError={() => {
-          console.warn(`图标加载失败: ${src}`);
-          setHasError(true);
-        }}
+        style={{ transform: `scale(${scale})` }}
+        onError={() => setSrcError(true)}
       />
     );
   }
 
-  // 第二级：用户图标失败，尝试加载 Favicon
-  if (hasError && fallbackUrl && !faviconError) {
+  // 第二级：主图标失败，尝试根域名 favicon
+  if (rootFallbackUrl && !rootError) {
     return (
       <img
-        src={fallbackUrl}
+        src={rootFallbackUrl}
         alt={`${alt}的图标`}
         loading="lazy"
         decoding="async"
         className="w-22 h-22 object-contain"
-        style={{
-          transform: `scale(${scale})`,
-        }}
-        onError={() => {
-          console.warn(`Favicon 加载失败: ${fallbackUrl}`);
-          setFaviconError(true);
-        }}
+        style={{ transform: `scale(${scale})` }}
+        onError={() => setRootError(true)}
       />
     );
   }
 
-  // 第三级：所有图片都失败，显示默认图标
-  // 默认图标使用固定大小（48px），不受 iconScale 影响
-  // 如果背景是白色，使用主题色；否则使用白色
+  // 第三级：全部失败，显示默认图标
   const DefaultIcon = AntdIcons.LinkOutlined;
   const defaultIconColor = isWhiteColor(backgroundColor) ? '#1890ff' : '#ffffff';
-  const defaultIconSize = 48;
 
   return (
     <DefaultIcon
-      style={{
-        fontSize: defaultIconSize,
-        color: defaultIconColor,
-      }}
+      style={{ fontSize: 48, color: defaultIconColor }}
       aria-label={`${alt}的默认图标`}
     />
   );
@@ -135,31 +120,34 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
 
   // 使用 useCallback 缓存事件处理函数
   const handleClick = useCallback(() => {
-    // 在新标签页打开链接
-    if (!isDragging) {
-      window.open(link.url, '_blank', 'noopener,noreferrer');
+    if (isDragging) return;
+
+    // chrome:// 协议链接无法通过 window.open 打开，自动复制并提示用户
+    if (link.url.startsWith('chrome://') || link.url.startsWith('chrome-extension://')) {
+      navigator.clipboard
+        .writeText(link.url)
+        .then(() => showSuccess('已复制，请粘贴到浏览器地址栏打开', 3))
+        .catch(() => showError('复制失败，请手动复制地址'));
+      return;
     }
+
+    window.open(link.url, '_blank', 'noopener,noreferrer');
   }, [link.url, isDragging]);
 
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
-    // 阻止默认浏览器右键菜单
     e.preventDefault();
     e.stopPropagation();
   }, []);
 
   const handleEdit = useCallback(() => {
-    if (onEdit) {
-      onEdit(link);
-    }
+    if (onEdit) onEdit(link);
   }, [onEdit, link]);
 
   const handleDelete = useCallback(() => {
-    if (onDelete) {
-      onDelete(link.id);
-    }
+    if (onDelete) onDelete(link.id);
   }, [onDelete, link.id]);
 
-  // 右键菜单项 - 使用 useMemo 缓存
+  // 右键菜单项
   const menuItems: MenuProps['items'] = React.useMemo(
     () => [
       {
@@ -179,17 +167,15 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
     [handleEdit, handleDelete]
   );
 
-  // 渲染图标 - 使用 useMemo 缓存
+  // 渲染图标
   const renderIcon = React.useMemo(() => {
-    // 获取 favicon URL 作为回退选项，使用 larger=true 获取更高质量的图标
     const faviconUrl = getFaviconUrl(link.url, { larger: true });
+    // 子域名找不到图标时，自动回退到根域名（如 events.vercount.one → vercount.one）
+    const rootFaviconUrl = getFaviconRootFallbackUrl(link.url, { larger: true });
     const scale = link.iconScale || 0.7;
     const backgroundColor = link.backgroundColor;
 
-    // 判断是否为 favicon.im 的 URL
-    const isFaviconUrl = (url: string) => {
-      return url.includes('favicon.im/');
-    };
+    const isFaviconUrl = (url: string) => url.includes('favicon.im/');
 
     // 情况1: 用户提供了自定义图标 URL（但不是 favicon.im 的 URL）
     if (
@@ -203,7 +189,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
         <IconWithFallback
           src={link.icon}
           alt={link.name}
-          fallbackUrl={faviconUrl || undefined}
+          rootFallbackUrl={faviconUrl || rootFaviconUrl || undefined}
           scale={scale}
           backgroundColor={backgroundColor}
         />
@@ -225,11 +211,13 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
     }
 
     // 情况3: 没有自定义图标，或者图标是 favicon.im URL，尝试使用 favicon
+    // 优先用子域名，失败后自动回退到根域名
     if (faviconUrl) {
       return (
         <IconWithFallback
           src={faviconUrl}
           alt={link.name}
+          rootFallbackUrl={rootFaviconUrl || undefined}
           scale={scale}
           backgroundColor={backgroundColor}
         />
@@ -237,20 +225,10 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
     }
 
     // 情况4: 所有方式都失败，显示默认图标
-    // 默认图标使用固定大小（48px），不受 iconScale 影响
-    // 如果背景是白色，使用主题色；否则使用白色
     const DefaultIcon = AntdIcons.LinkOutlined;
     const defaultIconColor = isWhiteColor(backgroundColor) ? '#1890ff' : '#ffffff';
-    const defaultIconSize = 48;
 
-    return (
-      <DefaultIcon
-        style={{
-          fontSize: defaultIconSize,
-          color: defaultIconColor,
-        }}
-      />
-    );
+    return <DefaultIcon style={{ fontSize: 48, color: defaultIconColor }} />;
   }, [link.icon, link.name, link.url, link.iconScale, link.backgroundColor]);
 
   return (
@@ -331,7 +309,6 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
 
 // 使用 React.memo 优化组件，只在 props 变化时重新渲染
 const LinkCard = memo(LinkCardBase, (prevProps, nextProps) => {
-  // 自定义比较函数：只比较关键属性
   return (
     prevProps.link.id === nextProps.link.id &&
     prevProps.link.name === nextProps.link.name &&

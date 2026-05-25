@@ -14,6 +14,13 @@ const nextConfig: NextConfig = {
   // 图片优化配置
   images: {
     unoptimized: true, // 静态导出需要
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'favicon.im',
+        pathname: '/**',
+      },
+    ],
   },
 
   // URL 配置
