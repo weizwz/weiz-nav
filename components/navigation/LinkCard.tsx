@@ -9,6 +9,7 @@ import { CSS } from '@dnd-kit/utilities';
 import * as AntdIcons from '@ant-design/icons';
 import { Link } from '@/types/link';
 import { getFaviconUrl, getFaviconRootFallbackUrl } from '@/services/api/favicon';
+import { showSuccess, showError } from '@/utils/feedback';
 
 /**
  * 判断颜色是否为白色或接近白色
@@ -119,9 +120,18 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
 
   // 使用 useCallback 缓存事件处理函数
   const handleClick = useCallback(() => {
-    if (!isDragging) {
-      window.open(link.url, '_blank', 'noopener,noreferrer');
+    if (isDragging) return;
+
+    // chrome:// 协议链接无法通过 window.open 打开，自动复制并提示用户
+    if (link.url.startsWith('chrome://') || link.url.startsWith('chrome-extension://')) {
+      navigator.clipboard
+        .writeText(link.url)
+        .then(() => showSuccess('已复制，请粘贴到浏览器地址栏打开', 3))
+        .catch(() => showError('复制失败，请手动复制地址'));
+      return;
     }
+
+    window.open(link.url, '_blank', 'noopener,noreferrer');
   }, [link.url, isDragging]);
 
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
