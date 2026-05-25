@@ -180,36 +180,41 @@ export default function SearchBar() {
 
   return (
     <div className="w-full max-w-2xl" role="search" aria-label="搜索导航">
-      <Input
-        placeholder="搜索"
-        variant="filled"
-        value={inputValue}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyPress}
-        allowClear
-        prefix={
-          <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomLeft">
-            <div
-              className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity pr-1"
-              aria-label={`当前搜索引擎：${currentEngine.name}，点击切换搜索引擎`}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  (e.currentTarget as HTMLElement).click();
-                }
-              }}
-            >
-              {getEngineIcon(currentEngine.icon)}
-            </div>
-          </Dropdown>
-        }
-        className="search-bar-modern bg-(--background)! pl-3! shadow-none!"
-        aria-label="搜索输入框"
-        role="searchbox"
-        aria-describedby="search-description"
-      />
+      {/* 未挂载时渲染占位骨架，避免 hydration 错位 */}
+      {!mounted ? (
+        <div className="w-full h-10 rounded-full bg-gray-100 dark:bg-gray-800 animate-pulse" />
+      ) : (
+        <Input
+          placeholder="搜索"
+          variant="filled"
+          value={inputValue}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyPress}
+          allowClear
+          prefix={
+            <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomLeft">
+              <div
+                className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity pr-1"
+                aria-label={`当前搜索引擎：${currentEngine.name}，点击切换搜索引擎`}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    (e.currentTarget as HTMLElement).click();
+                  }
+                }}
+              >
+                {getEngineIcon(currentEngine.icon)}
+              </div>
+            </Dropdown>
+          }
+          className="search-bar-modern bg-(--background)! pl-3! shadow-none!"
+          aria-label="搜索输入框"
+          role="searchbox"
+          aria-describedby="search-description"
+        />
+      )}
       <span id="search-description" className="sr-only">
         输入关键词进行站内搜索，或按回车键使用外部搜索引擎搜索
       </span>

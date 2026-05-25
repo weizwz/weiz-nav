@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Tooltip } from 'antd';
 import { MenuOutlined, GithubOutlined, SettingOutlined } from '@ant-design/icons';
@@ -26,11 +26,69 @@ interface HeaderProps {
 
 const Header = memo(function Header({ onMenuClick }: HeaderProps) {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // 跳转到数据管理页面
   const handleManageClick = useCallback(() => {
     router.push('/manage');
   }, [router]);
+
+  /** 右侧工具栏按钮（Desktop：3个；Mobile：菜单按钮可选 + 3个） */
+  const toolbarButtons = (withMenu = false) => (
+    <>
+      {withMenu && onMenuClick && (
+        <Tooltip title="分类菜单" placement="bottom">
+          <Button
+            type="text"
+            icon={<MenuOutlined aria-hidden="true" />}
+            size="large"
+            onClick={onMenuClick}
+            aria-label="打开分类菜单"
+            className="flex items-center justify-center lg:hidden"
+          />
+        </Tooltip>
+      )}
+      <ThemeToggle />
+      <Tooltip title="数据管理" placement="bottom">
+        <Button
+          type="text"
+          icon={<SettingOutlined aria-hidden="true" />}
+          size="large"
+          onClick={handleManageClick}
+          aria-label="打开数据管理页面"
+          className="flex items-center justify-center"
+        />
+      </Tooltip>
+      <Tooltip title="GitHub 项目地址" placement="bottom">
+        <Button
+          type="text"
+          icon={<GithubOutlined aria-hidden="true" />}
+          size="large"
+          onClick={() =>
+            window.open('https://github.com/weizwz/weiz-nav', '_blank', 'noopener,noreferrer')
+          }
+          aria-label="访问 GitHub 项目地址"
+          className="flex items-center justify-center"
+        />
+      </Tooltip>
+    </>
+  );
+
+  /**
+   * 未挂载时的工具栏占位，宽度与真实按钮一致（3 × 40px = 120px）
+   * 避免 hydration 前后宽度变化导致布局抖动
+   */
+  const toolbarSkeleton = (btnCount: number) => (
+    <div className="flex items-center" style={{ width: btnCount * 40 }} aria-hidden="true">
+      {Array.from({ length: btnCount }).map((_, i) => (
+        <div key={i} className="w-10 h-10" />
+      ))}
+    </div>
+  );
 
   return (
     <header
@@ -55,31 +113,7 @@ const Header = memo(function Header({ onMenuClick }: HeaderProps) {
 
           {/* 右侧工具栏 */}
           <div className="shrink-0 flex items-center" role="toolbar" aria-label="工具栏">
-            <ThemeToggle />
-            <Tooltip title="数据管理" placement="bottom">
-              <Button
-                type="text"
-                icon={<SettingOutlined aria-hidden="true" />}
-                size="large"
-                onClick={handleManageClick}
-                aria-label="打开数据管理页面"
-                title="数据管理"
-                className="flex items-center justify-center"
-              />
-            </Tooltip>
-            <Tooltip title="GitHub 项目地址" placement="bottom">
-              <Button
-                type="text"
-                icon={<GithubOutlined aria-hidden="true" />}
-                size="large"
-                onClick={() =>
-                  window.open('https://github.com/weizwz/weiz-nav', '_blank', 'noopener,noreferrer')
-                }
-                aria-label="访问 GitHub 项目地址"
-                title="GitHub"
-                className="flex items-center justify-center"
-              />
-            </Tooltip>
+            {mounted ? toolbarButtons() : toolbarSkeleton(3)}
           </div>
         </div>
 
@@ -94,48 +128,7 @@ const Header = memo(function Header({ onMenuClick }: HeaderProps) {
               </h1>
             </div>
             <div className="flex items-center" role="toolbar" aria-label="工具栏">
-              {onMenuClick && (
-                <Tooltip title="分类菜单" placement="bottom">
-                  <Button
-                    type="text"
-                    icon={<MenuOutlined aria-hidden="true" />}
-                    size="large"
-                    onClick={onMenuClick}
-                    aria-label="打开分类菜单"
-                    title="分类菜单"
-                    className="flex items-center justify-center lg:hidden"
-                  />
-                </Tooltip>
-              )}
-              <ThemeToggle />
-              <Tooltip title="数据管理" placement="bottom">
-                <Button
-                  type="text"
-                  icon={<SettingOutlined aria-hidden="true" />}
-                  size="large"
-                  onClick={handleManageClick}
-                  aria-label="打开数据管理页面"
-                  title="数据管理"
-                  className="flex items-center justify-center"
-                />
-              </Tooltip>
-              <Tooltip title="GitHub 项目地址" placement="bottom">
-                <Button
-                  type="text"
-                  icon={<GithubOutlined aria-hidden="true" />}
-                  size="large"
-                  onClick={() =>
-                    window.open(
-                      'https://github.com/weizwz/weiz-nav',
-                      '_blank',
-                      'noopener,noreferrer'
-                    )
-                  }
-                  aria-label="访问 GitHub 项目地址"
-                  title="GitHub"
-                  className="flex items-center justify-center"
-                />
-              </Tooltip>
+              {mounted ? toolbarButtons(true) : toolbarSkeleton(onMenuClick ? 4 : 3)}
             </div>
           </div>
 
