@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Button, Result } from 'antd';
 import { ReloadOutlined, HomeOutlined } from '@ant-design/icons';
 

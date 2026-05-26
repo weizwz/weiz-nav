@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Tooltip } from 'antd';
 import { MenuOutlined, GithubOutlined, SettingOutlined } from '@ant-design/icons';
