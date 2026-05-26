@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Cloudflare Pages 部署脚本
-# 用于快速部署到 Cloudflare Pages
+# Cloudflare Workers 部署脚本（使用 OpenNext adapter）
+# 用于快速部署到 Cloudflare Workers
 
 set -e
 
-echo "🚀 开始部署到 Cloudflare Pages..."
+echo "🚀 开始部署到 Cloudflare Workers..."
 
 # 检查 pnpm 是否安装
 if ! command -v pnpm &> /dev/null; then
@@ -13,15 +13,9 @@ if ! command -v pnpm &> /dev/null; then
     exit 1
 fi
 
-# 检查 wrangler 是否安装
-if ! command -v wrangler &> /dev/null; then
-    echo "⚠️  Wrangler CLI 未安装。正在安装..."
-    npm install -g wrangler
-fi
-
 # 清理之前的构建
 echo "🧹 清理之前的构建..."
-rm -rf out .next
+rm -rf .next out .open-next
 
 # 安装依赖
 echo "📦 安装依赖..."
@@ -31,26 +25,9 @@ pnpm install --frozen-lockfile
 echo "🔍 运行代码检查..."
 pnpm lint
 
-# 构建项目
-echo "🏗️  构建项目..."
-pnpm build
-
-# 检查构建是否成功
-if [ -d "out" ]; then
-    echo "✅ 构建成功！"
-    echo ""
-    echo "📊 构建统计："
-    echo "   文件总数: $(find out -type f | wc -l | tr -d ' ')"
-    echo "   总大小: $(du -sh out | cut -f1)"
-    echo ""
-else
-    echo "❌ 构建失败！请检查上面的错误信息。"
-    exit 1
-fi
-
-# 部署到 Cloudflare Pages
-echo "🌐 部署到 Cloudflare Pages..."
-wrangler pages deploy out --project-name=weiz-nav
+# 构建并部署（opennextjs-cloudflare 会自动调用 next build）
+echo "🏗️  构建并部署到 Cloudflare Workers..."
+pnpm deploy:cloudflare
 
 echo ""
 echo "🎉 部署完成！"

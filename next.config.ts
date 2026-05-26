@@ -8,12 +8,9 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_APP_VERSION: pkg.version,
   },
-  // 启用静态导出
-  output: 'export',
 
   // 图片优化配置
   images: {
-    unoptimized: true, // 静态导出需要
     remotePatterns: [
       {
         protocol: 'https',
@@ -72,3 +69,7 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+// 本地开发时集成 Cloudflare bindings
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
+initOpenNextCloudflareForDev();

@@ -1,5 +1,5 @@
 {
-  "name": "frontend-navigation-site",
+  "name": "weiz-nav",
   "version": "0.1.4",
   "private": true,
   "scripts": {
@@ -15,11 +15,13 @@
     "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
-    "clean": "rm -rf .next out node_modules/.cache",
+    "clean": "rm -rf .next out .open-next node_modules/.cache",
     "serve:static": "npx serve@latest out -p 3000",
     "deploy:vercel": "vercel --prod",
-    "pages:build": "pnpm update-version && npx @cloudflare/next-on-pages",
-    "deploy:cloudflare": "pnpm build && wrangler pages deploy out --project-name=weiz-nav",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy:cloudflare": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload:cloudflare": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "deploy": "pnpm deploy:cloudflare",
     "prebuild": "pnpm clean"
   },
@@ -30,26 +32,27 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@opennextjs/cloudflare": "^1.19.11",
     "@reduxjs/toolkit": "^2.3.0",
     "antd": "^6.2.0",
     "framer-motion": "^11.11.0",
-    "next": "^15.0.0",
+    "next": "^16.0.0",
     "next-themes": "^0.4.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-redux": "^9.1.0"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "^1.13.16",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "eslint": "^9.0.0",
-    "eslint-config-next": "^15.0.0",
+    "eslint-config-next": "^16.0.0",
     "postcss": "^8.4.0",
     "prettier": "3.5.3",
     "tailwindcss": "^4.0.0",
-    "typescript": "^5.6.0"
+    "typescript": "^5.6.0",
+    "wrangler": "^4.94.0"
   }
 }
