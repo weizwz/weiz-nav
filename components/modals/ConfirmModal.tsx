@@ -53,7 +53,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
       okButtonProps={{ danger: okType === 'danger', loading, 'aria-label': okText }}
       cancelButtonProps={{ disabled: loading, 'aria-label': cancelText }}
       closable={!loading}
-      maskClosable={!loading}
+      mask={{ closable: !loading }}
       keyboard={!loading}
       aria-labelledby="confirm-modal-title"
       aria-describedby="confirm-modal-content"

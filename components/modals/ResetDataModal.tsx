@@ -70,7 +70,7 @@ export const ResetDataModal: React.FC<ResetDataModalProps> = ({ open, onConfirm,
       }}
       cancelButtonProps={{ disabled: loading, 'aria-label': '取消重置操作' }}
       closable={!loading}
-      maskClosable={!loading}
+      mask={{ closable: !loading }}
       keyboard={!loading}
       width={500}
       aria-labelledby="reset-modal-title"

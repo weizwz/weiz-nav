@@ -1,6 +1,6 @@
-# Cloudflare Pages GitHub Actions 配置指南
+# Cloudflare Workers GitHub Actions 配置
 
-如果你想使用 GitHub Actions 自动部署到 Cloudflare Pages，需要配置以下 Secrets。
+项目使用 [OpenNext for Cloudflare](https://opennext.js.org/cloudflare) 部署到 Cloudflare Workers。GitHub Actions 会在 PR 中执行构建检查，并在推送到 `main` 分支或手动触发 workflow 时部署 Worker。
 
 ## 获取 Cloudflare API Token
 
@@ -8,56 +8,44 @@
 
 2. 进入 **My Profile** → **API Tokens**
 
-3. 点击 **Create Token**
+3. 点击 **Create Token** → **Create Custom Token**
 
-4. 选择 **Create Custom Token**
+4. 配置权限：
 
-5. 配置权限：
    - **Token name**: `GitHub Actions - weiz-nav`
    - **Permissions**:
-     - Account - Cloudflare Pages - Edit
-   - **Account Resources**:
-     - Include - Your Account
+     - Account - Workers Scripts - Edit
+     - Account - Workers KV Storage - Edit（如启用 KV）
+     - Account - R2 Storage - Edit（如启用 R2）
+   - **Account Resources**: Include - Your Account
 
-6. 点击 **Continue to summary** → **Create Token**
+5. 点击 **Continue to summary** → **Create Token**
 
-7. 复制生成的 Token（只显示一次）
+6. 复制生成的 Token（只显示一次）
 
 ## 获取 Cloudflare Account ID
 
-1. 在 [Cloudflare Dashboard](https://dash.cloudflare.com) 首页
-
-2. 右侧可以看到 **Account ID**
-
-3. 复制 Account ID
+在 [Cloudflare Dashboard](https://dash.cloudflare.com) 首页右侧可以看到 **Account ID**，复制即可。
 
 ## 配置 GitHub Secrets
 
-1. 进入你的 GitHub 仓库
+进入仓库 **Settings → Secrets and variables → Actions**，添加以下两个 Secret：
 
-2. 进入 **Settings** → **Secrets and variables** → **Actions**
-
-3. 点击 **New repository secret**
-
-4. 添加以下两个 Secrets：
-
-### CLOUDFLARE_API_TOKEN
-- Name: `CLOUDFLARE_API_TOKEN`
-- Value: 粘贴你的 API Token
-
-### CLOUDFLARE_ACCOUNT_ID
-- Name: `CLOUDFLARE_ACCOUNT_ID`
-- Value: 粘贴你的 Account ID
+| Secret                  | 说明                   |
+| :---------------------- | :--------------------- |
+| `CLOUDFLARE_API_TOKEN`  | 上一步获取的 API Token |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID  |
 
 ## 完成
 
-配置完成后，每次推送到 `main` 分支或创建 Pull Request 时，GitHub Actions 会自动：
-1. 构建项目
-2. 部署到 Cloudflare Pages
-3. 在 PR 中显示预览链接
+配置完成后：
+
+1. PR 到 `main` 时运行 `opennextjs-cloudflare build`，验证 Worker 产物可以正常生成
+2. 推送到 `main` 或手动触发 workflow 时运行 `opennextjs-cloudflare deploy`，部署到 Cloudflare Workers
 
 ## 注意事项
 
-- API Token 请妥善保管，不要泄露
-- 如果不想使用 GitHub Actions，可以直接使用 Cloudflare Pages 的 Git 集成
-- GitHub Actions 方式适合需要自定义构建流程的场景
+- API Token 请妥善保管，不要泄露或提交到代码库
+- Worker 名称由 `wrangler.jsonc` 中的 `name` 字段决定，当前为 `weiz-nav`
+- workflow 使用 Node.js 22，与当前 Wrangler 版本要求一致
+- Pages 项目已迁移为 Workers 后，不再需要 Cloudflare Pages 的部署 workflow

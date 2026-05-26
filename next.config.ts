@@ -8,12 +8,9 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_APP_VERSION: pkg.version,
   },
-  // 启用静态导出
-  output: 'export',
 
   // 图片优化配置
   images: {
-    unoptimized: true, // 静态导出需要
     remotePatterns: [
       {
         protocol: 'https',
@@ -55,20 +52,16 @@ const nextConfig: NextConfig = {
   // 性能指标
   poweredByHeader: false, // 移除 X-Powered-By 头
 
-  // Webpack 配置
-  webpack: (config, { isServer }) => {
-    // 抑制 Ant Design CSS-in-JS 警告
-    if (!isServer) {
-      config.ignoreWarnings = [
-        ...(config.ignoreWarnings || []),
-        {
-          module: /node_modules\/@ant-design/,
-          message: /registering a cleanup function after unmount/,
-        },
-      ];
-    }
-    return config;
-  },
+  // Turbopack 配置（Next.js 16 默认启用）
+  // 空配置用于明确声明使用 Turbopack，避免与 webpack 配置冲突的警告
+  turbopack: {},
 };
 
 export default nextConfig;
+
+// 本地开发时集成 Cloudflare bindings
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
+
+if (process.env.NODE_ENV === 'development') {
+  initOpenNextCloudflareForDev();
+}
