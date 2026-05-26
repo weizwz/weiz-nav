@@ -61,4 +61,7 @@ export default nextConfig;
 
 // 本地开发时集成 Cloudflare bindings
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
-initOpenNextCloudflareForDev();
+
+if (process.env.NODE_ENV === 'development') {
+  initOpenNextCloudflareForDev();
+}
