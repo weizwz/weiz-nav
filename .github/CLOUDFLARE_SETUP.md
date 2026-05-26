@@ -36,6 +36,8 @@
 | `CLOUDFLARE_API_TOKEN`  | 上一步获取的 API Token |
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID  |
 
+注意：必须添加到仓库级别的 **Actions secrets**。如果 secret 名称拼写不一致，或只添加到了其他 environment 但 workflow 没有绑定该 environment，Wrangler 会在 CI 中报错：`necessary to set a CLOUDFLARE_API_TOKEN environment variable`。
+
 ## 完成
 
 配置完成后：
