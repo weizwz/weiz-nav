@@ -9,13 +9,13 @@
 前期使用 Kiro 的 Spec 模式开发，感谢 Claude Sonnet 4.5；
 后期使用 Antigravity 进行迭代和 bug 修复，感谢 Gemini 3 pro
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.x-black)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.x-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.x-38bdf8)](https://tailwindcss.com/)
 [![Ant Design](https://img.shields.io/badge/Ant%20Design-6.x-1890ff)](https://ant.design/)
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 
-<a href="https://nav.weizwz.com" target="_blank">在线演示</a> | [快速开始](#-快速开始) | [文档](./.kiro/specs/frontend-navigation-site/) | [部署指南](./.kiro/specs/frontend-navigation-site/QUICKSTART.md)
+<a href="https://nav.weizwz.com" target="_blank">在线演示</a> | [快速开始](#-快速开始) | [文档](./.kiro/specs/frontend-navigation-site/)
 
 </div>
 
@@ -39,7 +39,7 @@
 
 ## 🛠️ 技术栈
 
-Next.js 15 · TypeScript 5 · Tailwind CSS 4 · Ant Design 6 · Redux Toolkit · Framer Motion
+Next.js 16 · TypeScript 5 · Tailwind CSS 4 · Ant Design 6 · Redux Toolkit · Framer Motion
 
 ---
 
@@ -48,7 +48,7 @@ Next.js 15 · TypeScript 5 · Tailwind CSS 4 · Ant Design 6 · Redux Toolkit ·
 ```bash
 # 克隆项目
 git clone <repository-url>
-cd frontend-navigation-site
+cd weiz-nav
 
 # 安装依赖
 pnpm install
@@ -56,54 +56,94 @@ pnpm install
 # 配置环境变量（可选）
 cp .env.example .env.local
 # 编辑 .env.local 设置你的网站 URL
-# 静态部署时，cloudflare 上的环境变量无效，需要配置 .env.production/.env.local 且提交代码
 
 # 启动开发服务器
 pnpm dev
-
-# 构建生产版本
-pnpm build
-
-# 部署到 Cloudflare Pages (静态部署)
-pnpm deploy:cloudflare
 ```
-
-### 切换部署模式
-
-本项目支持**静态导出 (Static Export)** 和 **动态部署 (SSR)** 两种模式。
-
-#### 1. 静态部署 (推荐)
-
-适用于纯静态站点，性能最好，成本最低。
-
-- 修改 `next.config.ts`: 取消注释 `output: 'export'`
-- 修改 `wrangler.toml`: 设置 `pages_build_output_dir = "out"`
-- 修改 `package.json`: `deploy:cloudflare` 命令使用 `pnpm build` 和 `out` 目录
-
-#### 2. 动态部署 (SSR)
-
-适用于需要服务端渲染或 API 路由的场景。
-
-- 修改 `next.config.ts`: 注释掉 `output: 'export'`
-- 修改 `wrangler.toml`: 设置 `pages_build_output_dir = ".vercel/output/static"` 并添加 `compatibility_flags = ["nodejs_compat"]`
-- 修改 `package.json`: `deploy:cloudflare` 命令使用 `pnpm pages:build` 和 `.vercel/output/static` 目录
-
-详细说明请查看 [快速开始指南](./.kiro/specs/frontend-navigation-site/QUICKSTART.md)
 
 ---
 
 ## 🚢 部署
 
-推荐使用 **Cloudflare Pages**（免费额度大，中国访问速度快）
+项目使用 **[OpenNext](https://opennext.js.org/cloudflare) + Cloudflare Workers** 方案部署，支持完整的 SSR 能力。
+
+### 前置条件
+
+- 已安装 [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/)（项目 devDependency 已包含）
+- 已登录 Cloudflare 账号：`pnpm wrangler login`
+
+### 常用命令
+
+| 命令 | 说明 |
+| :--- | :--- |
+| `pnpm build` | 仅构建 Next.js（不部署） |
+| `pnpm preview` | 构建并在本地 Workers 运行时预览 |
+| `pnpm deploy` | 构建并部署到 Cloudflare Workers |
+| `pnpm upload:cloudflare` | 构建并上传新版本（不立即生效） |
+
+### 手动部署
 
 ```bash
-pnpm build
+# 登录 Cloudflare（首次需要）
+pnpm wrangler login
+
+# 构建并部署
 pnpm deploy
 ```
 
-也支持 Vercel、GitHub Pages、Netlify 等平台
+### 本地预览（Workers 运行时）
 
-详细部署指南：[QUICKSTART.md](./.kiro/specs/frontend-navigation-site/QUICKSTART.md) | [DEPLOYMENT.md](./.kiro/specs/frontend-navigation-site/DEPLOYMENT.md)
+```bash
+# 在与生产环境相同的 Workers 运行时中本地预览
+pnpm preview
+```
+
+### 环境变量
+
+Cloudflare Workers 部署时，环境变量通过 `.env.local` 或 `.env.production` 文件注入（需提交到代码库，或在 Cloudflare Dashboard 的 Workers 设置中配置）。
+
+```bash
+# 复制示例文件
+cp .env.example .env.local
+```
+
+| 变量 | 说明 | 默认值 |
+| :--- | :--- | :--- |
+| `NEXT_PUBLIC_SITE_URL` | 网站 URL，用于 Open Graph | `https://nav.weizwz.com` |
+| `NEXT_PUBLIC_API_ICONIFY_URL` | Iconify API 地址 | `https://api.iconify.design` |
+| `NEXT_PUBLIC_FAVICON_API_URL` | Favicon 获取服务地址 | `https://favicon.im` |
+
+### GitHub Actions 自动部署
+
+推送到 `master` 分支时自动触发部署，需要在仓库 **Settings → Secrets and variables → Actions** 中配置：
+
+| Secret | 说明 |
+| :--- | :--- |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API Token（需要 Workers 编辑权限） |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID |
+
+**获取 API Token：**
+
+1. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com) → **My Profile** → **API Tokens**
+2. 点击 **Create Token** → **Create Custom Token**
+3. 权限配置：`Account - Workers Scripts - Edit`
+4. 复制生成的 Token
+
+**获取 Account ID：**
+
+在 [Cloudflare Dashboard](https://dash.cloudflare.com) 首页右侧可以看到 Account ID。
+
+### 本地 HTTPS 开发
+
+如需在本地使用 HTTPS（测试 PWA 等功能）：
+
+```bash
+# 生成本地证书
+pnpm generate-cert
+
+# 启动 HTTPS 开发服务器
+pnpm dev:https
+```
 
 ---
 
@@ -111,8 +151,6 @@ pnpm deploy
 
 **快速指南**
 
-- [快速开始](./.kiro/specs/frontend-navigation-site/QUICKSTART.md) - 5 分钟快速部署
-- [部署指南](./.kiro/specs/frontend-navigation-site/DEPLOYMENT.md) - 详细部署说明
 - [PWA 使用指南](./.kiro/specs/frontend-navigation-site/PWA_GUIDE.md) - PWA 安装和使用
 - [缓存清除指南](./.kiro/specs/frontend-navigation-site/CACHE_CLEAR_GUIDE.md) - 解决缓存问题
 
