@@ -1,3 +1,5 @@
+import { getPublicEnv } from '../env';
+
 /**
  * Iconify API 服务
  * 使用 Iconify API 搜索和获取图标
@@ -20,9 +22,7 @@ export interface IconifyConfig {
  * 默认配置
  */
 const DEFAULT_ICONIFY_CONFIG: IconifyConfig = {
-  apiBaseUrl: typeof window !== 'undefined' && process.env.NEXT_PUBLIC_API_ICONIFY_URL 
-    ? process.env.NEXT_PUBLIC_API_ICONIFY_URL 
-    : 'https://api.iconify.design',
+  apiBaseUrl: getPublicEnv('NEXT_PUBLIC_API_ICONIFY_URL') || 'https://api.iconify.design',
   defaultLimit: 100,
   throttleDelay: 300,
 };

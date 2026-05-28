@@ -1,5 +1,6 @@
 import { Link } from '@weiz-nav/core/link';
 import { Settings } from '@weiz-nav/core/settings';
+import { getPublicEnv } from './env';
 
 /**
  * LocalStorage 键名常量
@@ -14,7 +15,7 @@ const STORAGE_KEYS = {
  * 当前数据版本
  * 用于未来的数据迁移
  */
-const CURRENT_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || '0.1.1';
+const CURRENT_VERSION = getPublicEnv('NEXT_PUBLIC_APP_VERSION') || '0.1.1';
 
 /**
  * 存储服务类

@@ -1,3 +1,5 @@
+import { getPublicEnv } from '../env';
+
 /**
  * Favicon API 服务
  * 使用 Favicon.im API 自动获取网站图标
@@ -8,7 +10,7 @@
  * Favicon.im API 基础 URL
  * 可通过环境变量 NEXT_PUBLIC_FAVICON_API_URL 自定义
  */
-const FAVICON_API_BASE = process.env.NEXT_PUBLIC_FAVICON_API_URL || 'https://favicon.im';
+const FAVICON_API_BASE = getPublicEnv('NEXT_PUBLIC_FAVICON_API_URL') || 'https://favicon.im';
 
 /**
  * Favicon API 选项

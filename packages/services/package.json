@@ -8,6 +8,7 @@
   },
   "exports": {
     ".": "./src/index.ts",
+    "./env": "./src/env.ts",
     "./storage": "./src/storage.ts",
     "./api/favicon": "./src/api/favicon.ts",
     "./api/iconify": "./src/api/iconify.ts"

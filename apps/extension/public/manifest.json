@@ -18,6 +18,9 @@
     "48": "icons/logo.png",
     "128": "icons/logo.png"
   },
-  "permissions": ["storage"],
-  "host_permissions": ["https://favicon.im/*", "https://api.iconify.design/*"]
+  "permissions": ["storage", "tabs"],
+  "host_permissions": ["https://favicon.im/*", "https://api.iconify.design/*"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; img-src 'self' data: https://favicon.im https://api.iconify.design;"
+  }
 }
