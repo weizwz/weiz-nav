@@ -7,7 +7,7 @@
     "dev:https": "node server.js",
     "dev:turbo": "next dev --turbo",
     "generate-cert": "node scripts/generate-cert.js",
-    "update-version": "node scripts/update-version.js",
+    "update-version": "node ../../scripts/sync-version.js",
     "build": "pnpm clean && pnpm update-version && next build",
     "start": "next start",
     "lint": "eslint .",
