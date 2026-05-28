@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "唯知导航",
+  "short_name": "唯知导航",
+  "description": "在浏览器插件中快速搜索和打开唯知导航链接",
+  "version": "0.1.5",
+  "action": {
+    "default_title": "唯知导航",
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "icons/logo.png",
+      "48": "icons/logo.png",
+      "128": "icons/logo.png"
+    }
+  },
+  "icons": {
+    "16": "icons/logo.png",
+    "48": "icons/logo.png",
+    "128": "icons/logo.png"
+  },
+  "permissions": ["storage"],
+  "host_permissions": ["https://favicon.im/*", "https://api.iconify.design/*"]
+}
