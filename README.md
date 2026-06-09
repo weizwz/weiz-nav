@@ -74,12 +74,12 @@ pnpm dev
 
 ### 常用命令
 
-| 命令 | 说明 |
-| :--- | :--- |
-| `pnpm build` | 仅构建 Next.js（不部署） |
-| `pnpm preview` | 构建并在本地 Workers 运行时预览 |
-| `pnpm deploy` | 构建并部署到 Cloudflare Workers |
-| `pnpm upload:cloudflare` | 构建并上传新版本（不立即生效） |
+| 命令                     | 说明                            |
+| :----------------------- | :------------------------------ |
+| `pnpm build`             | 仅构建 Next.js（不部署）        |
+| `pnpm preview`           | 构建并在本地 Workers 运行时预览 |
+| `pnpm deploy`            | 构建并部署到 Cloudflare Workers |
+| `pnpm upload:cloudflare` | 构建并上传新版本（不立即生效）  |
 
 ### 手动部署
 
@@ -107,20 +107,20 @@ Cloudflare Workers 部署时，环境变量通过 `.env.local` 或 `.env.product
 cp .env.example .env.local
 ```
 
-| 变量 | 说明 | 默认值 |
-| :--- | :--- | :--- |
-| `NEXT_PUBLIC_SITE_URL` | 网站 URL，用于 Open Graph | `https://nav.weizwz.com` |
-| `NEXT_PUBLIC_API_ICONIFY_URL` | Iconify API 地址 | `https://api.iconify.design` |
-| `NEXT_PUBLIC_FAVICON_API_URL` | Favicon 获取服务地址 | `https://favicon.im` |
+| 变量                          | 说明                      | 默认值                       |
+| :---------------------------- | :------------------------ | :--------------------------- |
+| `NEXT_PUBLIC_SITE_URL`        | 网站 URL，用于 Open Graph | `https://nav.weizwz.com`     |
+| `NEXT_PUBLIC_API_ICONIFY_URL` | Iconify API 地址          | `https://api.iconify.design` |
+| `NEXT_PUBLIC_FAVICON_API_URL` | Favicon 获取服务地址      | `https://favicon.im`         |
 
 ### GitHub Actions 自动部署
 
 推送到 `master` 分支时自动触发部署，需要在仓库 **Settings → Secrets and variables → Actions** 中配置：
 
-| Secret | 说明 |
-| :--- | :--- |
-| `CLOUDFLARE_API_TOKEN` | Cloudflare API Token（需要 Workers 编辑权限） |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID |
+| Secret                  | 说明                                          |
+| :---------------------- | :-------------------------------------------- |
+| `CLOUDFLARE_API_TOKEN`  | Cloudflare API Token（需要 Workers 编辑权限） |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Account ID                         |
 
 **获取 API Token：**
 
@@ -151,21 +151,22 @@ pnpm dev:https
 
 **快速指南**
 
-- [PWA 使用指南](./.kiro/specs/frontend-navigation-site/PWA_GUIDE.md) - PWA 安装和使用
-- [缓存清除指南](./.kiro/specs/frontend-navigation-site/CACHE_CLEAR_GUIDE.md) - 解决缓存问题
+- [PWA 使用指南](./.ai/specs/frontend-navigation-site/PWA_GUIDE.md) - PWA 安装和使用
+- [缓存清除指南](./.ai/specs/frontend-navigation-site/CACHE_CLEAR_GUIDE.md) - 解决缓存问题
 
 **开发文档**
 
-- [需求文档](./.kiro/specs/frontend-navigation-site/requirements.md) - 功能需求
-- [设计文档](./.kiro/specs/frontend-navigation-site/design.md) - 技术架构
-- [任务列表](./.kiro/specs/frontend-navigation-site/tasks.md) - 开发任务
+- [架构与技术要点分析](./.ai/architecture.md) - 架构深度分析
+- [需求文档](./.ai/specs/frontend-navigation-site/requirements.md) - 功能需求
+- [设计文档](./.ai/specs/frontend-navigation-site/design.md) - 技术架构
+- [任务列表](./.ai/specs/frontend-navigation-site/tasks.md) - 开发任务
 
 **技术指南**
 
-- [搜索实现](./.kiro/specs/frontend-navigation-site/SEARCH_IMPLEMENTATION.md) - 搜索功能详解
-- [错误处理](./.kiro/specs/frontend-navigation-site/ERROR_HANDLING.md) - 错误处理策略
-- [可访问性](./.kiro/specs/frontend-navigation-site/ACCESSIBILITY.md) - 无障碍访问
-- [HTTPS 配置](./.kiro/specs/frontend-navigation-site/HTTPS_SETUP.md) - 本地 HTTPS 开发
+- [搜索实现](./.ai/specs/frontend-navigation-site/SEARCH_IMPLEMENTATION.md) - 搜索功能详解
+- [错误处理](./.ai/specs/frontend-navigation-site/ERROR_HANDLING.md) - 错误处理策略
+- [可访问性](./.ai/specs/frontend-navigation-site/ACCESSIBILITY.md) - 无障碍访问
+- [HTTPS 配置](./.ai/specs/frontend-navigation-site/HTTPS_SETUP.md) - 本地 HTTPS 开发
 
 ---
 
