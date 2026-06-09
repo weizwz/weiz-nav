@@ -5,7 +5,7 @@ import pkg from './package.json';
 // updateVersion();
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@weiz-nav/core', '@weiz-nav/services', '@weiz-nav/store'],
+  transpilePackages: ['@weiz-nav/core', '@weiz-nav/services', '@weiz-nav/store', '@weiz-nav/ui'],
 
   env: {
     NEXT_PUBLIC_APP_VERSION: pkg.version,

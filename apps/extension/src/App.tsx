@@ -8,14 +8,14 @@ import store from '@weiz-nav/store';
 import { addLink, updateLink, deleteLink, loadLinks } from '@weiz-nav/store/slices/linksSlice';
 import { storageService } from '@weiz-nav/services/storage';
 import { defaultLinks } from "@weiz-nav/core";
-import { showSuccess, showError } from '@/utils/feedback';
-import Header from '@/components/layout/Header';
-import { CategorySidebar } from '@/components/navigation/CategorySidebar';
-import { LinkGrid } from '@/components/navigation/LinkGrid';
-import { LinkGridSkeleton } from '@/components/navigation/LinkGridSkeleton';
-import { EditLinkModal } from '@/components/modals/EditLinkModal';
-import { ConfirmModal } from '@/components/modals/ConfirmModal';
-import InstallPrompt from '@/components/common/InstallPrompt';
+import { showSuccess, showError } from '@weiz-nav/ui/src/utils/feedback';
+import Header from '@weiz-nav/ui/src/components/layout/Header';
+import { CategorySidebar } from '@weiz-nav/ui/src/components/navigation/CategorySidebar';
+import { LinkGrid } from '@weiz-nav/ui/src/components/navigation/LinkGrid';
+import { LinkGridSkeleton } from '@weiz-nav/ui/src/components/navigation/LinkGridSkeleton';
+import { EditLinkModal } from '@weiz-nav/ui/src/components/modals/EditLinkModal';
+import { ConfirmModal } from '@weiz-nav/ui/src/components/modals/ConfirmModal';
+import InstallPrompt from '@weiz-nav/ui/src/components/common/InstallPrompt';
 import { Link } from '@weiz-nav/core/link';
 
 /**

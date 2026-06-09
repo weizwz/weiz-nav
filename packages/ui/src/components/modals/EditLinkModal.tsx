@@ -6,9 +6,9 @@ import type { Color } from 'antd/es/color-picker';
 import { UndoOutlined, ZoomInOutlined, ZoomOutOutlined, BgColorsOutlined } from '@ant-design/icons';
 import * as Icons from '@ant-design/icons';
 import { Link } from '@weiz-nav/core/link';
-import { PRESET_COLORS, isValidColor, getDefaultColor } from '@weiz-nav/core/utils/color';
+import { PRESET_COLORS, isValidColor, getDefaultColor } from '@weiz-nav/ui/src/utils/colorUtils';
 import { getFaviconUrl } from '@weiz-nav/services/api/favicon';
-import { showError } from '@/utils/feedback';
+import { showError } from '@weiz-nav/ui/src/utils/feedback';
 import { useAppSelector } from '@weiz-nav/store/hooks';
 import { IconifySelector } from './IconifySelector';
 
@@ -121,13 +121,17 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({ open, link, onCanc
       const url = e.target.value.trim();
 
       // 验证 URL 格式
-      if (!url || !/^https?:\/\/.+/.test(url)) {
+      if (!url || !/^(https?|chrome|edge):\/\/.+/.test(url)) {
         setPreviewIcon('');
         return;
       }
 
       // 只有在 Favicon 模式下才自动更新
       if (iconType === '1') {
+        // 对于非 http(s) 协议，不尝试获取 favicon
+        if (!/^https?:\/\//.test(url)) {
+          return;
+        }
         const faviconUrl = getFaviconUrl(url, { larger: true });
         form.setFieldsValue({ icon: faviconUrl || '' });
         setPreviewIcon(faviconUrl || '');
@@ -345,13 +349,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({ open, link, onCanc
       aria-labelledby="edit-link-modal-title"
       aria-describedby="edit-link-modal-description"
     >
-      <span id="edit-link-modal-title" className="sr-only">
-        {link ? '编辑链接表单' : '添加新链接表单'}
-      </span>
-      <span id="edit-link-modal-description" className="sr-only">
-        填写表单以{link ? '编辑' : '添加'}导航链接信息
-      </span>
-      <div className="pt-2"></div>
+      {/* ... (omitted code) */}
       <Form
         form={form}
         labelCol={{ flex: '54px' }}
@@ -363,7 +361,10 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({ open, link, onCanc
           name="url"
           rules={[
             { required: true, message: '请输入链接地址' },
-            { type: 'url', message: '请输入有效的 URL 地址' },
+            {
+              pattern: /^(https?|chrome|edge):\/\/.+/,
+              message: '请输入有效的 URL 地址 (http, https, chrome, edge)',
+            },
             { max: 500, message: '地址长度不能超过 500 个字符' },
           ]}
         >

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo, useCallback } from 'react';
+import { memo, useCallback } from 'react';
 
 import { Button, Tooltip } from 'antd';
 import { MenuOutlined, GithubOutlined, SettingOutlined } from '@ant-design/icons';

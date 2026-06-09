@@ -38,6 +38,9 @@
       ],
       "@/utils/*": [
         "./utils/*"
+      ],
+      "@weiz-nav/ui/*": [
+        "../../packages/ui/*"
       ]
     }
   },

@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { App } from 'antd';
-import { setMessageApi, setModalApi } from '@/utils/feedback';
+import { setMessageApi, setModalApi } from '@weiz-nav/ui/src/utils/feedback';
 
 /**
  * MessageProvider 组件

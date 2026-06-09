@@ -20,7 +20,7 @@ import { useAppSelector, useAppDispatch } from '@weiz-nav/store/hooks';
 import { reorderLinks } from '@weiz-nav/store/slices/linksSlice';
 import { LinkCard } from './LinkCard';
 import { Link } from '@weiz-nav/core/link';
-import { showSuccess } from '@/utils/feedback';
+import { showSuccess } from '@weiz-nav/ui/src/utils/feedback';
 
 interface LinkGridProps {
   onEdit?: (link: Link) => void;

@@ -8,7 +8,7 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 import zhCN from 'antd/locale/zh_CN';
 import store, { initializeStore } from '@weiz-nav/store';
 import { storageService } from '@weiz-nav/services/storage';
-import MessageProvider from './MessageProvider';
+import MessageProvider from '@weiz-nav/ui/src/components/MessageProvider';
 
 /**
  * Ant Design 主题配置组件

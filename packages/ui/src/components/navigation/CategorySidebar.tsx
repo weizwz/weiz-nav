@@ -30,9 +30,9 @@ import {
   reorderCategories,
 } from '@weiz-nav/store/slices/categoriesSlice';
 import { updateLink } from '@weiz-nav/store/slices/linksSlice';
-import { EditCategoryModal } from '@/components/modals/EditCategoryModal';
+import { EditCategoryModal } from '@weiz-nav/ui/src/components/modals/EditCategoryModal';
 import { Category } from '@weiz-nav/core/category';
-import { showSuccess, showConfirm } from '@/utils/feedback';
+import { showSuccess, showConfirm } from '@weiz-nav/ui/src/utils/feedback';
 
 interface CategorySidebarProps {
   className?: string;

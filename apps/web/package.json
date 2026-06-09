@@ -33,6 +33,7 @@
     "@weiz-nav/core": "workspace:*",
     "@weiz-nav/services": "workspace:*",
     "@weiz-nav/store": "workspace:*",
+    "@weiz-nav/ui": "workspace:*",
     "antd": "^6.4.3",
     "framer-motion": "^11.11.0",
     "next": "^16.0.0",

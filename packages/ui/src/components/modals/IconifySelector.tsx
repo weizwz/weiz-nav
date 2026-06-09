@@ -5,8 +5,8 @@ import { Button, Input, Popover, Spin, Empty, ColorPicker } from 'antd';
 import type { Color } from 'antd/es/color-picker';
 import { SearchOutlined, CheckOutlined } from '@ant-design/icons';
 import { iconifyApi, IconOption } from '@weiz-nav/services/api/iconify';
-import { PRESET_COLORS } from '@weiz-nav/core/utils/color';
-import { debounce } from '@weiz-nav/core/utils/debounce';
+import { PRESET_COLORS } from '@weiz-nav/ui/src/utils/colorUtils';
+import { debounce } from '@weiz-nav/ui/src/utils/debounce';
 
 /**
  * IconifySelector 组件 Props

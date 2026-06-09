@@ -19,12 +19,12 @@ import {
   updateCategory,
   deleteCategory,
 } from '@weiz-nav/store/slices/categoriesSlice';
-import { DataTable } from '@/components/management/DataTable';
-import { EditLinkModal } from '@/components/modals/EditLinkModal';
-import { EditCategoryModal } from '@/components/modals/EditCategoryModal';
-import { ImportExport } from '@/components/management/ImportExport';
-import { ResetDataModal } from '@/components/modals/ResetDataModal';
-import { BatchCategoryModal } from '@/components/modals/BatchCategoryModal';
+import { DataTable } from '@weiz-nav/ui/src/components/management/DataTable';
+import { EditLinkModal } from '@weiz-nav/ui/src/components/modals/EditLinkModal';
+import { EditCategoryModal } from '@weiz-nav/ui/src/components/modals/EditCategoryModal';
+import { ImportExport } from '@weiz-nav/ui/src/components/management/ImportExport';
+import { ResetDataModal } from '@weiz-nav/ui/src/components/modals/ResetDataModal';
+import { BatchCategoryModal } from '@weiz-nav/ui/src/components/modals/BatchCategoryModal';
 import { Link } from '@weiz-nav/core/link';
 import { Category } from '@weiz-nav/core/category';
 import { defaultLinks } from '@weiz-nav/core/default-data';

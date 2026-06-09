@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Upload, Space, App } from 'antd';
+import { Button, Upload, Space } from 'antd';
 import { DownloadOutlined, UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
 import { useAppDispatch, useAppSelector } from '@weiz-nav/store/hooks';
@@ -9,92 +9,60 @@ import { loadLinks } from '@weiz-nav/store/slices/linksSlice';
 import { loadCategories } from '@weiz-nav/store/slices/categoriesSlice';
 import { Link } from '@weiz-nav/core/link';
 import type { Category } from '@weiz-nav/core/category';
-import { showSuccess, showError, showConfirm, showWarning } from '@/utils/feedback';
-import { isValidColor } from '@weiz-nav/core/utils/color';
-import packageInfo from '@/package.json';
+import { showSuccess, showError, showConfirm, showWarning } from '@weiz-nav/ui/src/utils/feedback';
+import packageInfo from "../../../package.json";
 
 /**
  * 验证单个链接数据格式
- * 规则参考 EditLinkModal 的校验要求
  */
-const validateImportedLink = (item: any): { valid: boolean; reason?: string } => {
-  if (!item || typeof item !== 'object') {
-    return { valid: false, reason: '数据格式错误' };
+const validateLinkItem = (item: any): { valid: boolean; reason?: string } => {
+  // 检查必需字段
+  if (
+    typeof item.id !== 'string' ||
+    typeof item.name !== 'string' ||
+    typeof item.url !== 'string' ||
+    typeof item.description !== 'string' ||
+    typeof item.order !== 'number' ||
+    typeof item.createdAt !== 'number' ||
+    typeof item.updatedAt !== 'number'
+  ) {
+    return { valid: false, reason: '缺少必需字段或类型错误' };
   }
 
-  // 检查必需系统字段
-  if (typeof item.id !== 'string') return { valid: false, reason: '缺少ID或ID类型错误' };
-  if (typeof item.order !== 'number') return { valid: false, reason: '排序字段(order)缺失或无效' };
-  if (typeof item.createdAt !== 'number')
-    return { valid: false, reason: '创建时间(createdAt)缺失或无效' };
-  if (typeof item.updatedAt !== 'number')
-    return { valid: false, reason: '更新时间(updatedAt)缺失或无效' };
-
-  // 检查业务字段 (参考 EditLinkModal)
-  // 1. URL: 必填, http/https开头, max 500
-  if (typeof item.url !== 'string' || !item.url.trim()) {
-    return { valid: false, reason: 'URL不能为空' };
-  }
-  if (!/^https?:\/\/.+/.test(item.url)) {
-    return { valid: false, reason: 'URL必须以http://或https://开头' };
+  // 验证字段值的有效性 (与 EditLinkModal 保持一致)
+  // 1. URL 格式和长度
+  if (!/^(https?|chrome|edge):\/\/.+/.test(item.url)) {
+    return { valid: false, reason: `URL 格式无效: ${item.url}` };
   }
   if (item.url.length > 500) {
-    return { valid: false, reason: 'URL长度不能超过500字符' };
+    return { valid: false, reason: `URL 过长 (${item.url.substring(0, 20)}...)` };
   }
 
-  // 2. Name: 必填, max 30
-  if (typeof item.name !== 'string' || !item.name.trim()) {
-    return { valid: false, reason: '名称不能为空' };
-  }
+  // 2. 名称长度
   if (item.name.length > 30) {
-    return { valid: false, reason: '名称长度不能超过30字符' };
+    return { valid: false, reason: `名称过长: ${item.name}` };
   }
 
-  // 3. Description: 选填, max 200
-  if (item.description !== undefined) {
-    if (typeof item.description !== 'string') {
-      return { valid: false, reason: '描述必须是字符串' };
-    }
-    if (item.description.length > 200) {
-      return { valid: false, reason: '描述长度不能超过200字符' };
-    }
+  // 3. 描述长度
+  if (item.description.length > 200) {
+    return { valid: false, reason: `描述过长: ${item.name}` };
   }
 
-  // 4. BackgroundColor: 选填, valid color
-  if (
-    item.backgroundColor !== undefined &&
-    item.backgroundColor !== null &&
-    item.backgroundColor !== ''
-  ) {
-    if (typeof item.backgroundColor !== 'string') {
-      return { valid: false, reason: '背景颜色格式错误' };
-    }
-    if (!isValidColor(item.backgroundColor)) {
-      return { valid: false, reason: '背景颜色无效' };
-    }
-  }
-
-  // 5. IconScale: 选填, number
-  if (item.iconScale !== undefined && item.iconScale !== null) {
-    if (typeof item.iconScale !== 'number') {
-      return { valid: false, reason: '图标缩放比例必须是数字' };
-    }
-  }
-
-  // 检查其他可选字段类型
+  // 检查可选字段类型
   if (item.icon !== undefined && typeof item.icon !== 'string') {
-    return { valid: false, reason: '图标格式错误' };
+    return { valid: false, reason: `图标格式错误: ${item.name}` };
+  }
+  if (item.backgroundColor !== undefined && typeof item.backgroundColor !== 'string') {
+    return { valid: false, reason: `背景色格式错误: ${item.name}` };
   }
   if (item.category !== undefined && typeof item.category !== 'string') {
-    return { valid: false, reason: '分类格式错误' };
+    return { valid: false, reason: `分类格式错误: ${item.name}` };
   }
-  if (item.tags !== undefined) {
-    if (!Array.isArray(item.tags)) {
-      return { valid: false, reason: '标签必须是数组' };
-    }
-    if (!item.tags.every((tag: any) => typeof tag === 'string')) {
-      return { valid: false, reason: '标签项必须是字符串' };
-    }
+  if (item.tags !== undefined && !Array.isArray(item.tags)) {
+    return { valid: false, reason: `标签格式错误: ${item.name}` };
+  }
+  if (item.tags && !item.tags.every((tag: any) => typeof tag === 'string')) {
+    return { valid: false, reason: `标签内容错误: ${item.name}` };
   }
 
   return { valid: true };
@@ -105,7 +73,6 @@ const validateImportedLink = (item: any): { valid: boolean; reason?: string } =>
  * 提供数据的导入和导出功能
  */
 export const ImportExport: React.FC = () => {
-  const { modal } = App.useApp();
   const dispatch = useAppDispatch();
   const links = useAppSelector((state) => state.links.items);
   const categories = useAppSelector((state) => state.categories.items);
@@ -155,7 +122,7 @@ export const ImportExport: React.FC = () => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `weiz_nav_${Date.now()}.json`;
+      link.download = `weiz_nav_expand_${Date.now()}.json`;
 
       // 触发下载
       document.body.appendChild(link);
@@ -260,30 +227,37 @@ export const ImportExport: React.FC = () => {
           return;
         }
 
-        // 验证并过滤链接数据
+        // 验证链接数据格式并筛选有效数据
         const validLinks: Link[] = [];
-        const invalidLinks: { name: string; reason: string }[] = [];
+        const invalidLinks: string[] = [];
 
-        linksData.forEach((link: any) => {
-          const result = validateImportedLink(link);
-          if (result.valid) {
-            validLinks.push(link);
+        linksData.forEach((item) => {
+          const validation = validateLinkItem(item);
+          if (validation.valid) {
+            validLinks.push(item);
           } else {
-            invalidLinks.push({
-              name: link.name || '未命名',
-              reason: result.reason || '未知错误',
-            });
+            invalidLinks.push(validation.reason || '未知错误');
           }
         });
 
         if (validLinks.length === 0) {
           if (invalidLinks.length > 0) {
-            showWarning(`未找到有效链接。忽略了 ${invalidLinks.length} 条无效数据。`);
+            showError(`导入失败：所有 ${invalidLinks.length} 条数据均不符合格式要求`);
+            console.error('Invalid links:', invalidLinks);
           } else {
             showWarning('导入的文件中没有链接数据');
           }
           return;
         }
+
+        // 如果有无效数据，提示用户
+        if (invalidLinks.length > 0) {
+          showWarning(`发现 ${invalidLinks.length} 条无效数据将被忽略，详情请查看控制台`);
+          console.warn('Skipped invalid links:', invalidLinks);
+        }
+
+        // 使用有效数据继续处理
+        linksData = validLinks;
 
         // 合并链接数据：根据 URL + 分类 判断是否为同一链接
         // 允许相同 URL 在不同分类中存在，但同一分类中 URL 不能重复
@@ -294,7 +268,7 @@ export const ImportExport: React.FC = () => {
         let newLinksCount = 0;
         let updatedLinksCount = 0;
 
-        validLinks.forEach((importedLink: Link) => {
+        linksData.forEach((importedLink: Link) => {
           const compositeKey = `${importedLink.url}::${importedLink.category}`;
           const existingLink = existingLinksMap.get(compositeKey);
 
@@ -388,11 +362,10 @@ export const ImportExport: React.FC = () => {
         const newCategoriesCount = newCategories.length;
 
         // 显示确认对话框
-        let message =
+        const message =
           `即将导入数据：\n` +
-          `• 链接：新增 ${newLinksCount} 个，更新 ${updatedLinksCount} 个` +
-          (invalidLinks.length > 0 ? `\n• 过滤：${invalidLinks.length} 条数据格式不符` : '') +
-          `\n• 分类：新增 ${newCategoriesCount} 个，更新 ${updatedCategoriesCount} 个\n` +
+          `• 链接：新增 ${newLinksCount} 个，更新 ${updatedLinksCount} 个\n` +
+          `• 分类：新增 ${newCategoriesCount} 个，更新 ${updatedCategoriesCount} 个\n` +
           `是否继续？`;
 
         showConfirm({
@@ -411,41 +384,9 @@ export const ImportExport: React.FC = () => {
               localStorage.setItem('nav_links', JSON.stringify(sortedLinks));
               localStorage.setItem('nav_categories', JSON.stringify(sortedCategories));
 
-              if (invalidLinks.length > 0) {
-                // 使用 Modal 展示详细的错误报告
-                modal.warning({
-                  title: '导入完成（部分数据被忽略）',
-                  width: 500,
-                  content: (
-                    <div className="mt-2">
-                      <p className="mb-2">
-                        成功导入 {validLinks.length} 条数据。以下 {invalidLinks.length}{' '}
-                        条数据因格式不符被忽略：
-                      </p>
-                      <div className="max-h-[300px] overflow-y-auto border border-gray-200 dark:border-gray-700 rounded p-2 bg-gray-50 dark:bg-gray-800">
-                        <ul className="space-y-1.5">
-                          {invalidLinks.map((item, index) => (
-                            <li
-                              key={index}
-                              className="text-sm text-gray-600 dark:text-gray-400 flex flex-col"
-                            >
-                              <span className="font-medium text-gray-800 dark:text-gray-200">
-                                {item.name}
-                              </span>
-                              <span className="text-xs text-red-500">{item.reason}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  ),
-                  okText: '知道了',
-                });
-              } else {
-                showSuccess(
-                  `成功导入：新增 ${newLinksCount} 个链接，更新 ${updatedLinksCount} 个链接`
-                );
-              }
+              showSuccess(
+                `成功导入：新增 ${newLinksCount} 个链接，更新 ${updatedLinksCount} 个链接`
+              );
               setFileList([]);
             } catch (saveError) {
               console.error('Save error:', saveError);
