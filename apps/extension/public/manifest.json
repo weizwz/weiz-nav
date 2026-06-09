@@ -4,14 +4,8 @@
   "short_name": "唯知导航",
   "description": "在浏览器插件中快速搜索和打开唯知导航链接",
   "version": "1.0.0",
-  "action": {
-    "default_title": "唯知导航",
-    "default_popup": "index.html",
-    "default_icon": {
-      "16": "icons/logo.png",
-      "48": "icons/logo.png",
-      "128": "icons/logo.png"
-    }
+  "chrome_url_overrides": {
+    "newtab": "index.html"
   },
   "icons": {
     "16": "icons/logo.png",
