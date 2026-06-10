@@ -1,7 +1,11 @@
 @import 'tailwindcss';
-@source "../../packages/ui/src";
+@source "../../../packages/ui/src";
 
 @variant dark (.dark &);
+
+@theme {
+  --spacing-22: 5.5rem;
+}
 
 body {
   @apply bg-gray-50 text-gray-900 m-0 p-0;

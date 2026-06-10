@@ -1,0 +1,44 @@
+
+> @weiz-nav/web@1.0.0 dev /Users/weiz/workspace/tools/weiz-nav/apps/web
+> next dev
+
+⚠ Port 3000 is in use by process 37761, using available port 3001 instead.
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://172.30.200.92:3001
+- Environments: .env.local
+✓ Ready in 258ms
+- Experiments (use with caution):
+  · optimizePackageImports
+
+Persisting failed: Unable to write SST file 00000009.sst
+
+Caused by:
+    No such file or directory (os error 2)
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Compaction failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://172.30.200.92:3001
+- Environments: .env.local
+✓ Ready in 224ms
+⨯ Failed to load next.config.ts, see more info here https://nextjs.org/docs/messages/next-config-error
+[Error:   x Expression expected
+    ,-[63:1]
+ 60 | 
+ 61 |   allowedDevOrigins: ['localhost.weizwz.com'],
+ 62 | }
+ 63 | };
+    : ^
+ 64 | 
+ 65 | export default nextConfig;
+    `----
+
+
+Caused by:
+    Syntax Error] {
+  code: 'GenericFailure'
+}
+[?25h
+ ELIFECYCLE  Command failed with exit code 1.

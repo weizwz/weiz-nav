@@ -57,6 +57,8 @@ const nextConfig: NextConfig = {
   // Turbopack 配置（Next.js 16 默认启用）
   // 空配置用于明确声明使用 Turbopack，避免与 webpack 配置冲突的警告
   turbopack: {},
+
+  allowedDevOrigins: ['localhost.weizwz.com'],
 };
 
 export default nextConfig;

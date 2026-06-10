@@ -15,7 +15,7 @@ export const LinkGridSkeleton: React.FC = () => {
       {Array.from({ length: 12 }).map((_, index) => (
         <Card 
           key={index} 
-          className="transition-theme h-22"
+          className="transition-theme h-[5.5rem]"
           style={{ 
             backgroundColor: 'var(--background)',
             borderColor: 'var(--border)',

@@ -53,7 +53,7 @@ const IconWithFallback: React.FC<{
         alt={`${alt}的图标`}
         loading="lazy"
         decoding="async"
-        className="w-22 h-22 object-contain"
+        className="w-[5.5rem] h-[5.5rem] object-contain"
         style={{
           transform: `scale(${scale})`,
         }}
@@ -73,7 +73,7 @@ const IconWithFallback: React.FC<{
         alt={`${alt}的图标`}
         loading="lazy"
         decoding="async"
-        className="w-22 h-22 object-contain"
+        className="w-[5.5rem] h-[5.5rem] object-contain"
         style={{
           transform: `scale(${scale})`,
         }}
@@ -298,7 +298,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
             tabIndex={0}
             role="button"
             aria-label={`打开 ${link.name}${link.description ? `，${link.description}` : ''}`}
-            className="link-card h-22 box-content cursor-pointer! overflow-hidden rounded-xl"
+            className="link-card h-[5.5rem] box-content cursor-pointer! overflow-hidden rounded-xl"
             styles={{
               body: {
                 height: '100%',
@@ -309,7 +309,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
           >
             {/* 左侧：背景色 + 图标 */}
             <div
-              className="flex-none w-22 flex items-center justify-center text-white relative overflow-hidden dark:brightness-[0.8]"
+              className="flex-none w-[5.5rem] flex items-center justify-center text-white relative overflow-hidden dark:brightness-[0.8]"
               style={{
                 backgroundColor: link.backgroundColor || '#bae0ff',
               }}
@@ -319,7 +319,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
               {(link.backgroundColor === '#ffffff' ||
                 link.backgroundColor === 'rgb(255, 255, 255)' ||
                 link.backgroundColor?.indexOf('rgba(255, 255, 255') === 0) && (
-                <div className="absolute right-0 top-7/32 h-9/16 w-0 border-r border-card-border z-0"></div>
+                <div className="absolute right-0 top-[21.875%] h-[56.25%] w-0 border-r border-card-border z-0"></div>
               )}
             </div>
 

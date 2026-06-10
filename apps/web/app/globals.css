@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@source "../../packages/ui/src";
+@source "../../../packages/ui/src";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -15,6 +15,9 @@
   --breakpoint-5xl: 160rem;
   --breakpoint-6xl: 184rem;
   --breakpoint-7xl: 208rem;
+  
+  /* spacing */
+  --spacing-22: 5.5rem;
 }
 
 /* CSS 自定义变量 - Light Theme */
