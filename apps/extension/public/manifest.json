@@ -8,9 +8,10 @@
     "newtab": "index.html"
   },
   "icons": {
-    "16": "logo.png",
-    "48": "logo.png",
-    "128": "logo.png"
+    "16": "logo_16.png",
+    "32": "logo_32.png",
+    "48": "logo_48.png",
+    "128": "logo_128.png"
   },
   "permissions": [
     "storage",

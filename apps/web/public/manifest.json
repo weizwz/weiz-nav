@@ -11,18 +11,18 @@
   "orientation": "any",
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "16x16",
-      "type": "image/x-icon"
+      "src": "/logo_64.png",
+      "sizes": "64x64",
+      "type": "image/png"
     },
     {
-      "src": "/favicon-128.ico",
+      "src": "/logo_128.png",
       "sizes": "128x128",
-      "type": "image/x-icon"
+      "type": "image/png"
     },
     {
-      "src": "/logo.png",
-      "sizes": "512x512",
+      "src": "/logo_256.png",
+      "sizes": "256x256",
       "type": "image/png",
       "purpose": "any"
     },

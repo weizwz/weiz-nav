@@ -52,9 +52,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: ['/((?!api|_next/static|_next/image|logo.png).*)'],
 };
 ```
 
@@ -91,11 +89,7 @@ const nextConfig: NextConfig = {
 在 `app/layout.tsx` 中添加：
 
 ```tsx
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh-CN">
       <head>
@@ -125,20 +119,20 @@ location / {
 ### Cloudflare Workers 配置示例
 
 ```javascript
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
-})
+addEventListener('fetch', (event) => {
+  event.respondWith(handleRequest(event.request));
+});
 
 async function handleRequest(request) {
-  const response = await fetch(request)
-  const newResponse = new Response(response.body, response)
-  
+  const response = await fetch(request);
+  const newResponse = new Response(response.body, response);
+
   newResponse.headers.set(
     'Content-Security-Policy',
     "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://api.iconify.design https://favicon.im; connect-src 'self' https://api.iconify.design; font-src 'self' data:;"
-  )
-  
-  return newResponse
+  );
+
+  return newResponse;
 }
 ```
 

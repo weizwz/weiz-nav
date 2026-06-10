@@ -27,11 +27,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: '16x16', type: 'image/x-icon' },
-      { url: '/favicon-128.ico', sizes: '128x128', type: 'image/x-icon' },
+      { url: '/logo_64.png', sizes: '64x64', type: 'image/png' },
+      { url: '/logo_128.png', sizes: '128x128', type: 'image/png' },
     ],
-    shortcut: '/favicon.ico',
-    apple: '/favicon-128.ico',
+    shortcut: '/logo_128.png',
+    apple: '/logo_128.png',
   },
   manifest: '/manifest.json',
   openGraph: {

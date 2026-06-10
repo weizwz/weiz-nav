@@ -4,7 +4,7 @@ const RUNTIME_CACHE = 'weiz-nav-runtime-{{VERSION}}';
 const IMAGE_CACHE = 'weiz-nav-images-{{VERSION}}';
 
 // 需要预缓存的静态资源
-const PRECACHE_URLS = ['/', '/manifest.json', '/favicon.ico', '/logo.png'];
+const PRECACHE_URLS = ['/', '/manifest.json', '/logo.png'];
 
 // 安装事件 - 预缓存静态资源
 self.addEventListener('install', (event) => {
