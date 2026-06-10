@@ -195,17 +195,29 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
 
   // 渲染图标 - 使用 useMemo 缓存
   const renderIcon = React.useMemo(() => {
-    // 获取 favicon URL 作为回退选项，使用 larger=true 获取更高质量的图标
-    const faviconUrl = getFaviconUrl(link.url, { larger: true });
+    // 判断是否为 favicon.im 的 URL
+    const isFaviconUrl = (url: string) => {
+      return url.includes('favicon.im');
+    };
+
+    // 判断加不加 larger 根据原来的 url 里判断
+    let useLarger = true;
+    if (link.icon && isFaviconUrl(link.icon)) {
+      useLarger = link.icon.includes('larger=true');
+    }
+
+    // 获取 favicon URL 作为回退选项
+    const faviconUrl = getFaviconUrl(link.url, { larger: useLarger });
     const scale = link.iconScale || 0.7;
     const backgroundColor = link.backgroundColor;
 
-    // 情况1: 用户提供了自定义图标 URL
+    // 情况1: 用户提供了自定义图标 URL（但不是 favicon.im 的 URL）
     if (
       link.icon &&
       (link.icon.startsWith('http://') ||
         link.icon.startsWith('https://') ||
-        link.icon.startsWith('/'))
+        link.icon.startsWith('/')) &&
+      !isFaviconUrl(link.icon)
     ) {
       return (
         <IconWithFallback
