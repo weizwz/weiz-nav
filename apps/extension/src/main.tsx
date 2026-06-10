@@ -16,6 +16,15 @@ function AntdThemeProvider({ children }: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     setMounted(true);
+    
+    // 注册 Service Worker 用于缓存图标等资源
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch((error) => {
+          console.warn('Service Worker 注册失败:', error);
+        });
+      });
+    }
   }, []);
 
   const isDark = mounted ? resolvedTheme === 'dark' : false;
