@@ -10,6 +10,7 @@ const jsonFiles = [
   'packages/services/package.json',
   'packages/store/package.json',
   'apps/extension/public/manifest.json',
+  'packages/core/src/data.json',
 ];
 
 function readJson(filePath) {

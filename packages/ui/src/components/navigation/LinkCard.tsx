@@ -200,18 +200,12 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
     const scale = link.iconScale || 0.7;
     const backgroundColor = link.backgroundColor;
 
-    // 判断是否为 favicon.im 的 URL
-    const isFaviconUrl = (url: string) => {
-      return url.includes('favicon.im/');
-    };
-
-    // 情况1: 用户提供了自定义图标 URL（但不是 favicon.im 的 URL）
+    // 情况1: 用户提供了自定义图标 URL
     if (
       link.icon &&
       (link.icon.startsWith('http://') ||
         link.icon.startsWith('https://') ||
-        link.icon.startsWith('/')) &&
-      !isFaviconUrl(link.icon)
+        link.icon.startsWith('/'))
     ) {
       return (
         <IconWithFallback

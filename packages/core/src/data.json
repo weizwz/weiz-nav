@@ -1,5 +1,5 @@
 {
-  "version": "0.1.5",
+  "version": "1.0.0",
   "exportTime": 1779868952066,
   "data": [
     {
@@ -29,14 +29,14 @@
           "category": "主页",
           "createdAt": 1764324547789,
           "description": "你的超级个人助理",
-          "icon": "https://favicon.im/www.qianwen.com/?larger=true",
+          "icon": "https://favicon.im/qianwen.com/",
           "iconScale": 0.7,
           "id": "1764324547789-b8h0lh4ob",
           "name": "千问",
           "order": 1,
           "tags": [],
           "updatedAt": 1779761099317,
-          "url": "https://www.tongyi.com"
+          "url": "https://qianwen.com"
         },
         {
           "backgroundColor": "#2090ff",
