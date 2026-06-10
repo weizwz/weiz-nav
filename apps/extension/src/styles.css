@@ -1,12 +1,435 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 @source "../../../packages/ui/src";
 
-@variant dark (.dark &);
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  --color-antd-dark: #141414;
+  --color-card-border: #f0f0f0;
+  --color-dark-card-border: #303030;
+  --color-input-border: #d9d9d9;
+  --color-dark-input-border: #424242;
+  /* layout */
+  --breakpoint-3xl: 112rem;
+  --breakpoint-4xl: 136rem;
+  --breakpoint-5xl: 160rem;
+  --breakpoint-6xl: 184rem;
+  --breakpoint-7xl: 208rem;
+  
+  /* spacing */
   --spacing-22: 5.5rem;
 }
 
+/* CSS 自定义变量 - Light Theme */
+:root {
+  /* 背景颜色 */
+  --background: #F8F9FB;
+  --background-main: #ffffff;
+  --background-secondary: #f5f5f5;
+  --background-tertiary: #fafafa;
+  
+  /* 前景颜色 - WCAG 2.1 AA 兼容 (对比度 ≥ 4.5:1) */
+  --foreground: #1a1a1a;
+  --foreground-secondary: #4a4a4a;
+  --foreground-tertiary: #6b6b6b;
+  
+  /* 边框颜色 */
+  --border: #e5e5e5;
+  --border-hover: #d4d4d4;
+  
+  /* 主题色 */
+  --primary: #1890ff;
+  --primary-hover: #40a9ff;
+  --primary-active: #096dd9;
+  
+  /* 卡片阴影 */
+  --card-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --card-shadow-hover: 0 4px 12px 0 rgba(0, 0, 0, 0.1);
+  
+  /* 过渡时长 */
+  --transition-duration: 300ms;
+}
+
+/* CSS 自定义变量 - Dark Theme */
+.dark {
+  /* 背景颜色 */
+  --background: #1A1B1E;
+  --background-main: #141414;
+  --background-secondary: #171717;
+  --background-tertiary: #262626;
+  
+  /* 前景颜色 - WCAG 2.1 AA 兼容 (对比度 ≥ 4.5:1) */
+  --foreground: #f5f5f5;
+  --foreground-secondary: #b8b8b8;
+  --foreground-tertiary: #8a8a8a;
+  
+  /* 边框颜色 */
+  --border: #262626;
+  --border-hover: #404040;
+  
+  /* 主题色 */
+  --primary: #1890ff;
+  --primary-hover: #40a9ff;
+  --primary-active: #096dd9;
+  
+  /* 卡片阴影 */
+  --card-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: 0 4px 12px 0 rgba(0, 0, 0, 0.5);
+
+  /* Ant Design 变量覆盖 - 解决暗黑模式闪烁问题 */
+  --ant-color-bg-container: #141414;
+  --ant-color-bg-layout: #000000;
+  --ant-color-text: rgba(255, 255, 255, 0.85);
+  --ant-color-text-base: #fff;
+}
+
+/* 基础样式 */
+html {
+  overflow-x: hidden;
+}
+
 body {
-  @apply bg-gray-50 text-gray-900 m-0 p-0;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
+  min-height: 100vh;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* 主题过渡动画 - 优化性能，避免文字闪烁 */
+html {
+  color-scheme: light dark;
+}
+
+/* 只对特定元素应用过渡效果，避免全局过渡导致的闪烁 */
+body,
+.ant-layout,
+.ant-card,
+.ant-btn,
+.ant-input,
+.ant-select,
+.ant-menu,
+.ant-dropdown,
+nav,
+header,
+aside,
+main {
+  transition-property: background-color, border-color, box-shadow;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 性能优化：使用 GPU 加速 */
+.link-card,
+.ant-card,
+.ant-btn,
+.ant-input {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* 减少重绘和回流 */
+.link-card img {
+  content-visibility: auto;
+  contain: layout style paint;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-hover);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground-tertiary);
+}
+
+/* Firefox 滚动条 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-hover) var(--background-secondary);
+}
+
+/* 工具类 */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .transition-theme {
+    transition: background-color var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1),
+                color var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1),
+                border-color var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* 焦点样式 - WCAG 2.1 AA 兼容 */
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 增强按钮和交互元素的焦点样式 */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+[role="link"]:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(24, 144, 255, 0.2);
+}
+
+/* 卡片焦点样式 */
+.link-card:focus-within,
+.ant-card:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(24, 144, 255, 0.2);
+}
+
+/* 跳过导航链接（屏幕阅读器支持） */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--primary);
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: 100;
+  border-radius: 0 0 4px 0;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* 屏幕阅读器专用文本 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* 选择文本样式 */
+::selection {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* 加载动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* 骨架屏动画 */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--background-secondary) 0%,
+    var(--background-tertiary) 50%,
+    var(--background-secondary) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* SearchBar 组件样式 */
+.search-bar .ant-input-group-addon {
+  padding: 0;
+  background: transparent;
+}
+
+.search-bar .ant-input-affix-wrapper {
+  padding-right: 8px;
+}
+
+.search-bar .ant-input-clear-icon {
+  font-size: 14px;
+}
+
+/* 现代搜索框样式 */
+.search-bar-modern.ant-input-affix-wrapper {
+  border-radius: 24px;
+  padding: 8px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.search-bar-modern.ant-input-affix-wrapper:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.search-bar-modern.ant-input-affix-wrapper-focused {
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.2);
+}
+
+.search-bar-modern .ant-input {
+  font-size: 15px;
+}
+
+.search-bar-modern .ant-input-prefix {
+  margin-right: 12px;
+}
+
+/* 搜索引擎下拉菜单样式优化 */
+.ant-dropdown-menu-item {
+  transition: background-color 0.2s ease;
+}
+
+.ant-dropdown-menu-item:hover {
+  background-color: var(--background-secondary);
+}
+
+/* LinkCard 组件样式 */
+.link-card {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  box-shadow: var(--card-shadow);
+}
+
+.link-card:hover {
+  box-shadow: var(--card-shadow-hover);
+}
+
+.link-card .ant-card-body {
+  transition: none;
+}
+
+/* PWA 安装提示动画 */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* PWA 离线提示 */
+.offline-indicator {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ff4d4f;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: slide-up 0.3s ease-out;
+}
+
+/* PWA 更新提示 */
+.update-prompt {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--primary);
+  color: white;
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.3);
+  z-index: 1000;
+  animation: slide-up 0.3s ease-out;
+}
+
+/* 安装成功动画 */
+@keyframes success-bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.install-success {
+  animation: success-bounce 0.5s ease-in-out;
+}
+
+/* 固定布局样式 */
+.h-screen {
+  height: 100vh;
+  height: 100dvh; /* 动态视口高度，移动端更准确 */
+}
+
+/* 确保 body 和 html 不会滚动 */
+html, body {
+  overflow: hidden;
+  height: 100%;
+}
+
+/* 只允许内容区域滚动 */
+#main-content {
+  scroll-behavior: smooth;
+}
+
+/* 优化滚动性能 */
+#main-content {
+  -webkit-overflow-scrolling: touch; /* iOS 平滑滚动 */
+  overscroll-behavior: contain; /* 防止滚动链 */
+}
+
+/* 侧边栏滚动优化 */
+aside {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* 移动端优化 */
+@media (max-width: 1023px) {
+  /* 移动端允许整体滚动 */
+  html, body {
+    overflow: auto;
+  }
 }

@@ -5,10 +5,14 @@ import { store } from '@weiz-nav/store';
 import App from './App';
 import './styles.css';
 
+import { ThemeProvider } from 'next-themes';
+
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <App />
+      </ThemeProvider>
     </Provider>
   </React.StrictMode>
 );

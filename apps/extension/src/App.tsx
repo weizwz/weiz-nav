@@ -18,13 +18,15 @@ import { ConfirmModal } from '@weiz-nav/ui/src/components/modals/ConfirmModal';
 import InstallPrompt from '@weiz-nav/ui/src/components/common/InstallPrompt';
 import { Link } from '@weiz-nav/core/link';
 
+import { ManageView } from '@weiz-nav/ui/src/components/management/ManageView';
+
 /**
  * 主页组件
  * 实现左右布局：左侧分类导航，右侧内容区域（Header + LinkGrid）
  * 支持添加、编辑、删除链接
  * 响应式布局：移动端使用抽屉式侧边栏
  */
-export default function Home() {
+function HomeView() {
   const dispatch = useAppDispatch();
   const links = useAppSelector((state) => state.links.items);
 
@@ -117,6 +119,7 @@ export default function Home() {
           showSuccess('链接更新成功');
         } else {
           // 添加新链接
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           dispatch(addLink(linkData as any));
 
           // 检查是否有错误
@@ -177,7 +180,10 @@ export default function Home() {
     <div className="h-screen flex flex-col bg-(--background) transition-theme overflow-hidden">
       {/* 固定顶部 Header */}
       <div className="flex-none">
-        <Header onMenuClick={() => setDrawerOpen(true)} />
+        <Header 
+          onMenuClick={() => setDrawerOpen(true)} 
+          onManageClick={() => { window.location.hash = 'manage'; }}
+        />
       </div>
 
       {/* 主内容区域 - 固定高度，内部滚动 */}
@@ -254,4 +260,31 @@ export default function Home() {
       <InstallPrompt />
     </div>
   );
+}
+
+export default function App() {
+  const [currentRoute, setCurrentRoute] = useState<'home' | 'manage'>('home');
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'manage') {
+        setCurrentRoute('manage');
+      } else {
+        setCurrentRoute('home');
+      }
+    };
+    
+    // Initial check
+    handleHashChange();
+    
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  if (currentRoute === 'manage') {
+    return <ManageView onBack={() => { window.location.hash = ''; }} />;
+  }
+
+  return <HomeView />;
 }

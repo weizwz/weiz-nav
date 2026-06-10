@@ -22,15 +22,19 @@ import ThemeToggle from './ThemeToggle';
  */
 interface HeaderProps {
   onMenuClick?: () => void;
+  onManageClick?: () => void;
 }
 
-const Header = memo(function Header({ onMenuClick }: HeaderProps) {
+const Header = memo(function Header({ onMenuClick, onManageClick }: HeaderProps) {
   
-
   // 跳转到数据管理页面
   const handleManageClick = useCallback(() => {
-    window.location.href = '/manage';
-  }, []);
+    if (onManageClick) {
+      onManageClick();
+    } else {
+      window.location.href = '/manage';
+    }
+  }, [onManageClick]);
 
   return (
     <header
