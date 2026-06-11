@@ -5,6 +5,7 @@
   "packageManager": "pnpm@10.0.0",
   "scripts": {
     "version:sync": "node scripts/sync-version.js",
+    "generate-cert": "pnpm --filter @weiz-nav/web generate-cert",
     "dev": "pnpm --filter @weiz-nav/web dev",
     "dev:web": "pnpm --filter @weiz-nav/web dev",
     "dev:https": "pnpm --filter @weiz-nav/web dev:https",
