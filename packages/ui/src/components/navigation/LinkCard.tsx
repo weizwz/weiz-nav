@@ -30,7 +30,7 @@ const isWhiteColor = (color?: string): boolean => {
 };
 
 /**
- * 图标组件，支持多级回退并针对环境优化缓存
+ * 图标组件，支持多级回退并基于 Cache API 进行二进制缓存
  * 1. 用户自定义图标
  * 2. Favicon API 图标
  * 3. Ant Design 默认图标
@@ -43,98 +43,114 @@ const IconWithFallback: React.FC<{
   backgroundColor?: string;
 }> = ({ src, alt, fallbackUrl, scale = 0.8, backgroundColor }) => {
   // 检测是否处于 Chrome 扩展环境
-  const isExtension = typeof chrome !== 'undefined' && !!chrome.runtime && !!chrome.runtime.id;
+  const isExtension = typeof window !== 'undefined' && typeof chrome !== 'undefined' && !!chrome.runtime && !!chrome.runtime.id;
 
-  // 仅在扩展环境中尝试从 localStorage 读取缓存的 Base64 图标，Web 端依赖浏览器原生的 HTTP 缓存
-  const getCachedIcon = (url: string) => {
-    if (!isExtension) return null;
-    try {
-      if (typeof window !== 'undefined') {
-        const key = `icon_cache_${url}`;
-        return localStorage.getItem(key);
-      }
-    } catch (e) {}
-    return null;
-  };
-
-  // 使用 useRef 记录初始读取的缓存，避免组件更新导致的闪烁
-  const initialSrc = React.useRef<string | null>(getCachedIcon(src));
-  const initialFallback = React.useRef<string | null>(fallbackUrl ? getCachedIcon(fallbackUrl) : null);
-
+  // 当前应当显示的实际来源（可能是普通 URL，也可能是 Cache API 生成的 Blob URL）
+  // Web 环境直接使用初始 src 进行首次渲染，避免任何异步状态导致的闪烁
+  const [displaySrc, setDisplaySrc] = useState<string | null>(() => {
+    return isExtension ? null : src;
+  });
+  
+  // 错误状态记录
   const [hasError, setHasError] = useState(false);
   const [faviconError, setFaviconError] = useState(false);
 
-  // 扩展环境中，后台异步缓存图片（不触发重渲染，纯静默写入，为下次打开新标签页加速）
   useEffect(() => {
-    if (!isExtension) return;
+    let isActive = true;
+    let objectUrl: string | null = null;
 
-    const cacheImage = async (url: string) => {
+    const loadIcon = async () => {
+      // 确定当前应该加载哪一级的图片
+      const targetUrl = hasError ? fallbackUrl : src;
+      if (!targetUrl || faviconError) return;
+
+      // 核心修复：如果是普通 Web 环境，直接将 URL 交给浏览器的原生 <img> 标签处理。
+      // 原因：JS 的 fetch 会被严格的 CORS 跨域策略拦截（红字报错），而原生 <img> 具有 no-cors 特性可以完美显示图片，并且自带 HTTP 缓存。
+      if (!isExtension) {
+        if (isActive) setDisplaySrc(targetUrl);
+        return;
+      }
+
       try {
-        const key = `icon_cache_${url}`;
-        if (localStorage.getItem(key)) return;
+        // 尝试使用现代浏览器的 Cache API (扩展环境专享，具有越权跨域能力，用于极致提速新标签页)
+        if (typeof caches !== 'undefined') {
+          const cache = await caches.open('weiz-nav-icons-v1');
+          let response = await cache.match(targetUrl);
 
-        const res = await fetch(url);
-        if (!res.ok) return;
-        const blob = await res.blob();
-        
-        // 限制大小（约 50KB），避免撑爆 localStorage
-        if (blob.size > 50000) return;
-
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64 = reader.result as string;
-          if (base64) {
-            try {
-              localStorage.setItem(key, base64);
-            } catch (e) {
-              // localStorage 容量满时忽略
+          if (!response) {
+            // 如果缓存未命中，发起请求并存入缓存
+            response = await fetch(targetUrl);
+            if (response.ok) {
+              await cache.put(targetUrl, response.clone());
+            } else {
+              throw new Error(`Fetch error: ${response.status}`);
             }
           }
-        };
-        reader.readAsDataURL(blob);
-      } catch (e) {
-        // 网络错误忽略
+
+          // 将响应转为 Blob 并在内存中创建 URL
+          const blob = await response.blob();
+          if (isActive) {
+            objectUrl = URL.createObjectURL(blob);
+            setDisplaySrc(objectUrl);
+          }
+        } else {
+          // 环境不支持 Cache API
+          if (isActive) setDisplaySrc(targetUrl);
+        }
+      } catch (error) {
+        // 在扩展环境中，如果有任何异常（如偶然的跨域拦截或断网），优雅降级为原生 <img> 加载，失败由 onError 兜底
+        if (isActive) {
+          setDisplaySrc(targetUrl);
+        }
       }
     };
 
-    if (!initialSrc.current) cacheImage(src);
-    if (fallbackUrl && !initialFallback.current) cacheImage(fallbackUrl);
-  }, [src, fallbackUrl, isExtension]);
+    // 每次层级发生变化（hasError）时，尝试重新加载对应的图片
+    loadIcon();
 
-  // 第一级：尝试加载用户自定义图标
-  if (!hasError) {
+    // 清理函数：组件卸载或 URL 变化时，释放内存中的 Blob URL
+    return () => {
+      isActive = false;
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
+  }, [src, fallbackUrl, hasError, faviconError, isExtension]);
+
+  // 第一级或第二级加载中或已完成
+  if (!faviconError && displaySrc !== null) {
     return (
       <img
-        src={initialSrc.current || src}
+        src={displaySrc}
         alt={`${alt}的图标`}
         decoding="async"
-        className="w-[5.5rem] h-[5.5rem] object-contain"
+        className="w-[5.5rem] h-[5.5rem] object-contain transition-opacity duration-300"
         style={{
           transform: `scale(${scale})`,
         }}
         onError={() => {
-          console.warn(`图标加载失败: ${src}`);
-          setHasError(true);
+          // <img> 原生加载失败时触发，尝试降级
+          // 如果还没有尝试过第一级错误降级，并且存在备用 URL，则降级到备用 URL
+          if (!hasError && fallbackUrl) {
+            setHasError(true);
+          } else {
+            // 如果已经是第二级错误，或者根本没有备用 URL，则彻底判定失败，显示默认图标
+            setFaviconError(true);
+          }
         }}
       />
     );
   }
 
-  // 第二级：用户图标失败，尝试加载 Favicon
-  if (hasError && fallbackUrl && !faviconError) {
+  // 如果 displaySrc 还是 null（仅扩展环境首次异步 Cache 读取的几毫秒内），
+  // 渲染一个透明的占位像素，防止发送多余的 HTTP 请求以及避免布局抖动
+  if (!faviconError && displaySrc === null) {
     return (
       <img
-        src={initialFallback.current || fallbackUrl}
-        alt={`${alt}的图标`}
-        decoding="async"
+        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+        alt="loading"
         className="w-[5.5rem] h-[5.5rem] object-contain"
-        style={{
-          transform: `scale(${scale})`,
-        }}
-        onError={() => {
-          console.warn(`Favicon 加载失败: ${fallbackUrl}`);
-          setFaviconError(true);
-        }}
+        style={{ transform: `scale(${scale})` }}
       />
     );
   }
