@@ -181,7 +181,6 @@ export default function SearchBar() {
     <div className="w-full max-w-2xl" role="search" aria-label="搜索导航">
       <Input
         placeholder="搜索"
-        variant="filled"
         value={inputValue}
         onChange={handleInputChange}
         onKeyDown={handleKeyPress}
@@ -204,7 +203,7 @@ export default function SearchBar() {
             </div>
           </Dropdown>
         }
-        className="search-bar-modern bg-(--background)! pl-3! shadow-none!"
+        className="search-bar-modern bg-white border hover:border-primary dark:hover:border-primary focus-within:border-primary dark:focus-within:border-primary pl-3! transition-all shadow-none!"
         aria-label="搜索输入框"
         role="searchbox"
         aria-describedby="search-description"
