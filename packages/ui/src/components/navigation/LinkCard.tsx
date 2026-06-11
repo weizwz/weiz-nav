@@ -9,6 +9,7 @@ import { CSS } from '@dnd-kit/utilities';
 import * as AntdIcons from '@ant-design/icons';
 import { Link } from '@weiz-nav/core/link';
 import { getFaviconUrl } from '@weiz-nav/services/api/favicon';
+import { showSuccess, showError } from '../../utils/feedback';
 
 declare var chrome: any;
 
@@ -213,8 +214,14 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
         if (typeof chrome !== 'undefined' && chrome.tabs && chrome.tabs.create) {
           chrome.tabs.create({ url: link.url });
         } else {
-          // 非扩展环境或 API 不可用，尝试直接打开（可能会被浏览器拦截）
-          window.open(link.url, '_blank', 'noopener,noreferrer');
+          // 非扩展环境或 API 不可用，直接复制链接并提示
+          navigator.clipboard.writeText(link.url)
+            .then(() => {
+              showSuccess('已复制，请粘贴到地址栏打开');
+            })
+            .catch(() => {
+              showError('复制失败，请手动复制');
+            });
         }
       } else {
         // 普通链接
