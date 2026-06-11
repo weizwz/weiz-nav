@@ -6,8 +6,7 @@
 
 现代化的个人前端导航网站，为开发者提供高效、美观的资源导航体验
 
-前期使用 Kiro 的 Spec 模式开发，感谢 Claude Sonnet 4.5；
-后期使用 Antigravity 进行迭代和 bug 修复，感谢 Gemini 3 pro
+前期使用 Kiro 的 Spec 模式开发（模型 Claude Sonnet）；后期使用 Antigravity 进行迭代和 bug 修复（模型 Gemini）
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.x-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
@@ -15,7 +14,7 @@
 [![Ant Design](https://img.shields.io/badge/Ant%20Design-6.x-1890ff)](https://ant.design/)
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 
-<a href="https://nav.weizwz.com" target="_blank">在线演示</a> | [快速开始](#-快速开始) | [文档](./.kiro/specs/frontend-navigation-site/)
+<a href="https://nav.weizwz.com" target="_blank">在线演示</a> | [快速开始](#-快速开始) | [文档](./.agent/specs/frontend-navigation-site/)
 
 </div>
 
@@ -23,17 +22,17 @@
 
 ## ✨ 核心特性
 
-| 特性                                                                                                                                                             | 描述                            | 备注                         |
-| :--------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------ | :--------------------------- |
-| <img src="https://api.iconify.design/material-symbols:devices.svg?color=%231890ff" width="20" height="20" style="vertical-align: middle;" /> **响应设计**        | 完美适配桌面、平板、手机        | 多端适配                     |
-| <img src="https://api.iconify.design/material-symbols:search.svg?color=%2352c41a" width="20" height="20" style="vertical-align: middle;" /> **实时搜索**         | 支持多维度匹配                  | 默认站内，回车可搜索站外网页 |
-| <img src="https://api.iconify.design/material-symbols:edit.svg?color=%23722ed1" width="20" height="20" style="vertical-align: middle;" /> **灵活管理**           | 支持添加、编辑、删除， 拖拽排序 |                              |
-| <img src="https://api.iconify.design/material-symbols:save.svg?color=%23faad14" width="20" height="20" style="vertical-align: middle;" /> **持久数据**           | 支持数据的导入导出              |                              |
-| <img src="https://api.iconify.design/material-symbols:dark-mode.svg?color=%2313c2c2" width="20" height="20" style="vertical-align: middle;" /> **主题切换**      | 支持明暗主题切换，平滑过渡      |                              |
-| <img src="https://api.iconify.design/material-symbols:install-desktop.svg?color=%23eb2f96" width="20" height="20" style="vertical-align: middle;" /> **PWA支持** | 支持安装到桌面，离线可用        |                              |
-| <img src="https://api.iconify.design/material-symbols:speed.svg?color=%23f5222d" width="20" height="20" style="vertical-align: middle;" /> **性能优化**          | 代码分割、懒加载                | Lighthouse 90+               |
-| <img src="https://api.iconify.design/material-symbols:accessibility.svg?color=%23fa8c16" width="20" height="20" style="vertical-align: middle;" /> **可访问性**  | 遵循无障碍设计标准              | WCAG 2.1 AA                  |
-| <img src="https://api.iconify.design/material-symbols:extension.svg?color=%234096ff" width="20" height="20" style="vertical-align: middle;" /> **Chrome扩展**    | 安装到 Chrome 插件              | releases V0.1.4+ 版本里找    |
+| 特性                                                                                                                                                             | 描述                                   | 备注                         |
+| :--------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------- | :--------------------------- |
+| <img src="https://api.iconify.design/material-symbols:devices.svg?color=%231890ff" width="20" height="20" style="vertical-align: middle;" /> **响应设计**        | 完美适配桌面、平板、手机               | 多端适配                     |
+| <img src="https://api.iconify.design/material-symbols:search.svg?color=%2352c41a" width="20" height="20" style="vertical-align: middle;" /> **实时搜索**         | 支持多维度匹配                         | 默认站内，回车可搜索站外网页 |
+| <img src="https://api.iconify.design/material-symbols:edit.svg?color=%23722ed1" width="20" height="20" style="vertical-align: middle;" /> **灵活管理**           | 支持添加、编辑、删除， 拖拽排序        |                              |
+| <img src="https://api.iconify.design/material-symbols:save.svg?color=%23faad14" width="20" height="20" style="vertical-align: middle;" /> **持久数据**           | 支持数据的导入导出                     |                              |
+| <img src="https://api.iconify.design/material-symbols:dark-mode.svg?color=%2313c2c2" width="20" height="20" style="vertical-align: middle;" /> **主题切换**      | 支持明暗主题切换，平滑过渡             |                              |
+| <img src="https://api.iconify.design/material-symbols:install-desktop.svg?color=%23eb2f96" width="20" height="20" style="vertical-align: middle;" /> **PWA支持** | 支持安装到桌面，离线可用               |                              |
+| <img src="https://api.iconify.design/material-symbols:speed.svg?color=%23f5222d" width="20" height="20" style="vertical-align: middle;" /> **性能优化**          | KeepAlive 视图缓存、Cache API 图标存储 | Lighthouse 90+               |
+| <img src="https://api.iconify.design/material-symbols:accessibility.svg?color=%23fa8c16" width="20" height="20" style="vertical-align: middle;" /> **可访问性**  | 遵循无障碍设计标准                     | WCAG 2.1 AA                  |
+| <img src="https://api.iconify.design/material-symbols:extension.svg?color=%234096ff" width="20" height="20" style="vertical-align: middle;" /> **Chrome扩展**    | 独立扩展程序，支持多标签页状态实时同步 |                              |
 
 ---
 
@@ -42,6 +41,21 @@
 Next.js 16 · TypeScript 5 · Tailwind CSS 4 · Ant Design 6 · Redux Toolkit · Framer Motion
 
 ---
+
+## 主要目录
+
+```text
+weiz-nav/
+├── apps/
+│   ├── web/               # 核心 Web 端应用 (Next.js 16 App Router)
+│   └── extension/         # Chrome 浏览器扩展端 (React + Vite SPA)
+├── packages/
+│   ├── core/              # 核心领域逻辑、全局类型定义、数据默认配置 (如 data.json)
+│   ├── services/          # 基础服务层 (数据持久化 Storage、外部 API 封装如 Favicon API)
+│   ├── store/             # 全局状态管理层 (Redux Toolkit，包含 links, categories, settings 等切片)
+│   └── ui/                # 跨端共享视图层 (包含所有通用 UI 组件，如 LinkCard, ManageView, Header)
+└── scripts/               # 工程化脚手架与自动化脚本 (如 sync-version.js 同步各个包版本)
+```
 
 ## 🚀 快速开始
 
@@ -174,22 +188,23 @@ pnpm build:extension
 
 **快速指南**
 
-- [PWA 使用指南](./.ai/specs/frontend-navigation-site/PWA_GUIDE.md) - PWA 安装和使用
-- [缓存清除指南](./.ai/specs/frontend-navigation-site/CACHE_CLEAR_GUIDE.md) - 解决缓存问题
+- [PWA 使用指南](./.agent/specs/frontend-navigation-site/PWA_GUIDE.md) - PWA 安装和使用
+- [缓存清除指南](./.agent/specs/frontend-navigation-site/CACHE_CLEAR_GUIDE.md) - 解决缓存问题
 
 **开发文档**
 
-- [架构与技术要点分析](./.ai/architecture.md) - 架构深度分析
-- [需求文档](./.ai/specs/frontend-navigation-site/requirements.md) - 功能需求
-- [设计文档](./.ai/specs/frontend-navigation-site/design.md) - 技术架构
-- [任务列表](./.ai/specs/frontend-navigation-site/tasks.md) - 开发任务
+- [架构与技术要点分析](./.agent/architecture.md) - 架构深度分析
+- [需求文档](./.agent/specs/frontend-navigation-site/requirements.md) - 功能需求
+- [设计文档](./.agent/specs/frontend-navigation-site/design.md) - 技术架构
+- [任务列表](./.agent/specs/frontend-navigation-site/tasks.md) - 开发任务
 
 **技术指南**
 
-- [搜索实现](./.ai/specs/frontend-navigation-site/SEARCH_IMPLEMENTATION.md) - 搜索功能详解
-- [错误处理](./.ai/specs/frontend-navigation-site/ERROR_HANDLING.md) - 错误处理策略
-- [可访问性](./.ai/specs/frontend-navigation-site/ACCESSIBILITY.md) - 无障碍访问
-- [HTTPS 配置](./.ai/specs/frontend-navigation-site/HTTPS_SETUP.md) - 本地 HTTPS 开发
+- [搜索实现](./.agent/specs/frontend-navigation-site/SEARCH_IMPLEMENTATION.md) - 搜索功能详解
+- [错误处理](./.agent/specs/frontend-navigation-site/ERROR_HANDLING.md) - 错误处理策略
+- [可访问性](./.agent/specs/frontend-navigation-site/ACCESSIBILITY.md) - 无障碍访问
+- [缓存优化](./.agent/specs/frontend-navigation-site/CACHE_OPTIMIZATION.md) - Cache API 与持久化策略
+- [HTTPS 配置](./.agent/specs/frontend-navigation-site/HTTPS_SETUP.md) - 本地 HTTPS 开发
 
 ---
 
