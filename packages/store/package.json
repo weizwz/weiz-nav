@@ -1,0 +1,24 @@
+{
+  "name": "@weiz-nav/store",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./hooks": "./src/hooks.ts",
+    "./slices/linksSlice": "./src/slices/linksSlice.ts",
+    "./slices/searchSlice": "./src/slices/searchSlice.ts",
+    "./slices/settingsSlice": "./src/slices/settingsSlice.ts",
+    "./slices/categoriesSlice": "./src/slices/categoriesSlice.ts",
+    "./slices/uiSlice": "./src/slices/uiSlice.ts"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.3.0",
+    "@weiz-nav/core": "workspace:*",
+    "@weiz-nav/services": "workspace:*",
+    "react-redux": "^9.1.0"
+  }
+}
