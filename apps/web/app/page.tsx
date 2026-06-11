@@ -8,7 +8,7 @@ import store from '@weiz-nav/store';
 import { addLink, updateLink, deleteLink, loadLinks } from '@weiz-nav/store/slices/linksSlice';
 import { storageService } from '@weiz-nav/services/storage';
 import { defaultLinks } from '@weiz-nav/core/default-data';
-import { showSuccess, showError } from '@/utils/feedback';
+import { showSuccess, showError } from '@weiz-nav/ui/src/utils/feedback';
 import Header from '@weiz-nav/ui/src/components/layout/Header';
 import { CategorySidebar } from '@weiz-nav/ui/src/components/navigation/CategorySidebar';
 import { LinkGrid } from '@weiz-nav/ui/src/components/navigation/LinkGrid';

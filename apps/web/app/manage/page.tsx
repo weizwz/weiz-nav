@@ -29,7 +29,7 @@ import { Link } from '@weiz-nav/core/link';
 import { Category } from '@weiz-nav/core/category';
 import { defaultLinks } from '@weiz-nav/core/default-data';
 import { storageService } from '@weiz-nav/services/storage';
-import { showSuccess, showError, showWarning, showConfirm } from '@/utils/feedback';
+import { showSuccess, showError, showWarning, showConfirm } from '@weiz-nav/ui/src/utils/feedback';
 
 /**
  * 数据管理页面
