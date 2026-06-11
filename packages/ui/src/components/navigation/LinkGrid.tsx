@@ -20,7 +20,7 @@ import { useAppSelector, useAppDispatch } from '@weiz-nav/store/hooks';
 import { reorderLinks } from '@weiz-nav/store/slices/linksSlice';
 import { LinkCard } from './LinkCard';
 import { Link } from '@weiz-nav/core/link';
-import { showSuccess } from '@weiz-nav/ui/src/utils/feedback';
+import { showSuccess } from '../../utils/feedback';
 
 interface LinkGridProps {
   onEdit?: (link: Link) => void;
@@ -41,6 +41,7 @@ const LinkGridBase: React.FC<LinkGridProps> = ({ onEdit, onDelete, className, st
   const currentCategory = useAppSelector((state) => state.ui.currentCategory || '主页');
   const searchQuery = useAppSelector((state) => state.search.query);
   const searchResults = useAppSelector((state) => state.search.results);
+  const categories = useAppSelector((state) => state.categories.items);
 
   // 配置拖拽传感器 - 需要移动 8px 才触发拖拽，避免与点击冲突
   const sensors = useSensors(
@@ -70,33 +71,13 @@ const LinkGridBase: React.FC<LinkGridProps> = ({ onEdit, onDelete, className, st
     };
   };
 
-  // 过滤显示的链接
-  const displayedLinks = useMemo(() => {
-    // 如果有搜索关键词，显示搜索结果
-    if (searchQuery.trim()) {
-      return searchResults;
-    }
-
-    // 如果当前分类是"未分类"，显示所有没有分类的链接
-    if (currentCategory === '未分类') {
-      return links
-        .filter((link) => !link.category || link.category === '')
-        .sort((a, b) => a.order - b.order);
-    }
-
-    // 根据分类过滤链接，并按 order 排序
-    return links
-      .filter((link) => link.category === currentCategory)
-      .sort((a, b) => a.order - b.order);
-  }, [links, currentCategory, searchQuery, searchResults]);
-
   // 处理拖拽结束
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
 
       if (over && active.id !== over.id) {
-        // 在所有链接中查找索引（不是 displayedLinks）
+        // 在所有链接中查找索引
         const oldIndex = links.findIndex((link) => link.id === active.id);
         const newIndex = links.findIndex((link) => link.id === over.id);
 
@@ -109,14 +90,21 @@ const LinkGridBase: React.FC<LinkGridProps> = ({ onEdit, onDelete, className, st
     [links, dispatch]
   );
 
-  // 空状态判断
-  const isEmpty = displayedLinks.length === 0;
-  const isSearchEmpty = searchQuery.trim() && isEmpty;
-  const isCategoryEmpty = !searchQuery.trim() && isEmpty;
+  // 提取所有需要渲染的分类名称（预设分类 + 实际存在的未分类）
+  const allCategoryNames = useMemo(() => {
+    const names = new Set(categories.map((c) => c.name));
+    // 确保包含所有链接所在的分类，防止孤儿分类无法显示
+    links.forEach((l) => {
+      names.add(l.category || '未分类');
+    });
+    // 确保当前选中的分类也在其中（比如刚添加的空分类）
+    names.add(currentCategory);
+    return Array.from(names);
+  }, [categories, links, currentCategory]);
 
-  // 渲染空状态
-  if (isEmpty) {
-    if (isSearchEmpty) {
+  // 渲染单个分类或搜索结果的网格
+  const renderGrid = (items: Link[], isSearch: boolean, categoryName?: string) => {
+    if (items.length === 0) {
       return (
         <div
           className={className}
@@ -128,68 +116,80 @@ const LinkGridBase: React.FC<LinkGridProps> = ({ onEdit, onDelete, className, st
             minHeight: '400px',
           }}
         >
-          <Empty description={<span>没有找到与 &quot;{searchQuery}&quot; 相关的链接</span>} />
+          <Empty
+            description={
+              isSearch ? `没有找到与 "${searchQuery}" 相关的链接` : `${categoryName}分类暂无链接`
+            }
+          />
         </div>
       );
     }
 
-    if (isCategoryEmpty) {
-      return (
-        <div
-          className={className}
-          style={{
-            ...style,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '400px',
-          }}
+    const isDraggingEnabled = !isSearch;
+
+    return (
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+        modifiers={[restrictToParentElement]}
+      >
+        <SortableContext
+          items={items.map((link) => link.id)}
+          strategy={rectSortingStrategy}
+          disabled={!isDraggingEnabled}
         >
-          <Empty description={`${currentCategory}分类暂无链接`} />
-        </div>
-      );
-    }
-  }
+          <div
+            className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 4xl:grid-cols-7 5xl:grid-cols-8 6xl:grid-cols-9 7xl:grid-cols-10 gap-x-8 gap-y-6 p-4 sm:p-8 md:px-10 max-w-full ${
+              className || ''
+            }`}
+            style={{ ...style, width: '100%', boxSizing: 'border-box' }}
+            role="region"
+            aria-label={
+              isSearch
+                ? `搜索结果：${items.length} 个链接`
+                : `${categoryName}分类：${items.length} 个链接`
+            }
+          >
+            {items.map((link) => (
+              <LinkCard
+                key={link.id}
+                link={link}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                isDraggingEnabled={isDraggingEnabled}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+    );
+  };
 
-  // 搜索模式下禁用拖拽
-  const isDraggingEnabled = !searchQuery.trim();
+  const isSearchMode = searchQuery.trim().length > 0;
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-      modifiers={[restrictToParentElement]}
-    >
-      <SortableContext
-        items={displayedLinks.map((link) => link.id)}
-        strategy={rectSortingStrategy}
-        disabled={!isDraggingEnabled}
-      >
-        <div
-          className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 4xl:grid-cols-7 5xl:grid-cols-8 6xl:grid-cols-9 7xl:grid-cols-10 gap-x-8 gap-y-6 p-4 sm:p-8 md:px-10 max-w-full ${
-            className || ''
-          }`}
-          style={{ ...style, width: '100%', boxSizing: 'border-box' }}
-          role="region"
-          aria-label={
-            searchQuery.trim()
-              ? `搜索结果：${displayedLinks.length} 个链接`
-              : `${currentCategory}分类：${displayedLinks.length} 个链接`
-          }
-        >
-          {displayedLinks.map((link) => (
-            <LinkCard
-              key={link.id}
-              link={link}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              isDraggingEnabled={isDraggingEnabled}
-            />
-          ))}
-        </div>
-      </SortableContext>
-    </DndContext>
+    <>
+      {/* 搜索结果（不需要 DOM 缓存，每次搜索动态渲染） */}
+      {isSearchMode && <div style={{ display: 'block' }}>{renderGrid(searchResults, true)}</div>}
+
+      {/* 分类模式 DOM 缓存 (KeepAlive) */}
+      {allCategoryNames.map((categoryName) => {
+        // 只有在非搜索模式，且当前分类匹配时才可见
+        const isVisible = !isSearchMode && categoryName === currentCategory;
+
+        // 提取该分类下的所有链接
+        const categoryLinks = links
+          .filter((link) => (link.category || '未分类') === categoryName)
+          .sort((a, b) => a.order - b.order);
+
+        return (
+          <div key={categoryName} style={{ display: isVisible ? 'block' : 'none' }}>
+            {renderGrid(categoryLinks, false, categoryName)}
+          </div>
+        );
+      })}
+    </>
   );
 };
 

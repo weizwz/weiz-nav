@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, memo, useState } from 'react';
+import React, { useCallback, memo, useState, useEffect } from 'react';
 import { Card, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { motion } from 'framer-motion';
@@ -30,7 +30,7 @@ const isWhiteColor = (color?: string): boolean => {
 };
 
 /**
- * 图标组件，支持多级回退
+ * 图标组件，支持多级回退并针对环境优化缓存
  * 1. 用户自定义图标
  * 2. Favicon API 图标
  * 3. Ant Design 默认图标
@@ -42,16 +42,71 @@ const IconWithFallback: React.FC<{
   scale?: number;
   backgroundColor?: string;
 }> = ({ src, alt, fallbackUrl, scale = 0.8, backgroundColor }) => {
+  // 检测是否处于 Chrome 扩展环境
+  const isExtension = typeof chrome !== 'undefined' && !!chrome.runtime && !!chrome.runtime.id;
+
+  // 仅在扩展环境中尝试从 localStorage 读取缓存的 Base64 图标，Web 端依赖浏览器原生的 HTTP 缓存
+  const getCachedIcon = (url: string) => {
+    if (!isExtension) return null;
+    try {
+      if (typeof window !== 'undefined') {
+        const key = `icon_cache_${url}`;
+        return localStorage.getItem(key);
+      }
+    } catch (e) {}
+    return null;
+  };
+
+  // 使用 useRef 记录初始读取的缓存，避免组件更新导致的闪烁
+  const initialSrc = React.useRef<string | null>(getCachedIcon(src));
+  const initialFallback = React.useRef<string | null>(fallbackUrl ? getCachedIcon(fallbackUrl) : null);
+
   const [hasError, setHasError] = useState(false);
   const [faviconError, setFaviconError] = useState(false);
+
+  // 扩展环境中，后台异步缓存图片（不触发重渲染，纯静默写入，为下次打开新标签页加速）
+  useEffect(() => {
+    if (!isExtension) return;
+
+    const cacheImage = async (url: string) => {
+      try {
+        const key = `icon_cache_${url}`;
+        if (localStorage.getItem(key)) return;
+
+        const res = await fetch(url);
+        if (!res.ok) return;
+        const blob = await res.blob();
+        
+        // 限制大小（约 50KB），避免撑爆 localStorage
+        if (blob.size > 50000) return;
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64 = reader.result as string;
+          if (base64) {
+            try {
+              localStorage.setItem(key, base64);
+            } catch (e) {
+              // localStorage 容量满时忽略
+            }
+          }
+        };
+        reader.readAsDataURL(blob);
+      } catch (e) {
+        // 网络错误忽略
+      }
+    };
+
+    if (!initialSrc.current) cacheImage(src);
+    if (fallbackUrl && !initialFallback.current) cacheImage(fallbackUrl);
+  }, [src, fallbackUrl, isExtension]);
 
   // 第一级：尝试加载用户自定义图标
   if (!hasError) {
     return (
       <img
-        src={src}
+        src={initialSrc.current || src}
         alt={`${alt}的图标`}
-        loading="lazy"
         decoding="async"
         className="w-[5.5rem] h-[5.5rem] object-contain"
         style={{
@@ -69,9 +124,8 @@ const IconWithFallback: React.FC<{
   if (hasError && fallbackUrl && !faviconError) {
     return (
       <img
-        src={fallbackUrl}
+        src={initialFallback.current || fallbackUrl}
         alt={`${alt}的图标`}
-        loading="lazy"
         decoding="async"
         className="w-[5.5rem] h-[5.5rem] object-contain"
         style={{
@@ -86,8 +140,6 @@ const IconWithFallback: React.FC<{
   }
 
   // 第三级：所有图片都失败，显示默认图标
-  // 默认图标使用固定大小（48px），不受 iconScale 影响
-  // 如果背景是白色，使用主题色；否则使用白色
   const DefaultIcon = AntdIcons.LinkOutlined;
   const defaultIconColor = isWhiteColor(backgroundColor) ? '#1890ff' : '#ffffff';
   const defaultIconSize = 48;

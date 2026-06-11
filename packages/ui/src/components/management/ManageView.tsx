@@ -19,17 +19,17 @@ import {
   updateCategory,
   deleteCategory,
 } from '@weiz-nav/store/slices/categoriesSlice';
-import { DataTable } from '@weiz-nav/ui/src/components/management/DataTable';
-import { EditLinkModal } from '@weiz-nav/ui/src/components/modals/EditLinkModal';
-import { EditCategoryModal } from '@weiz-nav/ui/src/components/modals/EditCategoryModal';
-import { ImportExport } from '@weiz-nav/ui/src/components/management/ImportExport';
-import { ResetDataModal } from '@weiz-nav/ui/src/components/modals/ResetDataModal';
-import { BatchCategoryModal } from '@weiz-nav/ui/src/components/modals/BatchCategoryModal';
+import { DataTable } from './DataTable';
+import { EditLinkModal } from '../modals/EditLinkModal';
+import { EditCategoryModal } from '../modals/EditCategoryModal';
+import { ImportExport } from './ImportExport';
+import { ResetDataModal } from '../modals/ResetDataModal';
+import { BatchCategoryModal } from '../modals/BatchCategoryModal';
 import { Link } from '@weiz-nav/core/link';
 import { Category } from '@weiz-nav/core/category';
 import { defaultLinks } from '@weiz-nav/core/default-data';
 import { storageService } from '@weiz-nav/services/storage';
-import { showSuccess, showError, showWarning, showConfirm } from '@weiz-nav/ui/src/utils/feedback';
+import { showSuccess, showError, showWarning, showConfirm } from '../../utils/feedback';
 
 /**
  * 数据管理页面
