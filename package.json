@@ -7,6 +7,7 @@
     "version:sync": "node scripts/sync-version.js",
     "dev": "pnpm --filter @weiz-nav/web dev",
     "dev:web": "pnpm --filter @weiz-nav/web dev",
+    "dev:https": "pnpm --filter @weiz-nav/web dev:https",
     "dev:extension": "pnpm --filter @weiz-nav/extension dev",
     "build": "pnpm version:sync && pnpm --filter @weiz-nav/web build",
     "build:web": "pnpm version:sync && pnpm --filter @weiz-nav/web build",
