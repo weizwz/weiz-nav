@@ -25,5 +25,8 @@
       "unrs-resolver",
       "workerd"
     ]
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0"
   }
 }

@@ -122,6 +122,40 @@ export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
 /**
+ * 监听其他标签页的数据变化 (主要用于浏览器扩展中多标签页数据同步)
+ */
+export const setupStorageSync = () => {
+  if (typeof window === 'undefined') return;
+
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'nav_links' && e.newValue) {
+      try {
+        const links = JSON.parse(e.newValue);
+        store.dispatch({ type: 'links/loadLinks', payload: links });
+      } catch (err) {
+        console.error('Failed to sync links from storage:', err);
+      }
+    }
+    if (e.key === 'nav_categories' && e.newValue) {
+      try {
+        const categories = JSON.parse(e.newValue);
+        store.dispatch({ type: 'categories/loadCategories', payload: categories });
+      } catch (err) {
+        console.error('Failed to sync categories from storage:', err);
+      }
+    }
+    if (e.key === 'nav_settings' && e.newValue) {
+      try {
+        const settings = JSON.parse(e.newValue);
+        store.dispatch({ type: 'settings/loadSettings', payload: settings });
+      } catch (err) {
+        console.error('Failed to sync settings from storage:', err);
+      }
+    }
+  });
+};
+
+/**
  * 默认导出 store
  */
 export default store;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { store } from '@weiz-nav/store';
+import { store, setupStorageSync } from '@weiz-nav/store';
 import App from './App';
 import './styles.css';
 
@@ -16,7 +16,7 @@ function AntdThemeProvider({ children }: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     setMounted(true);
-    
+
     // 注册 Service Worker 用于缓存图标等资源
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
@@ -65,6 +65,9 @@ function AntdThemeProvider({ children }: { children: React.ReactNode }) {
     </ConfigProvider>
   );
 }
+
+// 开启多标签页数据同步
+setupStorageSync();
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
