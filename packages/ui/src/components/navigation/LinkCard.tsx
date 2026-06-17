@@ -44,17 +44,30 @@ const IconWithFallback: React.FC<{
   backgroundColor?: string;
 }> = ({ src, alt, fallbackUrl, scale = 0.8, backgroundColor }) => {
   // 检测是否处于 Chrome 扩展环境
-  const isExtension = typeof window !== 'undefined' && typeof chrome !== 'undefined' && !!chrome.runtime && !!chrome.runtime.id;
+  const isExtension =
+    typeof window !== 'undefined' &&
+    typeof chrome !== 'undefined' &&
+    !!chrome.runtime &&
+    !!chrome.runtime.id;
 
   // 当前应当显示的实际来源（可能是普通 URL，也可能是 Cache API 生成的 Blob URL）
   // Web 环境直接使用初始 src 进行首次渲染，避免任何异步状态导致的闪烁
   const [displaySrc, setDisplaySrc] = useState<string | null>(() => {
     return isExtension ? null : src;
   });
-  
+
   // 错误状态记录
   const [hasError, setHasError] = useState(false);
   const [faviconError, setFaviconError] = useState(false);
+
+  // 当 src 发生改变时（如用户在编辑对话框中修改了自定义图标 URL），重置错误状态，强制重新加载
+  useEffect(() => {
+    setHasError(false);
+    setFaviconError(false);
+    if (!isExtension) {
+      setDisplaySrc(src);
+    }
+  }, [src, isExtension]);
 
   useEffect(() => {
     let isActive = true;
@@ -216,7 +229,8 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
           chrome.tabs.create({ url: link.url });
         } else {
           // 非扩展环境或 API 不可用，直接复制链接并提示
-          navigator.clipboard.writeText(link.url)
+          navigator.clipboard
+            .writeText(link.url)
             .then(() => {
               showSuccess('已复制，请粘贴到地址栏打开');
             })
