@@ -1,6 +1,6 @@
 {
   "version": "1.0.1",
-  "exportTime": 1781687815252,
+  "exportTime": 1781690879917,
   "data": [
     {
       "id": "主页",
@@ -56,13 +56,13 @@
           "category": "主页",
           "createdAt": 1764324547789,
           "description": "使用手机微信扫码登录",
-          "icon": "https://api.iconify.design/ant-design/wechat-filled.svg?color=%23ffffff",
+          "icon": "https://api.iconify.design/mdi:wechat.svg?color=%23ffffff",
           "iconScale": 0.7,
           "id": "1764324547789-rj6v8orcs",
           "name": "微信网页版",
           "order": 3,
           "tags": [],
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781688741174,
           "url": "https://wx.qq.com"
         },
         {
@@ -126,12 +126,12 @@
           "category": "主页",
           "createdAt": 1768973870324,
           "description": "国内知名的视频弹幕网站",
-          "icon": "https://api.iconify.design/meteor-icons:bilibili.svg?color=%23ffffff",
+          "icon": "https://api.iconify.design/fa7-brands:bilibili.svg?color=%23ffffff",
           "iconScale": 0.7,
           "id": "1768973870324-kvzx1geun",
           "name": "哔哩哔哩",
           "order": 8,
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781688836904,
           "url": "https://www.bilibili.com/"
         },
         {
@@ -139,13 +139,13 @@
           "category": "主页",
           "createdAt": 1764324547789,
           "description": "优雅高效的在线文档编辑与协同工具",
-          "icon": "https://favicon.im/www.yuque.com?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/ri:yuque-fill.svg?color=%23ffffff",
           "iconScale": 0.7,
           "id": "1764324547789-l3ut50m2k",
           "name": "语雀",
           "order": 9,
           "tags": [],
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781689465943,
           "url": "https://www.yuque.com"
         },
         {
@@ -217,7 +217,7 @@
           "url": "https://www.zhibo8.com/"
         },
         {
-          "backgroundColor": "#d9d9d9",
+          "backgroundColor": "#1abc9c",
           "category": "主页",
           "createdAt": 1764324547789,
           "description": "程序开发常用工具\n",
@@ -227,7 +227,7 @@
           "name": "Ctool",
           "order": 15,
           "tags": [],
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781689541888,
           "url": "https://ctool.dev/"
         },
         {
@@ -331,13 +331,13 @@
           "category": "主页",
           "createdAt": 1764324547789,
           "description": "网站部署和托管平台",
-          "icon": "https://favicon.im/vercel.com?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/bxl:vercel.svg?color=%23ffffff",
           "iconScale": 0.7,
           "id": "1764324547789-v2cv8crbn",
           "name": "Vercel",
           "order": 23,
           "tags": [],
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781689646710,
           "url": "https://vercel.com"
         },
         {
@@ -466,12 +466,12 @@
           "category": "主页",
           "createdAt": 1773215635904,
           "description": "贴心的成长导师Brian 打造的面向未来的全栈与AI工程师成长之路",
-          "icon": "https://favicon.im/front-end.toimc.com?larger=true&throw-error-on-404=true",
+          "icon": "https://front-end.toimc.com/nuxt.svg",
           "iconScale": 0.7,
           "id": "1773215635904-fb43w3by8",
           "name": "Brian课程笔记",
           "order": 197,
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781689761040,
           "url": "https://front-end.toimc.com/"
         },
         {
@@ -532,12 +532,12 @@
           "category": "主页",
           "createdAt": 1770602227733,
           "description": "极客社区，专注于 Windows 与 macOS 系统技术",
-          "icon": "https://favicon.im/www.pcbeta.com?larger=true&t=1770595200000&throw-error-on-404=true",
+          "icon": "https://www.pcbeta.com/favicon.png",
           "iconScale": 0.7,
           "id": "1770602227733-sdjmzjt70",
           "name": "远景论坛",
           "order": 202,
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781689723636,
           "url": "https://www.pcbeta.com/"
         }
       ]
@@ -610,13 +610,13 @@
           "category": "开发常用",
           "createdAt": 1764324547789,
           "description": "API 文档和设计工具",
-          "icon": "https://api.iconify.design/devicon:swagger.svg?color=%23ffffff",
+          "icon": "https://api.iconify.design/simple-icons:swagger.svg?color=%23ffffff",
           "iconScale": 0.6,
           "id": "1764324547789-oi57zht6b",
           "name": "Swagger",
           "order": 37,
           "tags": [],
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781689799390,
           "url": "https://swagger.io/"
         },
         {
@@ -705,13 +705,13 @@
           "category": "开发常用",
           "createdAt": 1764324547789,
           "description": "全球最大的技术问答网站",
-          "icon": "https://favicon.im/stackoverflow.com?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/fa-brands:stack-overflow.svg?color=%23ffffff",
           "iconScale": 0.7,
           "id": "1764324547789-d7a0keua3",
           "name": "Stack Overflow",
           "order": 44,
           "tags": [],
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781689949080,
           "url": "https://stackoverflow.com"
         },
         {
@@ -732,13 +732,13 @@
           "category": "开发常用",
           "createdAt": 1764324547789,
           "description": "AI 产品设计工具，一键生成界面与代码",
-          "icon": "https://favicon.im/readdy.ai?larger=true&throw-error-on-404=true",
+          "icon": "https://readdy.ai/site-static/favicon/android-chrome-512x512.png",
           "iconScale": 0.7,
           "id": "1764324547789-bureuv727",
           "name": "Readdy",
           "order": 46,
           "tags": [],
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781690368486,
           "url": "https://readdy.ai"
         },
         {
@@ -756,7 +756,7 @@
           "url": "https://mock.mengxuegu.com/docs"
         },
         {
-          "backgroundColor": "#4c39db",
+          "backgroundColor": "#4937da",
           "category": "开发常用",
           "createdAt": 1764324547789,
           "description": "一个免费、漂亮的封面生成器",
@@ -766,7 +766,7 @@
           "name": "ThisCover",
           "order": 48,
           "tags": [],
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781690173990,
           "url": "https://cover.weizwz.com/"
         },
         {
@@ -802,13 +802,13 @@
           "name": "OpenAI",
           "description": "人工智能研究与部署机构，致力于安全通用人工智能发展",
           "category": "开发常用",
-          "icon": "https://favicon.im/openai.com?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/proicons:openai.svg",
           "backgroundColor": "#ffffff",
           "iconScale": 0.7,
           "id": "1779701911546-6gcujomyn",
           "order": 51,
           "createdAt": 1779701911546,
-          "updatedAt": 1781687763071
+          "updatedAt": 1781690255355
         },
         {
           "backgroundColor": "#ffffff",
@@ -851,16 +851,16 @@
           "url": "https://vitepress.dev"
         },
         {
-          "backgroundColor": "#d9d9d9",
+          "backgroundColor": "#1890ff",
           "category": "开发常用",
           "createdAt": 1770866987001,
           "description": "vscode 扩展市场",
-          "icon": "https://favicon.im/marketplace.visualstudio.com?larger=true&t=1770854400000&throw-error-on-404=true",
-          "iconScale": 1,
+          "icon": "https://api.iconify.design/mdi:microsoft-visual-studio-code.svg?color=%23ffffff",
+          "iconScale": 0.7,
           "id": "1770866987001-f4y6mex5q",
           "name": "vscode 市场",
           "order": 55,
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781690062543,
           "url": "https://marketplace.visualstudio.com/vscode"
         },
         {
@@ -910,11 +910,11 @@
           "category": "开发常用",
           "icon": "https://favicon.im/nubase.ai?larger=true&throw-error-on-404=true",
           "backgroundColor": "#060a1c",
-          "iconScale": 0.7,
+          "iconScale": 0.9,
           "id": "1781572692162-5woia1x3w",
           "order": 192,
           "createdAt": 1781572692162,
-          "updatedAt": 1781687763071
+          "updatedAt": 1781690385508
         },
         {
           "backgroundColor": "#1483cd",
@@ -974,13 +974,13 @@
           "name": "GitHub Proxy",
           "description": "GitHub 加速地址，快速下载 Github 上的各种资源",
           "category": "开发常用",
-          "icon": "https://favicon.im/ghproxy.link?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/mdi:github.svg",
           "backgroundColor": "#ffffff",
           "iconScale": 0.7,
           "id": "1781668591556-37l20vot2",
           "order": 209,
           "createdAt": 1781668591556,
-          "updatedAt": 1781687763071
+          "updatedAt": 1781689929973
         }
       ]
     },
@@ -997,13 +997,13 @@
           "category": "前端技术",
           "createdAt": 1764324547789,
           "description": "渐进式 JavaScript 框架",
-          "icon": "https://favicon.im/cn.vuejs.org?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/logos:vue.svg",
           "iconScale": 0.6,
           "id": "1764324547789-2yxuwdueg",
           "name": "Vue",
           "order": 57,
           "tags": [],
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781690504810,
           "url": "https://cn.vuejs.org"
         },
         {
@@ -1011,14 +1011,14 @@
           "category": "前端技术",
           "createdAt": 1764324547789,
           "description": "用于构建用户界面的 JavaScript 库",
-          "icon": "https://favicon.im/zh-hans.reactjs.org?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/uil:react.svg?color=%2358c4dc",
           "iconScale": 0.7,
           "id": "1764324547789-fqwzitf9l",
           "name": "React",
           "order": 58,
           "tags": [],
-          "updatedAt": 1781687763071,
-          "url": "https://zh-hans.reactjs.org"
+          "updatedAt": 1781690491898,
+          "url": "https://react.dev/"
         },
         {
           "backgroundColor": "#16bcff",
@@ -1163,13 +1163,13 @@
           "category": "前端技术",
           "createdAt": 1764324547789,
           "description": "Vue.js 官方路由管理器",
-          "icon": "https://favicon.im/router.vuejs.org?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/material-icon-theme:vue.svg",
           "iconScale": 0.7,
           "id": "1764324547789-dhonrpqdw",
           "name": "Vue Router",
           "order": 69,
           "tags": [],
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781690544684,
           "url": "https://router.vuejs.org/zh/introduction.html"
         },
         {
@@ -1602,13 +1602,13 @@
           "category": "图标壁纸",
           "createdAt": 1764324547789,
           "description": "统一调用多图标库的开发者工具。",
-          "icon": "https://favicon.im/iconify.design?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/line-md:iconify2.svg",
           "iconScale": 0.7,
           "id": "1764324547789-oesldf1t2",
           "name": "Iconify",
           "order": 100,
           "tags": [],
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781690592461,
           "url": "https://iconify.design/docs/"
         },
         {
@@ -1659,12 +1659,12 @@
           "createdAt": 1764324547789,
           "description": "免费提供超 2500 个开源品牌图标的 SVG 库",
           "icon": "https://api.iconify.design/simple-icons:simpleicons.svg?color=%23ffffff",
-          "iconScale": 0.7,
+          "iconScale": 0.6,
           "id": "1764324547789-vrl4sh4h6",
           "name": "Simeple Icons",
           "order": 104,
           "tags": [],
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781690603878,
           "url": "https://simpleicons.org/"
         },
         {
@@ -1977,12 +1977,12 @@
           "category": "开源项目",
           "createdAt": 1768551738031,
           "description": "能让你轻松白嫖优选域名的 CF Worker 工具",
-          "icon": "https://favicon.im/github.com?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/mdi:github.svg",
           "iconScale": 0.7,
           "id": "1768551738031-4z8wa14aj",
           "name": "CF-DNS-Clone",
           "order": 123,
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781690676512,
           "url": "https://github.com/crow1874/CF-DNS-Clone/tree/main"
         },
         {
@@ -1990,12 +1990,12 @@
           "category": "开源项目",
           "createdAt": 1768637640938,
           "description": "用 markdown 生成 精美的 PPT 文件",
-          "icon": "https://favicon.im/github.com?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/mdi:github.svg",
           "iconScale": 0.7,
           "id": "1768637640938-4ksbjpbyn",
           "name": "Slidev",
           "order": 124,
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781690683834,
           "url": "https://github.com/slidevjs/slidev"
         },
         {
@@ -2003,12 +2003,12 @@
           "category": "开源项目",
           "createdAt": 1768637951970,
           "description": "A Clash Meta GUI based on Tauri.",
-          "icon": "https://favicon.im/github.com?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/mdi:github.svg",
           "iconScale": 0.7,
           "id": "1768637951970-mfo6c2r0i",
           "name": "Clash Verge",
           "order": 125,
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781690690254,
           "url": "https://github.com/clash-verge-rev/clash-verge-rev"
         },
         {
@@ -2016,12 +2016,12 @@
           "category": "开源项目",
           "createdAt": 1768638017804,
           "description": "A web interface for Stable Diffusion, implemented using Gradio library.",
-          "icon": "https://favicon.im/github.com?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/mdi:github.svg",
           "iconScale": 0.7,
           "id": "1768638017804-1zybicpdk",
           "name": "Stable Diffusion web UI",
           "order": 126,
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781690696712,
           "url": "https://github.com/AUTOMATIC1111/stable-diffusion-webui"
         },
         {
@@ -2029,12 +2029,12 @@
           "category": "开源项目",
           "createdAt": 1768638101896,
           "description": "国产跨平台、轻量级的文本编辑器",
-          "icon": "https://favicon.im/gitee.com?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/ri:gitee-fill.svg?color=%23c71e23",
           "iconScale": 0.7,
           "id": "1768638101896-69emkzofw",
           "name": "notepad--",
           "order": 127,
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781690738753,
           "url": "https://gitee.com/cxasm/notepad--"
         },
         {
@@ -2042,12 +2042,12 @@
           "category": "开源项目",
           "createdAt": 1768641323482,
           "description": "面向 GitHub Releases 的跨平台 “Play Store”",
-          "icon": "https://favicon.im/github.com?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/mdi:github.svg",
           "iconScale": 0.7,
           "id": "1768641323482-se8fkexel",
           "name": "GitHub Store",
           "order": 128,
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781690703726,
           "url": "https://github.com/rainxchzed/Github-Store"
         },
         {
@@ -2055,26 +2055,26 @@
           "name": "OpenHarmony",
           "description": "OpenHarmony是由开放原子开源基金会（OpenAtom Foundation）孵化及运营的开源项目",
           "category": "开源项目",
-          "icon": "https://favicon.im/gitcode.com?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/simple-icons:gitcode.svg?color=%23da203e",
           "backgroundColor": "#ffffff",
-          "iconScale": 0.7,
+          "iconScale": 0.6,
           "id": "1781668421861-106asov9k",
           "order": 207,
           "createdAt": 1781668421861,
-          "updatedAt": 1781687763071
+          "updatedAt": 1781690810698
         },
         {
           "url": "https://github.com/nolangz/pixel2motion/tree/main",
           "name": "Pixel2Motion",
           "description": "AI Logo Animation Skill",
           "category": "开源项目",
-          "icon": "https://favicon.im/github.com?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/mdi:github.svg",
           "backgroundColor": "#ffffff",
           "iconScale": 0.7,
           "id": "1781668468135-ijk7xgax9",
           "order": 208,
           "createdAt": 1781668468135,
-          "updatedAt": 1781687763071
+          "updatedAt": 1781690711505
         }
       ]
     },
@@ -2160,13 +2160,13 @@
           "category": "工具软件",
           "createdAt": 1764324547789,
           "description": "最专业的协作式界面设计工具，支持实时协同、原型交互与设计系统管理",
-          "icon": "https://favicon.im/www.figma.com?larger=true&throw-error-on-404=true",
+          "icon": "https://api.iconify.design/devicon:figma.svg?color=%23ffffff",
           "iconScale": 0.7,
           "id": "1764324547789-45qwnotna",
           "name": "Figma",
           "order": 134,
           "tags": [],
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781690848120,
           "url": "https://www.figma.com/"
         },
         {
@@ -2743,7 +2743,7 @@
           "name": "芒果 TV",
           "order": 173,
           "tags": [],
-          "updatedAt": 1781687763071,
+          "updatedAt": 1781690867480,
           "url": "https://www.mgtv.com/"
         },
         {
