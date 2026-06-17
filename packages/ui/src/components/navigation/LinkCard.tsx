@@ -89,8 +89,7 @@ const IconWithFallback: React.FC<{
   alt: string;
   fallbackUrl?: string;
   scale?: number;
-  backgroundColor?: string;
-}> = ({ src, alt, fallbackUrl, scale = 0.7, backgroundColor }) => {
+}> = ({ src, alt, fallbackUrl, scale = 0.7 }) => {
   // 检测是否处于 Chrome 扩展环境
   const isExtension =
     typeof window !== 'undefined' &&
@@ -366,7 +365,6 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
           alt={link.name}
           fallbackUrl={faviconUrl || undefined}
           scale={scale}
-          backgroundColor={backgroundColor}
         />
       );
     }
@@ -393,7 +391,6 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
           src={faviconUrl}
           alt={link.name}
           scale={scale}
-          backgroundColor={backgroundColor}
         />
       );
     }
