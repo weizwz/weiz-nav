@@ -34,7 +34,7 @@ const isWhiteColor = (color?: string): boolean => {
  * 全局图片并发控制队列
  * 采用“小并发 + 强制时间间隔”策略，专门应对 favicon.im 这种防并发极严的免费接口
  */
-class IconQueue {
+export class IconQueue {
   private queue: Array<() => void> = [];
   private activeCount = 0;
   // 最大并发降至更安全的数值
@@ -76,7 +76,7 @@ class IconQueue {
   }
 }
 
-const globalIconQueue = new IconQueue();
+export const globalIconQueue = new IconQueue();
 
 /**
  * 图标组件，支持多级回退并基于 Cache API 进行二进制缓存
