@@ -361,6 +361,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
     ) {
       return (
         <IconWithFallback
+          key={link.updatedAt}
           src={link.icon}
           alt={link.name}
           fallbackUrl={faviconUrl || undefined}
@@ -388,6 +389,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
     if (faviconUrl) {
       return (
         <IconWithFallback
+          key={link.updatedAt}
           src={faviconUrl}
           alt={link.name}
           scale={scale}
@@ -495,6 +497,7 @@ const LinkCard = memo(LinkCardBase, (prevProps, nextProps) => {
   // 自定义比较函数：只比较关键属性
   return (
     prevProps.link.id === nextProps.link.id &&
+    prevProps.link.updatedAt === nextProps.link.updatedAt &&
     prevProps.link.name === nextProps.link.name &&
     prevProps.link.url === nextProps.link.url &&
     prevProps.link.description === nextProps.link.description &&
