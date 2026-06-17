@@ -67,7 +67,8 @@ const IconWithFallback: React.FC<{
 
       // 核心修复：如果是普通 Web 环境，直接将 URL 交给浏览器的原生 <img> 标签处理。
       // 原因：JS 的 fetch 会被严格的 CORS 跨域策略拦截（红字报错），而原生 <img> 具有 no-cors 特性可以完美显示图片，并且自带 HTTP 缓存。
-      if (!isExtension) {
+      // 另外，如果是 base64 格式的 data:image/，直接使用，不需要走 Cache API
+      if (!isExtension || targetUrl.startsWith('data:image/')) {
         if (isActive) setDisplaySrc(targetUrl);
         return;
       }
@@ -291,7 +292,8 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
       link.icon &&
       (link.icon.startsWith('http://') ||
         link.icon.startsWith('https://') ||
-        link.icon.startsWith('/')) &&
+        link.icon.startsWith('/') ||
+        link.icon.startsWith('data:image/')) &&
       !isFaviconUrl(link.icon)
     ) {
       return (
