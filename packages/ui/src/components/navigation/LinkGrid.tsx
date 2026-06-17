@@ -173,22 +173,23 @@ const LinkGridBase: React.FC<LinkGridProps> = ({ onEdit, onDelete, className, st
       {/* 搜索结果（不需要 DOM 缓存，每次搜索动态渲染） */}
       {isSearchMode && <div style={{ display: 'block' }}>{renderGrid(searchResults, true)}</div>}
 
-      {/* 分类模式 DOM 缓存 (KeepAlive) */}
-      {allCategoryNames.map((categoryName) => {
-        // 只有在非搜索模式，且当前分类匹配时才可见
-        const isVisible = !isSearchMode && categoryName === currentCategory;
+      {/* 分类模式按需渲染 */}
+      {!isSearchMode &&
+        allCategoryNames.map((categoryName) => {
+          // 仅当分类处于 active 状态时才予以渲染挂载（抛弃 display: none）
+          if (categoryName !== currentCategory) return null;
 
-        // 提取该分类下的所有链接
-        const categoryLinks = links
-          .filter((link) => (link.category || '未分类') === categoryName)
-          .sort((a, b) => a.order - b.order);
+          // 提取该分类下的所有链接
+          const categoryLinks = links
+            .filter((link) => (link.category || '未分类') === categoryName)
+            .sort((a, b) => a.order - b.order);
 
-        return (
-          <div key={categoryName} style={{ display: isVisible ? 'block' : 'none' }}>
-            {renderGrid(categoryLinks, false, categoryName)}
-          </div>
-        );
-      })}
+          return (
+            <div key={categoryName}>
+              {renderGrid(categoryLinks, false, categoryName)}
+            </div>
+          );
+        })}
     </>
   );
 };

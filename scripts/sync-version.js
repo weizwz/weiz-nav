@@ -6,10 +6,12 @@ const rootDir = path.resolve(__dirname, '..');
 const jsonFiles = [
   'apps/web/package.json',
   'apps/extension/package.json',
+  'apps/web/public/manifest.json',
+  'apps/extension/public/manifest.json',
   'packages/core/package.json',
   'packages/services/package.json',
   'packages/store/package.json',
-  'apps/extension/public/manifest.json',
+  'packages/ui/package.json',
   'packages/core/src/data.json',
 ];
 

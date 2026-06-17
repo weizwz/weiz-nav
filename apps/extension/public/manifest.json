@@ -3,7 +3,7 @@
   "name": "唯知导航",
   "short_name": "唯知导航",
   "description": "在浏览器插件中快速搜索和打开唯知导航链接",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "chrome_url_overrides": {
     "newtab": "index.html"
   },

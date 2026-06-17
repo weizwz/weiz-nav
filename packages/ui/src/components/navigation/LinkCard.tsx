@@ -31,6 +31,54 @@ const isWhiteColor = (color?: string): boolean => {
 };
 
 /**
+ * 全局图片并发控制队列
+ * 采用“小并发 + 强制时间间隔”策略，专门应对 favicon.im 这种防并发极严的免费接口
+ */
+class IconQueue {
+  private queue: Array<() => void> = [];
+  private activeCount = 0;
+  // 最大并发降至更安全的数值
+  private readonly MAX_CONCURRENT = 6;
+  // 强制每个请求之间至少间隔 150 毫秒 (即每秒最多派发 ~6 个请求)
+  private readonly DISPATCH_INTERVAL_MS = 150;
+  private nextAvailableTime = 0;
+
+  push(task: () => void) {
+    this.queue.push(task);
+    this.processNext();
+  }
+
+  release() {
+    this.activeCount = Math.max(0, this.activeCount - 1);
+    this.processNext();
+  }
+
+  private processNext() {
+    while (this.activeCount < this.MAX_CONCURRENT && this.queue.length > 0) {
+      const now = Date.now();
+      const delay = Math.max(0, this.nextAvailableTime - now);
+
+      // 更新下一个令牌的可用时间
+      this.nextAvailableTime = now + delay + this.DISPATCH_INTERVAL_MS;
+
+      this.activeCount++;
+      const task = this.queue.shift();
+
+      if (task) {
+        if (delay > 0) {
+          setTimeout(task, delay);
+        } else {
+          // 放入微任务队列，避免阻塞
+          Promise.resolve().then(task);
+        }
+      }
+    }
+  }
+}
+
+const globalIconQueue = new IconQueue();
+
+/**
  * 图标组件，支持多级回退并基于 Cache API 进行二进制缓存
  * 1. 用户自定义图标
  * 2. Favicon API 图标
@@ -42,19 +90,29 @@ const IconWithFallback: React.FC<{
   fallbackUrl?: string;
   scale?: number;
   backgroundColor?: string;
-}> = ({ src, alt, fallbackUrl, scale = 0.8, backgroundColor }) => {
+}> = ({ src, alt, fallbackUrl, scale = 0.7, backgroundColor }) => {
   // 检测是否处于 Chrome 扩展环境
-  const isExtension = typeof window !== 'undefined' && typeof chrome !== 'undefined' && !!chrome.runtime && !!chrome.runtime.id;
+  const isExtension =
+    typeof window !== 'undefined' &&
+    typeof chrome !== 'undefined' &&
+    !!chrome.runtime &&
+    !!chrome.runtime.id;
 
-  // 当前应当显示的实际来源（可能是普通 URL，也可能是 Cache API 生成的 Blob URL）
-  // Web 环境直接使用初始 src 进行首次渲染，避免任何异步状态导致的闪烁
-  const [displaySrc, setDisplaySrc] = useState<string | null>(() => {
-    return isExtension ? null : src;
-  });
-  
+  // 统一初始化为 null，由队列控制赋值时机，防止初始并发过高
+  const [displaySrc, setDisplaySrc] = useState<string | null>(null);
+
   // 错误状态记录
   const [hasError, setHasError] = useState(false);
   const [faviconError, setFaviconError] = useState(false);
+
+  // 用于在渲染层的 onLoad/onError 回调中释放队列通道
+  const releaseTokenRef = React.useRef<(() => void) | null>(null);
+
+  // 依赖项变化时重置错误状态
+  useEffect(() => {
+    setHasError(false);
+    setFaviconError(false);
+  }, [src, isExtension]);
 
   useEffect(() => {
     let isActive = true;
@@ -67,7 +125,8 @@ const IconWithFallback: React.FC<{
 
       // 核心修复：如果是普通 Web 环境，直接将 URL 交给浏览器的原生 <img> 标签处理。
       // 原因：JS 的 fetch 会被严格的 CORS 跨域策略拦截（红字报错），而原生 <img> 具有 no-cors 特性可以完美显示图片，并且自带 HTTP 缓存。
-      if (!isExtension) {
+      // 另外，如果是 base64 格式的 data:image/，直接使用，不需要走 Cache API
+      if (!isExtension || targetUrl.startsWith('data:image/')) {
         if (isActive) setDisplaySrc(targetUrl);
         return;
       }
@@ -125,17 +184,20 @@ const IconWithFallback: React.FC<{
         src={displaySrc}
         alt={`${alt}的图标`}
         decoding="async"
+        loading="lazy"
         className="w-[5.5rem] h-[5.5rem] object-contain transition-opacity duration-300"
         style={{
           transform: `scale(${scale})`,
         }}
+        onLoad={() => {
+          releaseTokenRef.current?.();
+        }}
         onError={() => {
+          releaseTokenRef.current?.();
           // <img> 原生加载失败时触发，尝试降级
-          // 如果还没有尝试过第一级错误降级，并且存在备用 URL，则降级到备用 URL
           if (!hasError && fallbackUrl) {
             setHasError(true);
           } else {
-            // 如果已经是第二级错误，或者根本没有备用 URL，则彻底判定失败，显示默认图标
             setFaviconError(true);
           }
         }}
@@ -158,7 +220,8 @@ const IconWithFallback: React.FC<{
 
   // 第三级：所有图片都失败，显示默认图标
   const DefaultIcon = AntdIcons.LinkOutlined;
-  const defaultIconColor = isWhiteColor(backgroundColor) ? '#1890ff' : '#ffffff';
+  // 简化逻辑：统一使用主题蓝，除非背景是深色才用白色（大部分卡片是浅色背景，蓝色最显眼）
+  const defaultIconColor = '#1890ff';
   const defaultIconSize = 48;
 
   return (
@@ -215,7 +278,8 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
           chrome.tabs.create({ url: link.url });
         } else {
           // 非扩展环境或 API 不可用，直接复制链接并提示
-          navigator.clipboard.writeText(link.url)
+          navigator.clipboard
+            .writeText(link.url)
             .then(() => {
               showSuccess('已复制，请粘贴到地址栏打开');
             })
@@ -291,11 +355,13 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
       link.icon &&
       (link.icon.startsWith('http://') ||
         link.icon.startsWith('https://') ||
-        link.icon.startsWith('/')) &&
+        link.icon.startsWith('/') ||
+        link.icon.startsWith('data:image/')) &&
       !isFaviconUrl(link.icon)
     ) {
       return (
         <IconWithFallback
+          key={link.updatedAt}
           src={link.icon}
           alt={link.name}
           fallbackUrl={faviconUrl || undefined}
@@ -323,6 +389,7 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
     if (faviconUrl) {
       return (
         <IconWithFallback
+          key={link.updatedAt}
           src={faviconUrl}
           alt={link.name}
           scale={scale}
@@ -430,6 +497,7 @@ const LinkCard = memo(LinkCardBase, (prevProps, nextProps) => {
   // 自定义比较函数：只比较关键属性
   return (
     prevProps.link.id === nextProps.link.id &&
+    prevProps.link.updatedAt === nextProps.link.updatedAt &&
     prevProps.link.name === nextProps.link.name &&
     prevProps.link.url === nextProps.link.url &&
     prevProps.link.description === nextProps.link.description &&

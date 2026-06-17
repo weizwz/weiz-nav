@@ -6,9 +6,9 @@ import type { Color } from 'antd/es/color-picker';
 import { UndoOutlined, ZoomInOutlined, ZoomOutOutlined, BgColorsOutlined } from '@ant-design/icons';
 import * as Icons from '@ant-design/icons';
 import { Link } from '@weiz-nav/core/link';
-import { PRESET_COLORS, isValidColor, getDefaultColor } from '@weiz-nav/ui/src/utils/colorUtils';
+import { PRESET_COLORS, isValidColor, getDefaultColor } from '../../utils/colorUtils';
 import { getFaviconUrl } from '@weiz-nav/services/api/favicon';
-import { showError } from '@weiz-nav/ui/src/utils/feedback';
+import { showError } from '../../utils/feedback';
 import { useAppSelector } from '@weiz-nav/store/hooks';
 import { IconifySelector } from './IconifySelector';
 
@@ -232,7 +232,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({ open, link, onCanc
   // 处理图标缩放
   const handleScaleChange = useCallback(
     (delta: number) => {
-      const newScale = Math.max(0.3, Math.min(1.5, iconScale + delta));
+      const newScale = Number(Math.max(0.3, Math.min(1.5, iconScale + delta)).toFixed(2));
       setIconScale(newScale);
       form.setFieldsValue({ iconScale: newScale });
     },

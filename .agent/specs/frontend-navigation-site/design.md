@@ -285,7 +285,7 @@ interface IconWithFallbackProps {
   src: string;           // 主图标 URL
   alt: string;           // 图标描述
   fallbackUrl?: string;  // 回退 favicon URL
-  scale?: number;        // 图标缩放比例（默认 0.8）
+  scale?: number;        // 图标缩放比例（默认 0.7）
 }
 ```
 
