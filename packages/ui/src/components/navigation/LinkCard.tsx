@@ -31,6 +31,54 @@ const isWhiteColor = (color?: string): boolean => {
 };
 
 /**
+ * 全局图片并发控制队列
+ * 采用“小并发 + 强制时间间隔”策略，专门应对 favicon.im 这种防并发极严的免费接口
+ */
+class IconQueue {
+  private queue: Array<() => void> = [];
+  private activeCount = 0;
+  // 最大并发降至更安全的数值
+  private readonly MAX_CONCURRENT = 6;
+  // 强制每个请求之间至少间隔 150 毫秒 (即每秒最多派发 ~6 个请求)
+  private readonly DISPATCH_INTERVAL_MS = 150;
+  private nextAvailableTime = 0;
+
+  push(task: () => void) {
+    this.queue.push(task);
+    this.processNext();
+  }
+
+  release() {
+    this.activeCount = Math.max(0, this.activeCount - 1);
+    this.processNext();
+  }
+
+  private processNext() {
+    while (this.activeCount < this.MAX_CONCURRENT && this.queue.length > 0) {
+      const now = Date.now();
+      const delay = Math.max(0, this.nextAvailableTime - now);
+
+      // 更新下一个令牌的可用时间
+      this.nextAvailableTime = now + delay + this.DISPATCH_INTERVAL_MS;
+
+      this.activeCount++;
+      const task = this.queue.shift();
+
+      if (task) {
+        if (delay > 0) {
+          setTimeout(task, delay);
+        } else {
+          // 放入微任务队列，避免阻塞
+          Promise.resolve().then(task);
+        }
+      }
+    }
+  }
+}
+
+const globalIconQueue = new IconQueue();
+
+/**
  * 图标组件，支持多级回退并基于 Cache API 进行二进制缓存
  * 1. 用户自定义图标
  * 2. Favicon API 图标
@@ -50,23 +98,20 @@ const IconWithFallback: React.FC<{
     !!chrome.runtime &&
     !!chrome.runtime.id;
 
-  // 当前应当显示的实际来源（可能是普通 URL，也可能是 Cache API 生成的 Blob URL）
-  // Web 环境直接使用初始 src 进行首次渲染，避免任何异步状态导致的闪烁
-  const [displaySrc, setDisplaySrc] = useState<string | null>(() => {
-    return isExtension ? null : src;
-  });
+  // 统一初始化为 null，由队列控制赋值时机，防止初始并发过高
+  const [displaySrc, setDisplaySrc] = useState<string | null>(null);
 
   // 错误状态记录
   const [hasError, setHasError] = useState(false);
   const [faviconError, setFaviconError] = useState(false);
 
-  // 当 src 发生改变时（如用户在编辑对话框中修改了自定义图标 URL），重置错误状态，强制重新加载
+  // 用于在渲染层的 onLoad/onError 回调中释放队列通道
+  const releaseTokenRef = React.useRef<(() => void) | null>(null);
+
+  // 依赖项变化时重置错误状态
   useEffect(() => {
     setHasError(false);
     setFaviconError(false);
-    if (!isExtension) {
-      setDisplaySrc(src);
-    }
   }, [src, isExtension]);
 
   useEffect(() => {
@@ -144,13 +189,15 @@ const IconWithFallback: React.FC<{
         style={{
           transform: `scale(${scale})`,
         }}
+        onLoad={() => {
+          releaseTokenRef.current?.();
+        }}
         onError={() => {
+          releaseTokenRef.current?.();
           // <img> 原生加载失败时触发，尝试降级
-          // 如果还没有尝试过第一级错误降级，并且存在备用 URL，则降级到备用 URL
           if (!hasError && fallbackUrl) {
             setHasError(true);
           } else {
-            // 如果已经是第二级错误，或者根本没有备用 URL，则彻底判定失败，显示默认图标
             setFaviconError(true);
           }
         }}
