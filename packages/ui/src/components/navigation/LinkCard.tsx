@@ -139,6 +139,7 @@ const IconWithFallback: React.FC<{
         src={displaySrc}
         alt={`${alt}的图标`}
         decoding="async"
+        loading="lazy"
         className="w-[5.5rem] h-[5.5rem] object-contain transition-opacity duration-300"
         style={{
           transform: `scale(${scale})`,
@@ -172,7 +173,8 @@ const IconWithFallback: React.FC<{
 
   // 第三级：所有图片都失败，显示默认图标
   const DefaultIcon = AntdIcons.LinkOutlined;
-  const defaultIconColor = isWhiteColor(backgroundColor) ? '#1890ff' : '#ffffff';
+  // 简化逻辑：统一使用主题蓝，除非背景是深色才用白色（大部分卡片是浅色背景，蓝色最显眼）
+  const defaultIconColor = '#1890ff';
   const defaultIconSize = 48;
 
   return (
