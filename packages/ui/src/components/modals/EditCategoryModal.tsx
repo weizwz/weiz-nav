@@ -2,9 +2,9 @@
 
 import React, { useEffect } from 'react';
 import { Modal, Form, Input } from 'antd';
-import { showError } from '@weiz-nav/ui/src/utils/feedback';
+import { showError } from '../../utils/feedback';
 import { Category } from '@weiz-nav/core/category';
-import { IconPicker } from '@weiz-nav/ui/src/components/common/IconPicker';
+import { IconPicker } from '../common/IconPicker';
 
 interface EditCategoryModalProps {
   open: boolean;

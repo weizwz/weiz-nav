@@ -9,8 +9,8 @@ import { loadLinks } from '@weiz-nav/store/slices/linksSlice';
 import { loadCategories } from '@weiz-nav/store/slices/categoriesSlice';
 import { Link } from '@weiz-nav/core/link';
 import type { Category } from '@weiz-nav/core/category';
-import { showSuccess, showError, showConfirm, showWarning } from '@weiz-nav/ui/src/utils/feedback';
-import packageInfo from "../../../package.json";
+import { showSuccess, showError, showConfirm, showWarning } from '../../utils/feedback';
+import packageInfo from '../../../package.json';
 
 /**
  * 验证单个链接数据格式
