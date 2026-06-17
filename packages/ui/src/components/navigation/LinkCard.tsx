@@ -90,7 +90,7 @@ const IconWithFallback: React.FC<{
   fallbackUrl?: string;
   scale?: number;
   backgroundColor?: string;
-}> = ({ src, alt, fallbackUrl, scale = 0.8, backgroundColor }) => {
+}> = ({ src, alt, fallbackUrl, scale = 0.7, backgroundColor }) => {
   // 检测是否处于 Chrome 扩展环境
   const isExtension =
     typeof window !== 'undefined' &&

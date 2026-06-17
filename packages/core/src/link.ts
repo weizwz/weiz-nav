@@ -5,37 +5,37 @@
 export interface Link {
   /** 唯一标识符 */
   id: string;
-  
+
   /** 链接名称 */
   name: string;
-  
+
   /** 链接地址 */
   url: string;
-  
+
   /** 描述信息 */
   description: string;
-  
+
   /** 图标 URL 或 Ant Design 图标名称 */
   icon?: string;
-  
+
   /** 背景颜色（HEX 格式） */
   backgroundColor?: string;
-  
-  /** 图标占背景比率，默认 0.8 */
+
+  /** 图标占背景比率，默认 0.7 */
   iconScale?: number;
-  
+
   /** 分类 */
   category?: string;
-  
+
   /** 标签列表 */
   tags?: string[];
-  
+
   /** 排序序号 */
   order: number;
-  
+
   /** 创建时间戳 */
   createdAt: number;
-  
+
   /** 更新时间戳 */
   updatedAt: number;
 }
