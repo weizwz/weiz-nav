@@ -12,25 +12,9 @@ import { Link } from '@weiz-nav/core/link';
 import { getFaviconUrl } from '@weiz-nav/services/api/favicon';
 import { showSuccess, showError } from '../../utils/feedback';
 import { isIconify, parseIconify } from '../../utils/iconifyUtils';
+import { isLightColor, isWhiteColor } from '../../utils/colorUtils';
 
 declare var chrome: any;
-
-/**
- * 判断颜色是否为白色或接近白色
- */
-const isWhiteColor = (color?: string): boolean => {
-  if (!color) return false;
-  const normalizedColor = color.toLowerCase().trim();
-  return (
-    normalizedColor === '#ffffff' ||
-    normalizedColor === '#fff' ||
-    normalizedColor === 'white' ||
-    normalizedColor === 'rgb(255, 255, 255)' ||
-    normalizedColor === 'rgb(255,255,255)' ||
-    normalizedColor.startsWith('rgba(255, 255, 255') ||
-    normalizedColor.startsWith('rgba(255,255,255')
-  );
-};
 
 /**
  * 全局图片并发控制队列
@@ -474,16 +458,18 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
           >
             {/* 左侧：背景色 + 图标 */}
             <div
-              className="flex-none w-[5.5rem] flex items-center justify-center text-white relative overflow-hidden dark:brightness-[0.8]"
+              className={`flex-none w-[5.5rem] flex items-center justify-center relative overflow-hidden dark:brightness-[0.8] ${
+                isLightColor(link.backgroundColor)
+                  ? 'text-gray-800 dark:text-gray-200'
+                  : 'text-white'
+              }`}
               style={{
                 backgroundColor: link.backgroundColor || '#bae0ff',
               }}
               aria-hidden="true"
             >
               {renderIcon}
-              {(link.backgroundColor === '#ffffff' ||
-                link.backgroundColor === 'rgb(255, 255, 255)' ||
-                link.backgroundColor?.indexOf('rgba(255, 255, 255') === 0) && (
+              {isWhiteColor(link.backgroundColor) && (
                 <div className="absolute right-0 top-[21.875%] h-[56.25%] w-0 border-r border-card-border z-0"></div>
               )}
             </div>

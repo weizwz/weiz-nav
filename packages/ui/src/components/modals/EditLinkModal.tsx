@@ -6,7 +6,7 @@ import type { Color } from 'antd/es/color-picker';
 import { UndoOutlined, ZoomInOutlined, ZoomOutOutlined, BgColorsOutlined } from '@ant-design/icons';
 import * as Icons from '@ant-design/icons';
 import { Link } from '@weiz-nav/core/link';
-import { PRESET_COLORS, isValidColor, getDefaultColor } from '../../utils/colorUtils';
+import { PRESET_COLORS, isValidColor, getDefaultColor, isLightColor } from '../../utils/colorUtils';
 import { getFaviconUrl } from '@weiz-nav/services/api/favicon';
 import { showError } from '../../utils/feedback';
 import { useAppSelector } from '@weiz-nav/store/hooks';
@@ -466,7 +466,9 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({ open, link, onCanc
               <div className="flex items-center gap-3">
                 {/* 预览卡片 */}
                 <div
-                  className="w-25 h-25 rounded-xl flex items-center justify-center relative overflow-hidden border border-input-border dark:border-dark-input-border dark:brightness-[0.8] transition-all"
+                  className={`w-25 h-25 rounded-xl flex items-center justify-center relative overflow-hidden border border-input-border dark:border-dark-input-border dark:brightness-[0.8] transition-all ${
+                    isLightColor(previewBgColor) ? 'text-gray-800 dark:text-gray-200' : 'text-white'
+                  }`}
                   style={{ backgroundColor: previewBgColor }}
                 >
                   {previewIcon ? (

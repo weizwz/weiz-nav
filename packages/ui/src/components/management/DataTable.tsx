@@ -7,6 +7,9 @@ import type { ColumnsType } from 'antd/es/table';
 import { Link } from '@weiz-nav/core/link';
 import { Category } from '@weiz-nav/core/category';
 import { useAppSelector } from '@weiz-nav/store/hooks';
+import { Icon } from '@iconify/react';
+import { isIconify, parseIconify } from '../../utils/iconifyUtils';
+import { isLightColor } from '../../utils/colorUtils';
 
 // 树节点类型
 interface TreeNode {
@@ -157,17 +160,35 @@ export const DataTable: React.FC<DataTableProps> = ({
         ) : record.icon ? (
           <div className="flex items-center">
             <div
-              className="w-6 h-6 rounded border border-gray-300 flex justify-center items-center mr-2"
+              className={`w-6 h-6 rounded border border-gray-300 flex justify-center items-center mr-2 overflow-hidden ${
+                isLightColor(record.backgroundColor)
+                  ? 'text-gray-800 dark:text-gray-200'
+                  : 'text-white'
+              }`}
               style={{ background: record.backgroundColor }}
             >
-              <img
-                src={record.icon}
-                alt="图标"
-                className="w-4 h-4 object-contain"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }}
-              />
+              {isIconify(record.icon) ? (
+                (() => {
+                  const parsed = parseIconify(record.icon);
+                  return parsed ? (
+                    <Icon
+                      icon={parsed.iconName}
+                      width={16}
+                      height={16}
+                      style={parsed.color ? { color: parsed.color } : undefined}
+                    />
+                  ) : null;
+                })()
+              ) : (
+                <img
+                  src={record.icon}
+                  alt="图标"
+                  className="w-4 h-4 object-contain"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              )}
             </div>
             <span> {name} </span>
           </div>
