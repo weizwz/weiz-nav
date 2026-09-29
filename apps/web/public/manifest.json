@@ -2,7 +2,7 @@
   "name": "唯知导航 - 现代化前端导航网站",
   "short_name": "唯知导航",
   "description": "现代化的个人前端导航网站，支持离线访问、实时搜索、数据管理等功能",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

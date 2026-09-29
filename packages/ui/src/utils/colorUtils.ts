@@ -64,3 +64,48 @@ export const isValidColor = (color: string): boolean => {
 export const getDefaultColor = (): string => {
   return '#ffffff'
 }
+
+/**
+ * 判断颜色是否为白色或接近白色
+ */
+export const isWhiteColor = (color?: string): boolean => {
+  if (!color) return false
+  const normalizedColor = color.toLowerCase().trim()
+  return (
+    normalizedColor === '#ffffff' ||
+    normalizedColor === '#fff' ||
+    normalizedColor === 'white' ||
+    normalizedColor === 'rgb(255, 255, 255)' ||
+    normalizedColor === 'rgb(255,255,255)' ||
+    normalizedColor.startsWith('rgba(255, 255, 255') ||
+    normalizedColor.startsWith('rgba(255,255,255')
+  )
+}
+
+/**
+ * 判断颜色是否为浅色（高亮度）
+ */
+export const isLightColor = (color?: string): boolean => {
+  if (!color) return false
+  if (isWhiteColor(color)) return true
+
+  const c = color.trim().toLowerCase()
+  if (c.startsWith('#')) {
+    const hex = c.slice(1)
+    let r = 0,
+      g = 0,
+      b = 0
+    if (hex.length === 3) {
+      r = parseInt(hex[0] + hex[0], 16)
+      g = parseInt(hex[1] + hex[1], 16)
+      b = parseInt(hex[2] + hex[2], 16)
+    } else if (hex.length >= 6) {
+      r = parseInt(hex.slice(0, 2), 16)
+      g = parseInt(hex.slice(2, 4), 16)
+      b = parseInt(hex.slice(4, 6), 16)
+    }
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000
+    return brightness > 180
+  }
+  return false
+}

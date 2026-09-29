@@ -4,18 +4,20 @@ import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import { Button, Input, Popover, Spin, Empty, ColorPicker } from 'antd';
 import type { Color } from 'antd/es/color-picker';
 import { SearchOutlined, CheckOutlined } from '@ant-design/icons';
+import { Icon } from '@iconify/react';
 import { iconifyApi, IconOption } from '@weiz-nav/services/api/iconify';
 import { PRESET_COLORS } from '../../utils/colorUtils';
 import { debounce } from '../../utils/debounce';
+import { parseIconify, formatIconify } from '../../utils/iconifyUtils';
 
 /**
  * IconifySelector 组件 Props
  */
 interface IconifySelectorProps {
-  /** 当前选中的图标 URL */
+  /** 当前选中的图标标识符或历史 URL */
   value?: string;
   /** 图标变化回调 */
-  onChange?: (iconUrl: string) => void;
+  onChange?: (icon: string) => void;
   /** 是否禁用 */
   disabled?: boolean;
   /** 占位符文本 */
@@ -34,8 +36,6 @@ const IconOptionItem: React.FC<{
   selected: boolean;
   onClick: () => void;
 }> = ({ icon, selected, onClick }) => {
-  const [imageError, setImageError] = useState(false);
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -59,19 +59,7 @@ const IconOptionItem: React.FC<{
       `}
     >
       <div className="flex items-center gap-3 flex-1 min-w-0">
-        {!imageError ? (
-          <img
-            src={icon.url}
-            alt={icon.label}
-            className="w-6 h-6 shrink-0"
-            loading="lazy"
-            onError={() => setImageError(true)}
-          />
-        ) : (
-          <div className="w-6 h-6 shrink-0 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center text-xs text-gray-400">
-            ?
-          </div>
-        )}
+        <Icon icon={icon.value} width={24} height={24} className="shrink-0" />
         <span className="overflow-hidden text-ellipsis whitespace-nowrap">{icon.label}</span>
       </div>
       {selected && <CheckOutlined className="text-blue-500 shrink-0 ml-2" />}
@@ -107,29 +95,20 @@ export const IconifySelector: React.FC<IconifySelectorProps> = ({
   // 初始化：如果有 value，尝试解析为 IconOption
   useEffect(() => {
     if (value) {
-      const identifier = extractIconIdentifier(value);
-      console.log('IconifySelector 初始化:', { value, identifier });
-
-      if (identifier && iconifyApi.isValidIconIdentifier(identifier)) {
+      const parsed = parseIconify(value);
+      if (parsed) {
+        const identifier = parsed.iconName;
         const label = identifier.split(':')[1] || identifier;
-        console.log('设置选中图标:', { identifier, label });
         setSelectedIcon({
           value: identifier,
           label,
-          url: value,
+          url: '',
         });
       }
+    } else {
+      setSelectedIcon(null);
     }
   }, [value]);
-
-  // 从 URL 提取图标标识符
-  const extractIconIdentifier = (url: string): string => {
-    // URL 格式: https://api.iconify.design/prefix:name.svg 或 https://api.iconify.design/prefix:name.svg?color=white
-    // 先移除查询参数
-    const urlWithoutParams = url.split('?')[0];
-    const match = urlWithoutParams.match(/\/([^/]+)\.svg$/);
-    return match ? match[1] : '';
-  };
 
   // 搜索图标
   const searchIcons = useCallback(
@@ -204,9 +183,7 @@ export const IconifySelector: React.FC<IconifySelectorProps> = ({
       setOpen(false);
 
       if (onChange) {
-        // 如果有颜色，添加 color 参数
-        const iconUrl = iconColor ? `${icon.url}?color=${encodeURIComponent(iconColor)}` : icon.url;
-        onChange(iconUrl);
+        onChange(formatIconify(icon.value, iconColor));
       }
     },
     [onChange, iconColor]
@@ -337,17 +314,12 @@ export const IconifySelector: React.FC<IconifySelectorProps> = ({
         >
           {selectedIcon ? (
             <div className="flex items-center gap-2">
-              <img
-                src={
-                  iconColor
-                    ? `${selectedIcon.url}?color=${encodeURIComponent(iconColor)}`
-                    : selectedIcon.url
-                }
-                alt={selectedIcon.label}
-                className="w-5 h-5"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }}
+              <Icon
+                icon={selectedIcon.value}
+                width={20}
+                height={20}
+                style={iconColor ? { color: iconColor } : undefined}
+                className="shrink-0"
               />
               <span className="overflow-hidden text-ellipsis">{selectedIcon.label}</span>
             </div>

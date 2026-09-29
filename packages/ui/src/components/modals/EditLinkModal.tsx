@@ -6,10 +6,12 @@ import type { Color } from 'antd/es/color-picker';
 import { UndoOutlined, ZoomInOutlined, ZoomOutOutlined, BgColorsOutlined } from '@ant-design/icons';
 import * as Icons from '@ant-design/icons';
 import { Link } from '@weiz-nav/core/link';
-import { PRESET_COLORS, isValidColor, getDefaultColor } from '../../utils/colorUtils';
+import { PRESET_COLORS, isValidColor, getDefaultColor, isLightColor } from '../../utils/colorUtils';
 import { getFaviconUrl } from '@weiz-nav/services/api/favicon';
 import { showError } from '../../utils/feedback';
 import { useAppSelector } from '@weiz-nav/store/hooks';
+import { Icon } from '@iconify/react';
+import { isIconify, parseIconify, formatIconify } from '../../utils/iconifyUtils';
 import { IconifySelector } from './IconifySelector';
 
 interface EditLinkModalProps {
@@ -81,12 +83,12 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({ open, link, onCanc
         setIconScale(scale);
 
         // 判断图标类型
-        if (iconUrl && iconUrl.includes('api.iconify.design')) {
+        if (iconUrl && isIconify(iconUrl)) {
           setIconType('2'); // Iconify 图标
-          // 提取颜色参数
-          const urlParams = new URLSearchParams(iconUrl.split('?')[1]);
-          const color = urlParams.get('color') || '';
-          setIconifyColor(color);
+          const parsed = parseIconify(iconUrl);
+          if (parsed?.color) {
+            setIconifyColor(parsed.color);
+          }
           setSavedIconifyIcon(iconUrl); // 保存 Iconify 图标
         } else if (iconUrl && !iconUrl.includes('favicon.im')) {
           setIconType('3'); // 自定义图标
@@ -149,7 +151,7 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({ open, link, onCanc
         // 切换到 Favicon 模式，保存当前图标并自动获取 favicon
         const currentIcon = form.getFieldValue('icon');
         if (currentIcon) {
-          if (currentIcon.includes('api.iconify.design')) {
+          if (isIconify(currentIcon)) {
             setSavedIconifyIcon(currentIcon);
           } else if (!currentIcon.includes('favicon.im')) {
             setSavedCustomIcon(currentIcon);
@@ -207,13 +209,12 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({ open, link, onCanc
       setIconifyColor(color);
       const currentIcon = form.getFieldValue('icon');
       if (currentIcon) {
-        // 移除现有的 color 参数
-        const baseUrl = currentIcon.split('?')[0];
-        // 添加新的颜色参数
-        const newUrl = color ? `${baseUrl}?color=${encodeURIComponent(color)}` : baseUrl;
-        form.setFieldsValue({ icon: newUrl });
-        setPreviewIcon(newUrl);
-        setSavedIconifyIcon(newUrl);
+        const parsed = parseIconify(currentIcon);
+        const iconName = parsed ? parsed.iconName : currentIcon.split('?')[0];
+        const newFormatted = formatIconify(iconName, color);
+        form.setFieldsValue({ icon: newFormatted });
+        setPreviewIcon(newFormatted);
+        setSavedIconifyIcon(newFormatted);
       }
     },
     [form]
@@ -465,22 +466,46 @@ export const EditLinkModal: React.FC<EditLinkModalProps> = ({ open, link, onCanc
               <div className="flex items-center gap-3">
                 {/* 预览卡片 */}
                 <div
-                  className="w-25 h-25 rounded-xl flex items-center justify-center relative overflow-hidden border border-input-border dark:border-dark-input-border dark:brightness-[0.8] transition-all"
+                  className={`w-25 h-25 rounded-xl flex items-center justify-center relative overflow-hidden border border-input-border dark:border-dark-input-border dark:brightness-[0.8] transition-all ${
+                    isLightColor(previewBgColor) ? 'text-gray-800 dark:text-gray-200' : 'text-white'
+                  }`}
                   style={{ backgroundColor: previewBgColor }}
                 >
                   {previewIcon ? (
-                    <img
-                      key={previewIcon}
-                      src={previewIcon}
-                      alt="图标预览"
-                      className="w-25 h-25 object-contain transition-all"
-                      style={{
-                        transform: `scale(${iconScale})`,
-                      }}
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                      }}
-                    />
+                    isIconify(previewIcon) ? (
+                      (() => {
+                        const parsed = parseIconify(previewIcon);
+                        return parsed ? (
+                          <div
+                            key={previewIcon}
+                            className="transition-all flex items-center justify-center"
+                            style={{
+                              transform: `scale(${iconScale})`,
+                            }}
+                          >
+                            <Icon
+                              icon={parsed.iconName}
+                              width={64}
+                              height={64}
+                              style={parsed.color ? { color: parsed.color } : undefined}
+                            />
+                          </div>
+                        ) : null;
+                      })()
+                    ) : (
+                      <img
+                        key={previewIcon}
+                        src={previewIcon}
+                        alt="图标预览"
+                        className="w-25 h-25 object-contain transition-all"
+                        style={{
+                          transform: `scale(${iconScale})`,
+                        }}
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    )
                   ) : (
                     <div className="text-white/40 text-xs text-center px-2">暂无图标</div>
                   )}
