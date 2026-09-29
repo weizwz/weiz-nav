@@ -7,9 +7,11 @@ import { motion } from 'framer-motion';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import * as AntdIcons from '@ant-design/icons';
+import { Icon } from '@iconify/react';
 import { Link } from '@weiz-nav/core/link';
 import { getFaviconUrl } from '@weiz-nav/services/api/favicon';
 import { showSuccess, showError } from '../../utils/feedback';
+import { isIconify, parseIconify } from '../../utils/iconifyUtils';
 
 declare var chrome: any;
 
@@ -348,6 +350,24 @@ const LinkCardBase: React.FC<LinkCardProps> = ({
     const faviconUrl = getFaviconUrl(link.url, { larger: useLarger });
     const scale = link.iconScale || 0.7;
     const backgroundColor = link.backgroundColor;
+
+    // 情况0: Iconify 图标（使用 @iconify/react 原生渲染）
+    if (isIconify(link.icon)) {
+      const parsed = parseIconify(link.icon);
+      if (parsed) {
+        const iconSize = Math.round(64 * scale);
+        return (
+          <Icon
+            key={link.updatedAt}
+            icon={parsed.iconName}
+            width={iconSize}
+            height={iconSize}
+            style={parsed.color ? { color: parsed.color } : undefined}
+            aria-label={`${link.name}的图标`}
+          />
+        );
+      }
+    }
 
     // 情况1: 用户提供了自定义图标 URL（但不是 favicon.im 的 URL）
     if (
